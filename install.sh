@@ -23,12 +23,13 @@ done
 python="python"
 pip="pip"
 
-if [[ $(cat /etc/os-release | grep -i "ubuntu") != "" ]]
-then
-  echo "Ubuntu detected. Using python3 and pip3..."
-  python="python3"
-  pip="pip3"
-fi
+while true; do
+	read -p "Use pip3 instead of pip? [Y/n]" yn
+	case $yn in 
+		[Yy]*|"") python="python3"; pip="pip3"; break;;
+		[Nn]*) break;;
+	esac
+done
 
 if [[ $($pip list | grep -wi virtualenv) = "" ]]
 then
