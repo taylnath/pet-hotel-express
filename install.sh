@@ -48,7 +48,7 @@ $python -m venv ./venv
 echo "Activating virtual environment via source ./venv/bin/activate..."
 source ./venv/bin/activate
 
-echo "Please verify that the source is ok (it should not be like /usr/bin/python"
+echo "Please verify that the source is ok (it should not be like /usr/bin/python)"
 which python
 
 # ask for permission to proceed

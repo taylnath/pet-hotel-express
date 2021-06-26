@@ -1,0 +1,103 @@
+[2021-06-26 13:52:28 -0700] [29810] [DEBUG] Current configuration:
+  config: ./gunicorn.conf.py
+  wsgi_app: None
+  bind: ['0.0.0.0:42001']
+  backlog: 2048
+  workers: 1
+  worker_class: sync
+  threads: 1
+  worker_connections: 1000
+  max_requests: 0
+  max_requests_jitter: 0
+  timeout: 30
+  graceful_timeout: 30
+  keepalive: 2
+  limit_request_line: 4094
+  limit_request_fields: 100
+  limit_request_field_size: 8190
+  reload: False
+  reload_engine: auto
+  reload_extra_files: []
+  spew: False
+  check_config: False
+  print_config: False
+  preload_app: False
+  sendfile: None
+  reuse_port: False
+  chdir: /nfs/stak/users/taylnath/test/cs340-project
+  daemon: True
+  raw_env: []
+  pidfile: None
+  worker_tmp_dir: None
+  user: 16977
+  group: 23362
+  umask: 0
+  initgroups: False
+  tmp_upload_dir: None
+  secure_scheme_headers: {'X-FORWARDED-PROTOCOL': 'ssl', 'X-FORWARDED-PROTO': 'https', 'X-FORWARDED-SSL': 'on'}
+  forwarded_allow_ips: ['127.0.0.1']
+  accesslog: None
+  disable_redirect_access_to_syslog: False
+  access_log_format: %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"
+  errorlog: app.log
+  loglevel: debug
+  capture_output: True
+  logger_class: gunicorn.glogging.Logger
+  logconfig: None
+  logconfig_dict: {}
+  syslog_addr: udp://localhost:514
+  syslog: False
+  syslog_prefix: None
+  syslog_facility: user
+  enable_stdio_inheritance: False
+  statsd_host: None
+  dogstatsd_tags: 
+  statsd_prefix: 
+  proc_name: None
+  default_proc_name: wsgi:app
+  pythonpath: None
+  paste: None
+  on_starting: <function OnStarting.on_starting at 0x7f7bbad2b048>
+  on_reload: <function OnReload.on_reload at 0x7f7bbad2b158>
+  when_ready: <function WhenReady.when_ready at 0x7f7bbad2b268>
+  pre_fork: <function Prefork.pre_fork at 0x7f7bbad2b378>
+  post_fork: <function Postfork.post_fork at 0x7f7bbad2b488>
+  post_worker_init: <function PostWorkerInit.post_worker_init at 0x7f7bbad2b598>
+  worker_int: <function WorkerInt.worker_int at 0x7f7bbad2b6a8>
+  worker_abort: <function WorkerAbort.worker_abort at 0x7f7bbad2b7b8>
+  pre_exec: <function PreExec.pre_exec at 0x7f7bbad2b8c8>
+  pre_request: <function PreRequest.pre_request at 0x7f7bbad2b9d8>
+  post_request: <function PostRequest.post_request at 0x7f7bbad2ba60>
+  child_exit: <function ChildExit.child_exit at 0x7f7bbad2bb70>
+  worker_exit: <function WorkerExit.worker_exit at 0x7f7bbad2bc80>
+  nworkers_changed: <function NumWorkersChanged.nworkers_changed at 0x7f7bbad2bd90>
+  on_exit: <function OnExit.on_exit at 0x7f7bbad2bea0>
+  proxy_protocol: False
+  proxy_allow_ips: ['127.0.0.1']
+  keyfile: None
+  certfile: None
+  ssl_version: 2
+  cert_reqs: 0
+  ca_certs: None
+  suppress_ragged_eofs: True
+  do_handshake_on_connect: False
+  ciphers: None
+  raw_paste_global_conf: []
+  strip_header_spaces: False
+[2021-06-26 13:52:28 -0700] [29810] [INFO] Starting gunicorn 20.1.0
+[2021-06-26 13:52:28 -0700] [29810] [ERROR] Connection in use: ('0.0.0.0', 42001)
+[2021-06-26 13:52:28 -0700] [29810] [DEBUG] connection to ('0.0.0.0', 42001) failed: [Errno 98] Address already in use
+[2021-06-26 13:52:28 -0700] [29810] [ERROR] Retrying in 1 second.
+[2021-06-26 13:52:29 -0700] [29810] [ERROR] Connection in use: ('0.0.0.0', 42001)
+[2021-06-26 13:52:29 -0700] [29810] [DEBUG] connection to ('0.0.0.0', 42001) failed: [Errno 98] Address already in use
+[2021-06-26 13:52:29 -0700] [29810] [ERROR] Retrying in 1 second.
+[2021-06-26 13:52:30 -0700] [29810] [ERROR] Connection in use: ('0.0.0.0', 42001)
+[2021-06-26 13:52:30 -0700] [29810] [DEBUG] connection to ('0.0.0.0', 42001) failed: [Errno 98] Address already in use
+[2021-06-26 13:52:30 -0700] [29810] [ERROR] Retrying in 1 second.
+[2021-06-26 13:52:31 -0700] [29810] [ERROR] Connection in use: ('0.0.0.0', 42001)
+[2021-06-26 13:52:31 -0700] [29810] [DEBUG] connection to ('0.0.0.0', 42001) failed: [Errno 98] Address already in use
+[2021-06-26 13:52:31 -0700] [29810] [ERROR] Retrying in 1 second.
+[2021-06-26 13:52:32 -0700] [29810] [ERROR] Connection in use: ('0.0.0.0', 42001)
+[2021-06-26 13:52:32 -0700] [29810] [DEBUG] connection to ('0.0.0.0', 42001) failed: [Errno 98] Address already in use
+[2021-06-26 13:52:32 -0700] [29810] [ERROR] Retrying in 1 second.
+[2021-06-26 13:52:33 -0700] [29810] [ERROR] Can't connect to ('0.0.0.0', 42001)
