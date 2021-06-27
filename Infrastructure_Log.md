@@ -20,9 +20,11 @@
 
 - Started an empty React app in client directory (via `npx create-react-app` -- no need to install create-react-app just for this). If we use React, we should move static -> client. (maybe templates also?).
 
+- Set up basic database access (i.e. db_connector.py runs ok). We may change how this works. Eventually I think it will work through our api. 
+
 ### TODO:
 
-- Set up basic database access. We may change how this works. Eventually I think it will work through our api. 
+- Access database from app.py
 
 - Set up basic page structure: navbar, title, header etc. Using React/react-bootstrap?
 
