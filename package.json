@@ -2,12 +2,12 @@
   "name": "pet-hotel-reservations",
   "version": "1.0.0",
   "description": "A database-driven website to make reservations at a luxury hotel for pets.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "preinstall": "pip3 install --user virtualenv && venv/bin/pip3 install -r requirements.txt && npm run client-install",
+    "preinstall": "npm run client-install",
     "client-install": "npm install --prefix client",
     "start": "gunicorn app:app",
-    "server": "venv/bin/flask run --no-debugger",
+    "server": "nodemon server.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
@@ -24,6 +24,12 @@
   },
   "homepage": "https://github.com/taylnath/cs340-project#readme",
   "dependencies": {
-    "concurrently": "^6.2.0"
+    "concurrently": "^6.2.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

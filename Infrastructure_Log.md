@@ -8,23 +8,25 @@
 
 ## Setup log
 
-### Phase 1: Basic Flask app, npm projects, empty React app
+### Phase 1: Basic Node/Express app
 
-- Originally cloned from https://github.com/osu-cs340-ecampus/flask-starter-app
+- Basic file structure from https://github.com/taylnath/mern-stack-course
 
-- Started a shell npm project in main dir (via npm init). 
+- Started an npm project in main dir (via npm init). 
 - Added scripts to package.json to handle build steps:
-  - "preinstall" to install needed python packages.
+  - "preinstall" to install client (react project).
   - "dev" to run the server and client at the same time.
   - A few others.
 
-- Started an empty React app in client directory (via `npx create-react-app` -- no need to install create-react-app just for this). If we use React, we should move static -> client. (maybe templates also?).
+- Started an empty React app in client directory (via `npx create-react-app` -- no need to install create-react-app just for this). 
 
-- Set up basic database access (i.e. db_connector.py runs ok). We may change how this works. Eventually I think it will work through our api. 
+- Set up basic database access (i.e. dbcon.js works ok). We may change how this works. Eventually I think it will work through our api. 
 
 ### TODO:
 
-- Access database from app.py
+- Display data from database in react page -- i.e. pass the data to react.
+
+- Access database from api routes
 
 - Set up basic page structure: navbar, title, header etc. Using React/react-bootstrap?
 
