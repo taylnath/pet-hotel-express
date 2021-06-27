@@ -1,0 +1,7 @@
+# copy this to a file named .env. make sure .env is in .gitignore so it doesn't get pushed to GitHub
+
+340DBHOST=classmysql.engr.oregonstate.edu
+340DBUSER=cs340_<onid>
+340DBPW=<password>
+340DB=cs340_<onid>
+# name of your local database name for the project
