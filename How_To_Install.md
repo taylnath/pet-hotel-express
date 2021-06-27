@@ -2,9 +2,9 @@
 
 ## Configuring: 
 
-TODO: where to put database credentials etc. 
+Put database credentials in dotenv_template.txt, then rename to .env
 
-## Installing: (installs virtualenv, Python packages etc)
+## Installing:
 `npm install`
 
 ## Running:
