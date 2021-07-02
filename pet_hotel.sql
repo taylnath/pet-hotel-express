@@ -57,6 +57,7 @@ create table  `Bookings` (
   `bookingID` int auto_increment not null primary key,
   `startDate` date not null,
   `endDate` date not null,
+  `numberOfRooms` int not null check(`numberOfRooms` > 0),
   `ownerId` int not null,
   `employeeId` int,
   constraint `bookings_fk1` foreign key (`ownerId`) references `Owners`(`ownerId`) on delete cascade on update cascade,
