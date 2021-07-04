@@ -3,10 +3,12 @@ const path = require('path');
 const queryAsync = require('./database/dbcon')
 const fs = require('fs');
 const { query } = require('express');
-
-//import reservations from './routes/api/reservations';
+const apiRoutes = require('./routes/api');
+const cors = require('cors'); // maybe we can take this out later
 
 const app = express();
+
+app.use(cors());
 
 // body parsing middleware
 app.use(express.json());
@@ -28,8 +30,8 @@ async function testDB(){
 
 testDB();
 
-// // use routes
-// app.use('/api/reservations', reservations);
+// use routes
+app.use('/api', apiRoutes);
 
 // server static assets if in production
 if (process.env.NODE_ENV === 'production'){

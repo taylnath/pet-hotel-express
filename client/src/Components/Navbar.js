@@ -18,6 +18,7 @@ function CustomNavbar() {
           <Nav.Link as={Link} to="/Reservations">Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports">Reports</Nav.Link>
           <Nav.Link as={Link} to="/Admin">Admin</Nav.Link>
+          <Nav.Link as={Link} to="/Test">Test</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
           <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
           <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
