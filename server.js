@@ -8,7 +8,7 @@ const cors = require('cors'); // maybe we can take this out later
 
 const app = express();
 
-app.use(cors());
+app.use(cors()); // maybe we can take this out later
 
 // body parsing middleware
 app.use(express.json());
