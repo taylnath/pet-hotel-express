@@ -1,8 +1,32 @@
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import {
+  Navbar, Nav, NavDropdown, Button, Modal, DropdownButton, Container,
+  Row, Col
+} from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import { ReactComponent as Logo } from './fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import DropdownItem from "react-bootstrap/DropdownItem";
 
 function CustomNavbar() {
+  
+  {/* modal magic - appear! - disappear!   */}
+
+  const[showOwnerLogin, setShowOwnerLogin] = useState(false);
+  const[showEmpLogin, setShowEmpLogin] = useState(false);
+  
+  const handleCloseOwn = () => setShowOwnerLogin(false);
+  const handleOpenOwn = () => setShowOwnerLogin(true);
+  const handleCloseEmp = () => setShowEmpLogin(false);
+  const handleOpenEmp = () => setShowEmpLogin(true);
+  
+  {/* not sure if we want to make this a separate component (module to import) */}
+  {/* TODO: do login as a fetch to verify Owner / Employee & return if Manager */}
+  const logInOwner = (e) => {
+    e.preventDefault()
+    handleCloseOwn()
+    console.log("Owner has logged in");    {/* TODO */}
+  }
+  
   return (
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand as={Link} to="/">
@@ -27,7 +51,49 @@ function CustomNavbar() {
           <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
         </NavDropdown>
         </Nav>
+        <DropdownButton variant={"dark"} title={"Log in"}>
+          <DropdownItem onClick={handleOpenOwn}>Customer Login</DropdownItem>
+          <DropdownItem href={"/"}>Employee Login</DropdownItem>
+        </DropdownButton>
+  
+        {/* Modal for customer to log in; another modal will be for employees. */}
+        {/* Upon login, button will change to show user name, and navbar menus will */}
+        {/* be tailored to the user. TODO */}
+        
+        <Modal show={showOwnerLogin} onHide={handleCloseOwn}>
+          <Modal.Header closeButton>
+            <Modal.Title>Owner Login</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={logInOwner}>
+              <label className={"col-form-label"}>
+                E-mail:
+              </label>
+      
+              <input type={"email"} className={"form-control"} id={"owner-email"}/>
+              <Container className={"p-3"}>
+                <Row>
+                  <Col>
+                  <Button variant="primary" md={4} type={"submit"}>
+                    Log in
+                  </Button>
+                  </Col>
+                  <Col>
+                  <Button variant="secondary" md={4} onClick={handleCloseOwn}>
+                    Cancel
+                  </Button>
+                  </Col>
+                </Row>
+              </Container>
+            </form>
+          </Modal.Body>
+          <Modal.Footer>
+          </Modal.Footer>
+        </Modal>
+        
       </Navbar>
+      
+      
   );
 }
 
