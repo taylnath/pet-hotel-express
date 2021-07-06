@@ -6,11 +6,9 @@ import { useState, useEffect } from 'react';
 import { ReactComponent as Logo } from './fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
-import { logIn } from './login'
+import Login  from './Login'
 
 function CustomNavbar( { user, setUser }) {
-  
-  console.log("Current State:", user);    // TODO
   
   {/* modal magic - appear! - disappear!   */}
 
@@ -23,20 +21,23 @@ function CustomNavbar( { user, setUser }) {
   const handleOpenEmp = () => setShowEmpLogin(true);
   
   const [userType, setUserType] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [userID, setUserID] = useState('');
   
   {/* not sure if we want to make this a separate component (module to import) */}
-  const logInOwner = (e) => {
+  
+  function logInOwner(e) {
     e.preventDefault();
     handleCloseOwn();
+    setUserType("owner");
     setUser({
-      type: "customer",
+      type: "owner",
       firstName: "",
-      email: userEmail,
+      email: userID,
       employeeID: null
-    });
-    logIn( { user, setUser });    {/* TODO */}
-  }
+    })
+    console.log("Current State:", user, userType, userID);    // TODO
+  };
+  
   
   return (
       <Navbar bg="dark" variant="dark">
@@ -81,8 +82,8 @@ function CustomNavbar( { user, setUser }) {
                 E-mail:
               </label>
               <input type={"email"} className={"form-control"}
-                     id={"owner-email"} value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}/>
+                     id={"owner-email"} value={userID}
+                    onChange={(e) => setUserID(e.target.value)}/>
               <Container className={"p-3"}>
                 <Row>
                   <Col>

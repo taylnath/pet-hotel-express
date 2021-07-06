@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const queryAsync = require('../database/dbcon');
 const fs = require('fs');
+var app = express();
+app.use(express.urlencoded({extended:false}));
 
 // TODO: add test with database
 
@@ -33,6 +35,29 @@ router.get('/testData', async (req, res) => {
       (e.trim()) && await queryAsync(e); // do each query
     }
     queryAsync('select * from test').then(result => res.json(result));
+  } catch (e) {
+    console.error(e);
+    res.status(500);
+  }
+});
+
+// @route   GET /api/logIn
+// @desc    Verify Login ID for owner or employee, return all info
+// @access  Public
+router.get('/logIn', async (req, res) => {
+  const userType = req.query.type        // owner or employee
+  const userID = req.query.id            // owner email or employee id
+  var logInQuery
+  
+  if (userType === 'owner') {
+    logInQuery = "select * from Owners where email=? "
+  } else {
+    logInQuery = "select * from Employees where employeeID=?"
+  }
+
+  try{
+      await queryAsync(logInQuery, [userID]).then(result => res.json(result));
+
   } catch (e) {
     console.error(e);
     res.status(500);
