@@ -5,12 +5,22 @@ import  Reports  from './Routes/Reports';
 import  Reservations  from './Routes/Reservations';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
+import {useState} from "react";
 
 function App() {
+  
+  {/* this allows app to know who is logged in (user), with what privileges */}
+  const[user, setUser] = useState({
+    type: "",
+    firstName: "",
+    email: "",
+    employeeID: null
+  });
+  
   return (
     <div className="App">
       <Router>
-      <Navbar/>
+      <Navbar user = { user } setUser = { setUser } />
       <header className="App-header">
         Hello
       </header>
