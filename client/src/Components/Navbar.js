@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react';
 import { ReactComponent as Logo } from './fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
-import Login  from './Login'
+import settings from "../appSettings";
+const serverURL = settings.serverURL;
+// import Login  from './Login'
 
 function CustomNavbar( { user, setUser }) {
   
@@ -23,7 +25,7 @@ function CustomNavbar( { user, setUser }) {
   const [userType, setUserType] = useState('');
   const [userID, setUserID] = useState('');
   
-  {/* not sure if we want to make this a separate component (module to import) */}
+  {/* ----  This just does a fetch statement to verify the login ----- */}
   
   function logInOwner(e) {
     e.preventDefault();
@@ -36,8 +38,16 @@ function CustomNavbar( { user, setUser }) {
       employeeID: null
     })
     console.log("Current State:", user, userType, userID);    // TODO
+    const fetchURL = serverURL + `/api/logIn?type=owner&id=${userID}`
+    console.log(fetchURL)
+    const log_owner_in = async () => {
+      const res = await fetch(fetchURL)
+      const data = await res.json();
+      console.log("data = ", data);
+    }
+    log_owner_in()
   };
-  
+  {/* --------------- end of logInOwner  ----------------------------- */}
   
   return (
       <Navbar bg="dark" variant="dark">
