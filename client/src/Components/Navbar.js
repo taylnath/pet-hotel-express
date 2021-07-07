@@ -10,7 +10,7 @@ import settings from "../appSettings";
 const serverURL = settings.serverURL;
 // import Login  from './Login'
 
-function CustomNavbar( { user, setUser }) {
+function CustomNavbar(props) {
   
   {/* modal magic - appear! - disappear!   */}
 
@@ -23,29 +23,36 @@ function CustomNavbar( { user, setUser }) {
   const handleOpenEmp = () => setShowEmpLogin(true);
   
   const [userType, setUserType] = useState('');
-  const [userID, setUserID] = useState('');
+  const [email, setEmail] = useState('');
   
   {/* ----  This just does a fetch statement to verify the login ----- */}
   
-  function logInOwner(e) {
+  // TODO: put login stuff in the login component? (after it's working)
+  async function logInOwner(e) {
     e.preventDefault();
     handleCloseOwn();
     setUserType("owner");
-    setUser({
-      type: "owner",
-      firstName: "",
-      email: userID,
-      employeeID: null
-    })
-    console.log("Current State:", user, userType, userID);    // TODO
-    const fetchURL = serverURL + `/api/logIn?type=owner&id=${userID}`
-    console.log(fetchURL)
-    const log_owner_in = async () => {
-      const res = await fetch(fetchURL)
-      const data = await res.json();
-      console.log("data = ", data);
+    // setUser({
+    //   type: "owner",
+    //   firstName: "",
+    //   email: email,
+    //   employeeID: null
+    // })
+    //console.log("Current State:", user, userType, email);    // TODO
+    const fetchURL = serverURL + `/api/logIn?type=owner&id=${email}`
+    const users = await fetch(fetchURL).then(response => response.json());
+    console.log(fetchURL);
+    console.log("the user is:", users);
+    if (users.length == 1){
+      props.setUser(users[0]);
     }
-    log_owner_in()
+    // console.log(fetchURL)
+    // const log_owner_in = async () => {
+    //   const res = await fetch(fetchURL)
+    //   const data = await res.json();
+    //   console.log("data = ", data);
+    // }
+    // log_owner_in()
   };
   {/* --------------- end of logInOwner  ----------------------------- */}
   
@@ -74,8 +81,10 @@ function CustomNavbar( { user, setUser }) {
         </NavDropdown>
         </Nav>
         <DropdownButton variant={"dark"} title={"Log in"}>
+          {/* <DropdownItem onClick={() => props.setUser({firstName: "bobby"})}>Customer Login</DropdownItem> */}
+          <DropdownItem onClick={() => logInOwner("bob@email.biz")}>Employee Login</DropdownItem>
           <DropdownItem onClick={handleOpenOwn}>Customer Login</DropdownItem>
-          <DropdownItem href={"/"}>Employee Login</DropdownItem>
+          {/* <DropdownItem href={"/"}>Employee Login</DropdownItem> */}
         </DropdownButton>
   
         {/* Modal for customer to log in; another modal will be for employees. */}
@@ -92,8 +101,8 @@ function CustomNavbar( { user, setUser }) {
                 E-mail:
               </label>
               <input type={"email"} className={"form-control"}
-                     id={"owner-email"} value={userID}
-                    onChange={(e) => setUserID(e.target.value)}/>
+                     id={"owner-email"} value={email}
+                    onChange={(e) => setEmail(e.target.value)}/>
               <Container className={"p-3"}>
                 <Row>
                   <Col>

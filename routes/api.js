@@ -45,18 +45,21 @@ router.get('/testData', async (req, res) => {
 // @desc    Verify Login ID for owner or employee, return all info
 // @access  Public
 router.get('/logIn', async (req, res) => {
-  const userType = req.query.type        // owner or employee
-  const userID = req.query.id            // owner email or employee id
-  var logInQuery
+  const userType = req.query.type;        // owner or employee
+  const userID = req.query.id;            // owner email or employee id
+  let logInQuery;
+  console.log(userType);
+  console.log(userID);
   
   if (userType === 'owner') {
-    logInQuery = "select * from Owners where email=? "
+    logInQuery = "select * from Owners where email=?";
   } else {
-    logInQuery = "select * from Employees where employeeID=?"
+    logInQuery = "select * from Employees where employeeID=?";
   }
 
-  try{
-      await queryAsync(logInQuery, [userID]).then(result => res.json(result));
+  // TODO: take out this try/catch once we get error handling working?
+  try {
+      let result = await queryAsync(logInQuery, [userID]).then(result => res.json(result));
 
   } catch (e) {
     console.error(e);
