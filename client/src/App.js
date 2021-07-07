@@ -5,14 +5,25 @@ import  Reports  from './Routes/Reports';
 import  Reservations  from './Routes/Reservations';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
+import {useState, useEffect} from "react";
 
 function App() {
+  
+  {/* this allows app to know who is logged in (user), with what privileges */}
+  const [user, setUser] = useState({
+    type: "",
+    firstName: "",
+    email: "",
+    employeeID: null
+  });
+  
   return (
     <div className="App">
       <Router>
-      <Navbar/>
+      <Navbar setUser={setUser} />
       <header className="App-header">
-        Hello
+        Hello, {user.firstName || "nobody"}. 
+        <button onClick={() => setUser({firstName:"bobo"})} width="20px" height="20px">use bobo</button>
       </header>
     {/* the route paths match the to="..." attributes from the Links in Navbar */}
     {/* TODO: I think the routes should be lowercase */}
