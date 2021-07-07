@@ -31,21 +31,21 @@ function CustomNavbar(props) {
   async function logInOwner(e) {
     e.preventDefault();
     handleCloseOwn();
-    setUserType("owner");
-    // setUser({
-    //   type: "owner",
-    //   firstName: "",
-    //   email: email,
-    //   employeeID: null
-    // })
-    //console.log("Current State:", user, userType, email);    // TODO
+    
     const fetchURL = serverURL + `/api/logIn?type=owner&id=${email}`
     const users = await fetch(fetchURL).then(response => response.json());
-    console.log(fetchURL);
-    console.log("the user is:", users);
+
     if (users.length == 1){
-      props.setUser(users[0]);
+      let login_user = users[0]     // needed a way to add 'logged_in' attribute
+      login_user.logged_in = true
+      props.setUser(login_user);
+      setUserType("owner")
+    } else {                        // if no match, reset local State
+      setEmail('');
+      setUserType('');
     }
+  
+    console.log('user now = ', props.user)
     // console.log(fetchURL)
     // const log_owner_in = async () => {
     //   const res = await fetch(fetchURL)
@@ -54,6 +54,19 @@ function CustomNavbar(props) {
     // }
     // log_owner_in()
   };
+  
+  function logOut() {
+    props.setUser({
+        type: "",
+        firstName: "",
+        email: "",
+        employeeID: null,
+        logged_in: false
+    })
+    setUserType('')
+    setEmail('')
+  }
+  
   {/* --------------- end of logInOwner  ----------------------------- */}
   
   return (
@@ -70,7 +83,7 @@ function CustomNavbar(props) {
         <Nav>
           <Nav.Link as={Link} to="/Reservations">Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports">Reports</Nav.Link>
-          <Nav.Link as={Link} to="/Admin">Admin</Nav.Link>
+          {userType === "owner" || <Nav.Link as={Link} to="/Admin">Admin</Nav.Link>}
           <Nav.Link as={Link} to="/Test">Test</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
           <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -80,10 +93,13 @@ function CustomNavbar(props) {
           <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
         </NavDropdown>
         </Nav>
-        <DropdownButton variant={"dark"} title={"Log in"}>
+        <DropdownButton variant={props.user.logged_in ? "success" : "dark"}
+                        title={props.user.logged_in ? props.user.firstName + " logged in" : "Log in"}>
           {/* <DropdownItem onClick={() => props.setUser({firstName: "bobby"})}>Customer Login</DropdownItem> */}
-          <DropdownItem onClick={() => logInOwner("bob@email.biz")}>Employee Login</DropdownItem>
-          <DropdownItem onClick={handleOpenOwn}>Customer Login</DropdownItem>
+          {props.user.logged_in ?
+              <DropdownItem onClick={() => logOut()}>Log Out</DropdownItem> :
+              <DropdownItem onClick={() => null}>Employee Login</DropdownItem>}
+          {!props.user.logged_in && <DropdownItem onClick={handleOpenOwn}>Customer Login</DropdownItem>}
           {/* <DropdownItem href={"/"}>Employee Login</DropdownItem> */}
         </DropdownButton>
   

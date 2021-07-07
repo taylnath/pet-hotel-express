@@ -14,13 +14,14 @@ function App() {
     type: "",
     firstName: "",
     email: "",
-    employeeID: null
+    employeeID: null,
+    logged_in: false
   });
   
   return (
     <div className="App">
       <Router>
-      <Navbar setUser={setUser} />
+      <Navbar user = {user} setUser={setUser} />
       <header className="App-header">
         Hello, {user.firstName || "nobody"}. 
         <button onClick={() => setUser({firstName:"bobo"})} width="20px" height="20px">use bobo</button>
