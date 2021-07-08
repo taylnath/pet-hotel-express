@@ -3,10 +3,11 @@ import HeaderImage from '../Components/images/pet_hotel_home_main.jpeg'
 import SereneCat from '../Components/images/serene_cat.jpeg'
 import BlackCat from '../Components/images/black_cat.jpeg'
 import HappyDog from '../Components/images/happy_dog.jpeg'
+import BlackCatAttr from '../Components/images/attributions/attributions'
 
 function Home() {
+  console.log(BlackCatAttr);    // todo
   return (
-      
       <div>
         <Container>
           <Row>
