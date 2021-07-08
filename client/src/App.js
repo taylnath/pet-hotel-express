@@ -6,24 +6,19 @@ import  Reservations  from './Routes/Reservations';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
 import {useState, useEffect} from "react";
+import blankUser from './Models/UserModel';
 
 function App() {
   
   {/* this allows app to know who is logged in (user), with what privileges */}
-  const [user, setUser] = useState({
-    type: "",
-    firstName: "",
-    email: "",
-    employeeID: null
-  });
-  
+  const [user, setUser] = useState(blankUser);
+
   return (
     <div className="App">
       <Router>
-      <Navbar setUser={setUser} />
+      <Navbar user={user} setUser={setUser} />
       <header className="App-header">
-        Hello, {user.firstName || "nobody"}. 
-        <button onClick={() => setUser({firstName:"bobo"})} width="20px" height="20px">use bobo</button>
+        Hello, {user.firstName || "nobody"}. You are a {user.type || "nobody"}.
       </header>
     {/* the route paths match the to="..." attributes from the Links in Navbar */}
     {/* TODO: I think the routes should be lowercase */}
