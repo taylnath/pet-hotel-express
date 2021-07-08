@@ -7,65 +7,29 @@ import { ReactComponent as Logo } from './fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
 import settings from "../appSettings";
+import Login  from './Login'
+import blankUser from '../Models/UserModel';
 const serverURL = settings.serverURL;
-// import Login  from './Login'
 
 function CustomNavbar(props) {
   
   {/* modal magic - appear! - disappear!   */}
 
-  const[showOwnerLogin, setShowOwnerLogin] = useState(false);
-  const[showEmpLogin, setShowEmpLogin] = useState(false);
+  const[loginVisible, setLoginVisible] = useState(false);
   
-  const handleCloseOwn = () => setShowOwnerLogin(false);
-  const handleOpenOwn = () => setShowOwnerLogin(true);
-  const handleCloseEmp = () => setShowEmpLogin(false);
-  const handleOpenEmp = () => setShowEmpLogin(true);
-  
-  const [userType, setUserType] = useState('');
-  const [email, setEmail] = useState('');
+  const logOut = () => props.setUser(blankUser);
+  const ownerLogin = () => {
+    props.setUser({...props.user, type: "owner"});
+    setLoginVisible(true);
+  };
+  const employeeLogin = () => {
+    props.setUser({...props.user, type: "employee"});
+    setLoginVisible(true);
+  };
   
   {/* ----  This just does a fetch statement to verify the login ----- */}
   
   // TODO: put login stuff in the login component? (after it's working)
-  async function logInOwner(e) {
-    e.preventDefault();
-    handleCloseOwn();
-    
-    const fetchURL = serverURL + `/api/logIn?type=owner&id=${email}`
-    const users = await fetch(fetchURL).then(response => response.json());
-
-    if (users.length == 1){
-      let login_user = users[0]     // needed a way to add 'logged_in' attribute
-      login_user.logged_in = true
-      props.setUser(login_user);
-      setUserType("owner")
-    } else {                        // if no match, reset local State
-      setEmail('');
-      setUserType('');
-    }
-  
-    console.log('user now = ', props.user)
-    // console.log(fetchURL)
-    // const log_owner_in = async () => {
-    //   const res = await fetch(fetchURL)
-    //   const data = await res.json();
-    //   console.log("data = ", data);
-    // }
-    // log_owner_in()
-  };
-  
-  function logOut() {
-    props.setUser({
-        type: "",
-        firstName: "",
-        email: "",
-        employeeID: null,
-        logged_in: false
-    })
-    setUserType('')
-    setEmail('')
-  }
   
   {/* --------------- end of logInOwner  ----------------------------- */}
   
@@ -83,7 +47,7 @@ function CustomNavbar(props) {
         <Nav>
           <Nav.Link as={Link} to="/Reservations">Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports">Reports</Nav.Link>
-          {userType === "owner" || <Nav.Link as={Link} to="/Admin">Admin</Nav.Link>}
+          <Nav.Link as={Link} to="/Admin" hidden={props.user.type === "owner"}>{props.user.type} Admin</Nav.Link>
           <Nav.Link as={Link} to="/Test">Test</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
           <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -95,50 +59,23 @@ function CustomNavbar(props) {
         </Nav>
         <DropdownButton variant={props.user.logged_in ? "success" : "dark"}
                         title={props.user.logged_in ? props.user.firstName + " logged in" : "Log in"}>
-          {/* <DropdownItem onClick={() => props.setUser({firstName: "bobby"})}>Customer Login</DropdownItem> */}
           {props.user.logged_in ?
-              <DropdownItem onClick={() => logOut()}>Log Out</DropdownItem> :
-              <DropdownItem onClick={() => null}>Employee Login</DropdownItem>}
-          {!props.user.logged_in && <DropdownItem onClick={handleOpenOwn}>Customer Login</DropdownItem>}
-          {/* <DropdownItem href={"/"}>Employee Login</DropdownItem> */}
+              <DropdownItem onClick={logOut}>Log Out</DropdownItem> :
+              <DropdownItem onClick={employeeLogin}>Employee Login</DropdownItem>}
+          {!props.user.logged_in && <DropdownItem onClick={ownerLogin}>Customer Login</DropdownItem>}
         </DropdownButton>
   
         {/* Modal for customer to log in; another modal will be for employees. */}
-        {/* Upon login, button will change to show user name, and navbar menus will */}
-        {/* be tailored to the user. TODO */}
-        
-        <Modal show={showOwnerLogin} onHide={handleCloseOwn}>
-          <Modal.Header closeButton>
-            <Modal.Title>Owner Login</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <form onSubmit={logInOwner}>
-              <label className={"col-form-label"}>
-                E-mail:
-              </label>
-              <input type={"email"} className={"form-control"}
-                     id={"owner-email"} value={email}
-                    onChange={(e) => setEmail(e.target.value)}/>
-              <Container className={"p-3"}>
-                <Row>
-                  <Col>
-                  <Button variant="primary" md={4} type={"submit"}>
-                    Log in
-                  </Button>
-                  </Col>
-                  <Col>
-                  <Button variant="secondary" md={4} onClick={handleCloseOwn}>
-                    Cancel
-                  </Button>
-                  </Col>
-                </Row>
-              </Container>
-            </form>
-          </Modal.Body>
-          <Modal.Footer>
-          </Modal.Footer>
-        </Modal>
-        
+        {/* Upon login, button will change to show props.user name, and navbar menus will */}
+        {/* be tailored to the props.user. TODO */}
+
+        {/* TODO: how to move login to right of screen */}
+        <Login
+         user={props.user} 
+         setUser={props.setUser} 
+         loginVisible={loginVisible} 
+         setLoginVisible={setLoginVisible}
+        />
       </Navbar>
       
       

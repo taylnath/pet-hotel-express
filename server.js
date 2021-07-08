@@ -4,6 +4,7 @@ const queryAsync = require('./database/dbcon')
 const fs = require('fs');
 const { query } = require('express');
 const apiRoutes = require('./routes/api');
+const testRoutes = require('./routes/testing');
 const cors = require('cors'); // maybe we can take this out later
 
 const app = express();
@@ -32,6 +33,7 @@ testDB();
 
 // use routes
 app.use('/api', apiRoutes);
+app.use('/api', testRoutes);
 
 // server static assets if in production
 if (process.env.NODE_ENV === 'production'){

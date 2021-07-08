@@ -1,44 +1,80 @@
 import { useState, useEffect } from 'react';
 import settings from '../appSettings';
 import fetchState from '../DataAccess/fetchState';
+import {
+  Button, Modal, Container, Row, Col
+} from 'react-bootstrap';
+import blankUser from '../Models/UserModel';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 
 // adapted from https://reactjs.org/docs/faq-ajax.html
-function Login( { userType, userID }) {
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  // const [testResult, setTestResult] = useState(''); // state for reading text
-  const [dataResult, setDataResult] = useState({}); // state for reading json from database
-  useEffect(() => {
-    // fetch(`${serverURL}/api/testText`)
-    //     .then(res => res.text())
-    //     .then(
-    //         (result) => {
-    //           setIsLoaded(true);
-    //           setTestResult(result);
-    //         },
-    //         (error) => {
-    //           setIsLoaded(true);
-    //           setError(error);
-    //         }
-    //     );
-    fetchState(`${serverURL}/api/logIn`, setIsDataLoaded, setDataResult, setError);
-  }, []);
+function Login(props) {
+  async function logInOwner(e) {
+    e.preventDefault();
+    props.setLoginVisible(false);
+    
+    // Could use fetchState if we want a "loading" screen later
+    const fetchURL = serverURL + `/api/logIn?type=${props.user.type}&id=${props.user.email}`
+    const users = await fetch(fetchURL).then(response => response.json());
+    console.log('found user', users[0]);
+
+    if (users.length == 1){
+      let userType = props.user.type;       // TODO: fix this hack
+      let login_user = users[0];     // needed a way to add 'logged_in' attribute
+      login_user.logged_in = true;
+      // TODO: fix this hack
+      props.setUser({...login_user, type: userType});    // TODO: give feedback for case where user type is wrong
+                                    // TODO: verify employees are actually employees (type for model?)
+    } else {                        // if no match, reset local State
+      console.log(users[0]?.type, "doesn't match", props.user.type);
+      props.setUser(blankUser);
+    }
   
-  if (error) return <div>Error: {error.message}</div>;
-  else if (!isLoaded) return <div>Loading...</div>;
-  else return (
-        <div>
-          <h1>Logged In!</h1>
-          {/*<p>*/}
-          {/*  The server says: {testResult}.*/}
-          {/*</p>*/}
-          <p>
-            Here is the data: {JSON.stringify(dataResult)}.
-          </p>
-        </div>
+    console.log('user now = ', props.user);
+    // console.log(fetchURL)
+    // const log_owner_in = async () => {
+    //   const res = await fetch(fetchURL)
+    //   const data = await res.json();
+    //   console.log("data = ", data);
+    // }
+    // log_owner_in()
+  };
+  
+    return (
+        <Modal show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {(props.user.type == "employee") ? "Employee Login" : "Owner Login"}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={logInOwner}>
+              <label className={"col-form-label"}>
+                E-mail:
+              </label>
+              <input type={"email"} className={"form-control"}
+                     id={"owner-email"} value={props.user.email}
+                    onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
+              <Container className={"p-3"}>
+                <Row>
+                  <Col>
+                  <Button variant="primary" md={4} type={"submit"}>
+                    Log in
+                  </Button>
+                  </Col>
+                  <Col>
+                  <Button variant="secondary" md={4} onClick={() => props.setLoginVisible(false)}>
+                    Cancel
+                  </Button>
+                  </Col>
+                </Row>
+              </Container>
+            </form>
+          </Modal.Body>
+          <Modal.Footer>
+          </Modal.Footer>
+        </Modal>
     );
 }
 
