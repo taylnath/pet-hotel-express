@@ -15,7 +15,11 @@ function Login(props) {
     props.setLoginVisible(false);
     
     // Could use fetchState if we want a "loading" screen later
-    const fetchURL = serverURL + `/api/logIn?type=${props.user.type}&id=${props.user.email}`
+    const fetchURL = serverURL + `/api/logIn?type=${props.user.type}&id=${
+      (props.user.type == "owner") ? 
+      props.user.email :
+      props.user.employeeID
+    }`;
     const users = await fetch(fetchURL).then(response => response.json());
     console.log('found user', users[0]);
 
@@ -40,6 +44,27 @@ function Login(props) {
     // }
     // log_owner_in()
   };
+
+  let loginField = (props.user.type === "owner") ?
+    (
+      <span>
+        <label className={"col-form-label"}>
+          E-mail:
+        </label>
+        <input type={"email"} className={"form-control"}
+                id={"owner-email"} value={props.user.email}
+              onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
+      </span>
+    ) : (
+      <span>
+        <label className={"col-form-label"}>
+          Employee Id:
+        </label>
+        <input type={"text"} className={"form-control"}
+                id={"employee-id"} value={props.user.employeeID}
+              onChange={(e) => props.setUser({...props.user, employeeID: e.target.value})}/>
+      </span>
+    );
   
     return (
         <Modal show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
@@ -50,12 +75,7 @@ function Login(props) {
           </Modal.Header>
           <Modal.Body>
             <form onSubmit={logInOwner}>
-              <label className={"col-form-label"}>
-                E-mail:
-              </label>
-              <input type={"email"} className={"form-control"}
-                     id={"owner-email"} value={props.user.email}
-                    onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
+              {loginField}
               <Container className={"p-3"}>
                 <Row>
                   <Col>
