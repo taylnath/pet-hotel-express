@@ -1,6 +1,8 @@
 import { Navbar } from './Components/Navbar';
 import { Switch, Route, Link, BrowserRouter as Router } from 'react-router-dom';
 import  Admin  from './Routes/Admin';
+import  Employees  from './Routes/Employees';
+import  Rooms  from './Routes/Rooms';
 import  Reports  from './Routes/Reports';
 import  Reservations  from './Routes/Reservations';
 import Home from './Routes/Home';
@@ -31,6 +33,12 @@ function App() {
       </Route>
       <Route path="/Admin">
         <Admin/>
+      </Route>
+      <Route path="/Employees">
+        <Employees />
+      </Route>
+      <Route path="/Rooms">
+        <Rooms />
       </Route>
       <Route path="/Test">
         <Test/>

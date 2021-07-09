@@ -1,5 +1,4 @@
 import {Container, Row, Col, Card, Image} from "react-bootstrap";
-import HeaderImage from '../Components/images/pet_hotel_home_main.jpeg';
 import SereneCat from '../Components/images/serene_cat.jpeg';
 import BlackCat from '../Components/images/black_cat.jpeg';
 import HappyDog from '../Components/images/happy_dog.jpeg';
@@ -10,17 +9,10 @@ function Home() {
         <Container>
           <Row>
             <Col className={"p-3"}>
-              <div id={"home-showcase"} className={"mb-1"}
-              //      style={{
-              //   minHeight: 525,
-              //   backgroundImage: `url(${HeaderImage})`,
-              //   backgroundRepeat: "no-repeat",
-              //   backgroundSize: 'w-100'
-              // }}
-              >
+              <div id={"home-showcase"} className={"mb-1"}>
                 <h1 style={{fontSize: 72, color: "darkolivegreen", padding: 5}}>Pet Hotel</h1>
-                <div id={"showcase-photo-attr"}
-                    style={{position: "absolute", bottom: 20, right: 25}}>
+                <div className={"photo-attribution"}
+                     style={{position: "absolute", bottom: 20, right: 25}}>
                   Photo by <a
                     href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
                   Gumustekin</a> on <a
@@ -41,19 +33,19 @@ function Home() {
                 pet while you are traveling. Your pet will love our plush lodging,
                 and our beautiful property will become a favorite playground.
               </p>
-              <p>
+              <p className={"mb-5"}>
                 We are open 365 days a year, and our highly trained staff looks
                 forward to your pet's next visit.
               </p>
-              <p className={"mt-3"}>
-                <div className={"text-center"}>
-                  <a href={"./Reservations"} className={"text-decoration-none"}>Reserve Now</a>
-                </div>
-              </p>
+              
+              <div className={"text-center"}>
+                <a href={"./Reservations"} className={"text-decoration-none"}>Reserve Now</a>
+              </div>
+            
             </Col>
             <Col className={"p-3"}>
               <Image src={SereneCat} className={"img-fluid"} rounded/>
-              <div
+              <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 15, right: 25}}>
                 Photo by <a
                   href="https://unsplash.com/@calicodesign?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Patrizia
@@ -66,7 +58,7 @@ function Home() {
           <Row id={"pet-amenities"} className={"align-items-center"}>
             <Col>
               <Image src={HappyDog} className={"img-fluid"} rounded/>
-              <div
+              <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 0}}>
                 Photo by <a
                   href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
@@ -105,7 +97,7 @@ function Home() {
               <h5>
                 Dog Vaccination Requirements
               </h5>
-              <p>
+
                 <ul>
                   <li>Rabies</li>
                   <li>Distemper</li>
@@ -116,21 +108,19 @@ function Home() {
                   <li>Parvo</li>
                   <li>Both h3n2 and h3n8 flu virus vaccinations</li>
                 </ul>
-              </p>
+
               <h5>
                 Cat Vaccination Requirements
               </h5>
-              <p>
                 <ul>
                   <li>Rabies</li>
                   <li>Feline Distemper</li>
                   <li>Feline Leukemia Virus</li>
                 </ul>
-              </p>
             </Col>
             <Col>
               <Image src={BlackCat} className={"img-fluid"} rounded/>
-              <div
+              <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 5, right: 25}}>
                 Photo by <a
                   href="https://unsplash.com/@cthemaker?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">

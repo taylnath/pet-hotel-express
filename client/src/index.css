@@ -24,7 +24,7 @@ code {
 }
 
 @media only screen and (max-width: 1200px) {
-  #home-showcase {min-height: 400px;
+  #home-showcase {min-height: 440px;
   }
 }
 
@@ -34,6 +34,7 @@ code {
 
 @media only screen and (max-width: 768px) {
   #home-showcase {min-height: 240px;}
+  .photo-attribution {display: none;}
 }
 
 @media only screen and (max-width: 540px) {
