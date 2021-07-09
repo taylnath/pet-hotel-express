@@ -47,7 +47,12 @@ function CustomNavbar(props) {
         <Nav>
           <Nav.Link as={Link} to="/Reservations">Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports">Reports</Nav.Link>
-          <Nav.Link as={Link} to="/Admin" hidden={props.user.type === "owner"}>{props.user.type} Admin</Nav.Link>
+          <NavDropdown hidden={props.user.type === "owner"}
+                       id={"admin-nav-dropdown"}
+                       title={"Admin"}>
+            <NavDropdown.Item href="/Employees">Employees</NavDropdown.Item>
+            <NavDropdown.Item href="/Rooms">Rooms</NavDropdown.Item>
+          </NavDropdown>
           <Nav.Link as={Link} to="/Test">Test</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
           <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

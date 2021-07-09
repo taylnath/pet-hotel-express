@@ -50,6 +50,16 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
   });
 });
 
+// working on this as of July 9 - TODO
+router.get('/getReport', async (req, res) => {
+  let report = await queryAsync(
+      "select * from Employees"
+  ).then(result => {
+    console.log(result);
+    return res.json(result);
+  });
+});
+
 // // @route   POST api/items
 // // @desc    Create an Item
 // // @access  Public
