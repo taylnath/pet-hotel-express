@@ -12,6 +12,14 @@ code {
     monospace;
 }
 
+#home-h1 {
+  color: darkolivegreen;
+  font-size: 76px;
+  position: absolute;
+  top: 10px;
+  left:30px;
+}
+
 #home-showcase {
   background-image: url('./Components/images/pet_hotel_home_main.jpeg');
   background-size: 100%;
