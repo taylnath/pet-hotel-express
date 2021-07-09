@@ -7,39 +7,39 @@ import MainImage from '../Components/images/pet_hotel_home_main.jpeg'
 function Home() {
   return (
       <div>
-        <Container fluid={true}>
-          <Row>
-            <Col>
-            
-            
-          <h1 id={"home-h1"} style={{fontSize: 72, color: "darkolivegreen", padding: 0}}>Pet Hotel</h1>
-          <Image src={MainImage} fluid={true} />
-          <div className={"photo-attribution"}
-               style={{position: "absolute", bottom: 20, right: 25}}>
-            Photo by <a
-              href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
-            Gumustekin</a> on <a
-              href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-          </div>
-            </Col>
-          </Row>
-        </Container>
         {/*<Container fluid={true}>*/}
         {/*  <Row>*/}
-        {/*    <Col className={"p-3"}>*/}
-        {/*      <div id={"home-showcase"} className={"mb-1"}>*/}
+        {/*    <Col>*/}
+        {/*    */}
+        {/*    */}
         
-        {/*        /!*<div className={"photo-attribution"}*!/*/}
-        {/*        /!*     style={{position: "absolute", bottom: 20, right: 25}}>*!/*/}
-        {/*        /!*  Photo by <a*!/*/}
-        {/*        /!*    href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay*!/*/}
-        {/*        /!*  Gumustekin</a> on <a*!/*/}
-        {/*        /!*    href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>*!/*/}
-        {/*        /!*</div>*!/*/}
-        {/*      </div>*/}
+        {/*  <Image src={MainImage} fluid={true} />*/}
+        {/*  <div className={"photo-attribution"}*/}
+        {/*       style={{position: "absolute", bottom: 20, right: 25}}>*/}
+        {/*    Photo by <a*/}
+        {/*      href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay*/}
+        {/*    Gumustekin</a> on <a*/}
+        {/*      href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>*/}
+        {/*  </div>*/}
         {/*    </Col>*/}
         {/*  </Row>*/}
         {/*</Container>*/}
+        <Container fluid={true}>
+          <Row>
+            <Col className={"p-0"}>
+              <div id={"home-showcase"} className={"mb-1"}>
+                <h1 id={"home-h1"}>Pet Hotel</h1>
+                <div className={"photo-attribution"}
+                     style={{position: "absolute", bottom: 20, right: 25}}>
+                  Photo by <a
+                    href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
+                  Gumustekin</a> on <a
+                    href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
         <Container>
           <Row id={"pet-hotel-info"} className={"align-items-center"}>
             <Col className={"p-3"}>

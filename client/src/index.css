@@ -23,21 +23,22 @@ code {
 #home-showcase {
   background-image: url('./Components/images/pet_hotel_home_main.jpeg');
   background-size: 100%;
-  height: auto;
+  height: 100%;
   background-repeat: no-repeat;
+  background-position-y: center;
 }
 
 @media only screen and (min-width: 1201px) {
-  #home-showcase {min-height: 535px;}
+  #home-showcase {min-height: 550px;}
 }
 
 @media only screen and (max-width: 1200px) {
-  #home-showcase {min-height: 440px;
+  #home-showcase {min-height: 460px;
   }
 }
 
 @media only screen and (max-width: 992px) {
-  #home-showcase {min-height: 335px;}
+  #home-showcase {min-height: 350px;}
 }
 
 @media only screen and (max-width: 768px) {
