@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const queryAsync = require('../database/dbcon');
 const fs = require('fs');
+const { query } = require('express');
 var app = express();
 app.use(express.urlencoded({extended:false}));
 
@@ -29,6 +30,24 @@ router.get('/logIn', async (req, res) => {
     console.error(e);
     res.status(500);
   }
+});
+
+// @route POST /api/reservations
+// @desc  Make a reservation (i.e. a booking)
+// @access Public
+router.post('/reservations', (req, res) => {
+  console.log(req.body);
+});
+
+router.get('/ownerPets/:ownerEmail', async (req, res) => {
+  console.log("owner requested their pets:", req.params.ownerEmail);
+  let pets = await queryAsync(
+    "select * from Pets p join Guests g on g.petID = p.petID join Owners o on o.ownerID = g.ownerID where o.ownerID=(select ownerID from Owners where email=?)",
+    [req.params.ownerEmail]
+  ).then(result => {
+    console.log(result);
+    return res.json(result);
+  });
 });
 
 // // @route   POST api/items

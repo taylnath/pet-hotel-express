@@ -24,7 +24,7 @@ function App() {
     {/* TODO: I think the routes should be lowercase */}
     <Switch>
       <Route path="/Reservations">
-        <Reservations/>
+        <Reservations user={user} setUser={setUser}/>
       </Route>
       <Route path="/Reports">
         <Reports/>
