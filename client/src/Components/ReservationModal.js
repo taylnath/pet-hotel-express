@@ -6,6 +6,7 @@ import {
   Button, Modal, Container, Row, Col
 } from 'react-bootstrap';
 import blankUser from '../Models/UserModel';
+import { propTypes } from 'react-bootstrap/esm/Image';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 
@@ -21,16 +22,18 @@ function ReservationModal(props) {
     ownerEmail: props.user.email // TODO ? change to id?
   });
 
+
   async function logInOwner(e) {
     e.preventDefault();
     props.setLoginVisible(false);
     
     // Could use fetchState if we want a "loading" screen later
     const url = serverURL + `/api/reservations`;
-
-    await postState(url, reservationDetails);
     console.log("Loaded?", loaded);
     console.log("Error?", error);
+    console.log("selected pet", props.selectedPetID);
+
+    await postState(url, reservationDetails);
 
     // const users = await fetch(fetchURL).then(response => response.json());
     // console.log('found user', users[0]);
@@ -83,8 +86,17 @@ function ReservationModal(props) {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            Selected pet: {props.selectedPetID}.
             <form onSubmit={logInOwner}>
               {loginField}
+              <select 
+              name="pet" id="pet-select" value={props.selectedPetID} onChange={e => {
+                console.log("target value is", e.target.value);
+                props.setSelectedPetID(e.target.value);
+              }
+              }>
+                {props.userPets.map(pet => <option key={pet.petID} value={pet.petID}>{pet.name}</option>)}
+              </select>
               <Container className={"p-3"}>
                 <Row>
                   <Col>

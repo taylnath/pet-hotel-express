@@ -1,7 +1,7 @@
 // my attempt at modularizing a fetch POST pattern
-let setLoaded;
-let setError;
-let error;
+let setLoaded = () => {};
+let setError = () => {};
+let error = () => {};
 const postState = (url, body) => fetch(url, {
   method: 'POST',
   headers: {
