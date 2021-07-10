@@ -1,4 +1,4 @@
-import {Container, Row, Col, Card, Image} from "react-bootstrap";
+import {Container, Row, Col, Card, Image, Button} from "react-bootstrap";
 import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
@@ -30,22 +30,25 @@ function Employees(props) {
   else return (
       <div>
         <Container>
-        <h1>Employees</h1>
+        <h1 className={"mt-5 mb-3"}>Employees</h1>
         </Container>
         <Container>
-          <h2>
-          I am an add/update form!
-          </h2>
+          <h4>Add New Employee:</h4>
+          <Button variant={"success"}>Add Employee</Button>
+          <h4 className={"mt-4"}>Update Employee:</h4>
+          <label className={"mr-3"}>Employee ID:</label>
+          <input/>
+        <Button className={"ml-3"}>Update</Button>
+          <Button variant={"danger"} className={"ml-3"}>Delete</Button>
         </Container>
         <Container>
-          I am a report!
+  
+          <h4 className={"mt-5"}>Employee List:</h4>
           <ShowReport title="Employee List"
                       headers={headers}
                       attributes={attributes}
-                      employees={employees}/>
-          <p>
-            Here is the data: {JSON.stringify(employees)}.
-          </p>
+                      report_rows={[headers, ...employees]}/>
+
         </Container>
 
       </div>
