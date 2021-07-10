@@ -27,12 +27,6 @@ function CustomNavbar(props) {
     setLoginVisible(true);
   };
   
-  {/* ----  This just does a fetch statement to verify the login ----- */}
-  
-  // TODO: put login stuff in the login component? (after it's working)
-  
-  {/* --------------- end of logInOwner  ----------------------------- */}
-  
   return (
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand as={Link} to="/">
