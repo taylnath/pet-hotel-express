@@ -38,6 +38,7 @@ router.get('/logIn', async (req, res) => {
 // @access Public
 router.post('/reservations', (req, res) => {
   console.log(req.body);
+  res.json({"success": true});
 });
 
 router.get('/ownerPets/:ownerEmail', async (req, res) => {

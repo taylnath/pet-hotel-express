@@ -2,6 +2,7 @@
 // TODO: add type to the model?
 
 const blankUser = {
+  id: null, // ownerID or employeeID
   type: "",
   firstName: "",
   email: "",

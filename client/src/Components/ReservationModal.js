@@ -3,7 +3,8 @@ import settings from '../appSettings';
 import fetchState from '../DataAccess/fetchState';
 import postState from '../DataAccess/postState';
 import {
-  Button, Modal, Container, Row, Col
+  Button, Modal, Container, Row, Col,
+  Form
 } from 'react-bootstrap';
 import blankUser from '../Models/UserModel';
 import { propTypes } from 'react-bootstrap/esm/Image';
@@ -15,15 +16,18 @@ function ReservationModal(props) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [ownerPets, setOwnerPets] = useState([]);
+  // TODO: get user's time zone (not sure how to do that)
+  // get tomorrow's date
+  let today = new Date();
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const [reservationDetails, setReservationDetails] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-    numberOfRooms: 1,
-    ownerEmail: props.user.email // TODO ? change to id?
+    startDate: today,
+    endDate: tomorrow,
+    numberOfRooms: 1
   });
 
-
-  async function logInOwner(e) {
+  async function makeReservation(e) {
     e.preventDefault();
     props.setLoginVisible(false);
     
@@ -32,52 +36,16 @@ function ReservationModal(props) {
     console.log("Loaded?", loaded);
     console.log("Error?", error);
     console.log("selected pet", props.selectedPetID);
+    console.log("user id", props.user.ownerID);
 
-    await postState(url, reservationDetails);
-
-    // const users = await fetch(fetchURL).then(response => response.json());
-    // console.log('found user', users[0]);
-
-  //   if (users.length == 1){
-  //     let userType = props.user.type;       // TODO: fix this hack
-  //     let login_user = users[0];     // needed a way to add 'logged_in' attribute
-  //     login_user.logged_in = true;
-  //     // TODO: fix this hack
-  //     props.setUser({...login_user, type: userType});    // TODO: give feedback for case where user type is wrong
-  //                                   // TODO: verify employees are actually employees (type for model?)
-  //   } else {                        // if no match, reset local State
-  //     console.log(users[0]?.type, "doesn't match", props.user.type);
-  //     props.setUser(blankUser);
-  //   }
-  
-  //   console.log('user now = ', props.user);
+    let response = await postState(url, {...reservationDetails, ownerID: props.user.ownerID, petID: props.selectedPetID});
+    let body = await response.json();
+    console.log(body);
   };
 
-  let loginField = (props.user.type === "owner") ?
-    (
-      <span>
-        <label className={"col-form-label"}>
-          E-mail:
-        </label>
-        <input type={"email"} className={"form-control"}
-                id={"owner-email"} value={props.user.email}
-              onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
-      </span>
-    ) : (
-      <span>
-        <label className={"col-form-label"}>
-          Employee Id:
-        </label>
-        <input type={"text"} className={"form-control"}
-                id={"employee-id"} value={props.user.employeeID}
-              onChange={(e) => props.setUser({...props.user, employeeID: e.target.value})}/>
-      </span>
-    );
-  
     if (!props.user.logged_in){
       return <div>Please log in to make a reservation.</div>
-    };
-
+    }
     return (
         <Modal animation={false} show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
           <Modal.Header closeButton>
@@ -87,21 +55,44 @@ function ReservationModal(props) {
           </Modal.Header>
           <Modal.Body>
             Selected pet: {props.selectedPetID}.
-            <form onSubmit={logInOwner}>
-              {loginField}
-              <select 
-              name="pet" id="pet-select" value={props.selectedPetID} onChange={e => {
-                console.log("target value is", e.target.value);
-                props.setSelectedPetID(e.target.value);
-              }
-              }>
-                {props.userPets.map(pet => <option key={pet.petID} value={pet.petID}>{pet.name}</option>)}
-              </select>
+            <form onSubmit={makeReservation}>
+              <Container fluid>
+
+                    <label htmlFor="pet-select" className="col-form-label">Select a pet</label>
+                    <select 
+                      className="form-control"
+                      name="pet" id="pet-select" value={props.selectedPetID} onChange={e => {
+                        console.log("target value is", e.target.value);
+                        props.setSelectedPetID(e.target.value);
+                        setReservationDetails({...reservationDetails, petID: e.target.value});
+                      }
+                    }>
+                      {props.userPets.map(pet => <option key={pet.petID} value={pet.petID}>{pet.name}</option>)}
+                    </select>
+
+                    <label htmlFor="start-date" className="col-form-label">Checkin Date</label>
+                    <input name="start-date" id="start-date" className="form-control" type="date"
+                      value={reservationDetails.startDate.toLocaleDateString('en-CA')}
+                      onChange={e => setReservationDetails({...reservationDetails, startDate: e.target.value})}
+                    ></input>
+
+                    <label htmlFor="end-date" className="col-form-label">Checkout Date</label>
+                    <input name="end-date" id="end-date" className="form-control" type="date"
+                      value={reservationDetails.endDate.toLocaleDateString('en-CA')}
+                      onChange={e => setReservationDetails({...reservationDetails, endDate: e.target.value})}
+                    ></input>
+
+              </Container>
               <Container className={"p-3"}>
                 <Row>
                   <Col>
                   <Button variant="primary" md={4} type={"submit"}>
-                    Log in
+                    Submit
+                  </Button>
+                  </Col>
+                  <Col>
+                  <Button variant="success" md={4}>
+                    Add
                   </Button>
                   </Col>
                   <Col>
