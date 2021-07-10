@@ -6,7 +6,8 @@ import ReportRow from './ReportRow'
 const ReportRows = (props) => {
   return (
       <>
-        <Table striped={true} bordered={true} hover={true}>
+        <Table striped bordered={true} hover={true}>
+          <tbody>
             {props.report_rows.map((row, index) => (
                   <ReportRow key = {index}
                              index={index}
@@ -14,6 +15,7 @@ const ReportRows = (props) => {
                              attributes={props.attributes} />
               )
           )}
+          </tbody>
         </Table>
       </>
   )

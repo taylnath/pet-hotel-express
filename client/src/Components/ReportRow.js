@@ -15,11 +15,12 @@ const ReportRow = (props) => {
         <tr>
           {cells.map((cell, index) => (
                   <Cell key = {index}
-                             index={index}
+                             row_index={props.index}
                              cell={cell} />
               )
           )}
         </tr>
+        
          {/* <Button variant={"danger"}*/}
          {/*          onClick={() => onDelete(row.id)}>Delete*/}
          {/*</Button>*/}

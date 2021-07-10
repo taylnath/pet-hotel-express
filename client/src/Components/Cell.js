@@ -5,14 +5,7 @@ const Cell = (props) => {
   
   return (
       <>
-        <td>
-          {props.cell}
-        </td>
-        {/* <Button variant={"danger"}*/}
-        {/*          onClick={() => onDelete(row.id)}>Delete*/}
-        {/*</Button>*/}
-      
-      
+        { props.row_index === 0 ? <th>{props.cell}</th> : <td> {props.cell}  </td> }
       </>
   )
 }
