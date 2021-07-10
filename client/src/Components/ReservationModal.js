@@ -35,10 +35,10 @@ function ReservationModal(props) {
     const url = serverURL + `/api/reservations`;
     console.log("Loaded?", loaded);
     console.log("Error?", error);
-    console.log("selected pet", props.selectedPetID);
-    console.log("user id", props.user.ownerID);
+    console.log("selected pet", props.selectedPetId);
+    console.log("user id", props.user.ownerId);
 
-    let response = await postState(url, {...reservationDetails, ownerID: props.user.ownerID, petID: props.selectedPetID});
+    let response = await postState(url, {...reservationDetails, ownerId: props.user.ownerId, petId: props.selectedPetId});
     let body = await response.json();
     console.log(body);
   };
@@ -54,20 +54,20 @@ function ReservationModal(props) {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Selected pet: {props.selectedPetID}.
+            Selected pet: {props.selectedPetId}.
             <form onSubmit={makeReservation}>
               <Container fluid>
 
                     <label htmlFor="pet-select" className="col-form-label">Select a pet</label>
                     <select 
                       className="form-control"
-                      name="pet" id="pet-select" value={props.selectedPetID} onChange={e => {
+                      name="pet" id="pet-select" value={props.selectedPetId} onChange={e => {
                         console.log("target value is", e.target.value);
-                        props.setSelectedPetID(e.target.value);
-                        setReservationDetails({...reservationDetails, petID: e.target.value});
+                        props.setSelectedPetId(e.target.value);
+                        setReservationDetails({...reservationDetails, petId: e.target.value});
                       }
                     }>
-                      {props.userPets.map(pet => <option key={pet.petID} value={pet.petID}>{pet.name}</option>)}
+                      {props.userPets.map(pet => <option key={pet.petId} value={pet.petId}>{pet.name}</option>)}
                     </select>
 
                     <label htmlFor="start-date" className="col-form-label">Checkin Date</label>

@@ -14,15 +14,15 @@ function Employees(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const headers = {
-    employeeID: "ID",
+    employeeId: "Id",
     firstName: "First Name",
     lastName: "Last Name",
     jobTitle: "Job Title"
   }
-  const attributes = ["employeeID", "firstName", "lastName", "jobTitle"]
+  const attributes = ["employeeId", "firstName", "lastName", "jobTitle"]
   
   useEffect(() => {
-    fetchState(`${serverURL}/api/getReport`, setIsLoaded, setEmployees, setError);
+    fetchState(`${serverURL}/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
   }, []);
   
   if (error) return <div>Error: {error.message}</div>;
@@ -36,7 +36,7 @@ function Employees(props) {
           <h4>Add New Employee:</h4>
           <Button variant={"success"}>Add Employee</Button>
           <h4 className={"mt-4"}>Update Employee:</h4>
-          <label className={"mr-3"}>Employee ID:</label>
+          <label className={"mr-3"}>Employee Id:</label>
           <input/>
         <Button className={"ml-3"}>Update</Button>
           <Button variant={"danger"} className={"ml-3"}>Delete</Button>

@@ -2,37 +2,56 @@ import ReservationModal from '../Components/ReservationModal';
 import {useState, useEffect} from 'react';
 import settings from '../appSettings';
 import {Button} from 'react-bootstrap';
+import fetchState from '../DataAccess/fetchState';
+import ShowReport from '../Components/ShowReport';
 const serverURL = settings.serverURL;
 function Reservations(props) {
   const [loginVisible, setLoginVisible] = useState(false);
   const [userPets, setUserPets] = useState([]);
-  const [selectedPetID, setSelectedPetID] = useState('');
-  // useEffect(() => getPets, [props.user.ownerID]);
+  const [selectedPetId, setSelectedPetId] = useState('');
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [userReservations, setUserReservations] = useState([]);
+  // useEffect(() => getPets, [props.user.ownerId]);
   useEffect(() => {
     console.log("getting pets");
-    if (props.user.ownerID != null) {
+    if (props.user.ownerId != null) {
       console.log("found pets for user");
       fetch(`${serverURL}/api/ownerPets/${props.user.email}`)
         .then(res => res.json()).then(res => {
           console.log(res);
-          setSelectedPetID(res[0].petID);
+          setSelectedPetId(res[0].petId);
           return setUserPets(res);
         });
     }
     else {
       console.log("no logged in user to find pets for");
-      setSelectedPetID('');
+      setSelectedPetId('');
       setUserPets([]);
     }
-  }, [props.user.ownerID]);
+  }, [props.user.ownerId]);
+
+  useEffect(() => {
+    fetchState(`${serverURL}/api/getReport?tables=Bookings,Stays,Pets`, setIsLoaded, setUserReservations, setError);
+  }, [props.user.ownerId]);
+  useEffect(() => console.log("res is", userReservations), [userReservations]);
   console.log(userPets);
   const bloop = ['hi', 'hello', 'hey'];
+  const headers = {
+    bookingId : "Id",
+    name: "Pet",
+    startDate: "Start Date",
+    endDate: "End Date"
+  };
+
+  const attributes = Object.keys(headers);
   return (
     <div>
       <h1>Reservations</h1>
+      TODO: make reservations personalized... also format date.
       <p>
         Your name: {props.user.firstName}
-        Your user id: {props.user.ownerID}
+        Your user id: {props.user.ownerId}
       </p>
       <ReservationModal 
         loginVisible={loginVisible} 
@@ -40,8 +59,8 @@ function Reservations(props) {
         setUser={props.setUser} 
         setLoginVisible={setLoginVisible}
         userPets={userPets}
-        selectedPetID={selectedPetID}
-        setSelectedPetID={setSelectedPetID}
+        selectedPetId={selectedPetId}
+        setSelectedPetId={setSelectedPetId}
       />
       <Button variant="danger" disabled={!props.user.logged_in} onClick={() => {
         if (props.user.logged_in){
@@ -58,6 +77,12 @@ function Reservations(props) {
       </div>
       <h2>Your Reservations</h2>
       TODO: show the user's reservations in a table or something.
+      <ShowReport 
+        title="Your Reservations"
+        headers={headers}
+        attributes={attributes}
+        report_rows={[headers, ...userReservations]}
+      />
     </div>
   );
 }

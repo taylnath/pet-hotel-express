@@ -13,7 +13,7 @@ select * from Bookings where '2022-1-12' between startDate and (endDate - 1);
 
 -- get all rooms booked on a given date (since we don't plan to assign rooms this is not a query we'll use)
 select "get all rooms booked on a given date" as ' ';
-select R.roomID, B.startDate, B.endDate from Bookings B natural join Stays natural join Rooms R;
+select R.roomId, B.startDate, B.endDate from Bookings B natural join Stays natural join Rooms R;
 
 -- ============================================================================
 -- tabular reports
@@ -22,15 +22,15 @@ select R.roomID, B.startDate, B.endDate from Bookings B natural join Stays natur
 -- Owner List with Pet List
 select "Owner List with Pet List" as ' ';
 select
-  o.ownerID, o.firstName, o.lastName, p.petID, p.name, p.type, p.preferences from
-  Owners o left join Guests g on o.ownerID = g.ownerID left join
-  Pets p on p.petID = g.petID order by
+  o.ownerId, o.firstName, o.lastName, p.petId, p.name, p.type, p.preferences from
+  Owners o left join Guests g on o.ownerId = g.ownerId left join
+  Pets p on p.petId = g.petId order by
   o.lastName;
 
 -- Owner List with count of # of Pets they own
 select "Owner List with count of # of Pets they own" as ' ';
-select o.ownerID, o.firstName, o.lastName, count(p.petID) as '# of Pets' from
-  Owners o left join Guests g on o.ownerID = g.ownerID left join
-  Pets p on p.petID = g.petID group by
-  o.ownerID order by
+select o.ownerId, o.firstName, o.lastName, count(p.petId) as '# of Pets' from
+  Owners o left join Guests g on o.ownerId = g.ownerId left join
+  Pets p on p.petId = g.petId group by
+  o.ownerId order by
   o.lastName, o.firstName asc;

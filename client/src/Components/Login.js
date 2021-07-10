@@ -18,7 +18,7 @@ function Login(props) {
     const fetchURL = serverURL + `/api/logIn?type=${props.user.type}&id=${
       (props.user.type == "owner") ? 
       props.user.email :
-      props.user.employeeID
+      props.user.employeeId
     }`;
     const users = await fetch(fetchURL).then(response => response.json());
     console.log('found user', users[0]);
@@ -61,8 +61,8 @@ function Login(props) {
           Employee Id:
         </label>
         <input type={"text"} className={"form-control"}
-                id={"employee-id"} value={props.user.employeeID}
-              onChange={(e) => props.setUser({...props.user, employeeID: e.target.value})}/>
+                id={"employee-id"} value={props.user.employeeId}
+              onChange={(e) => props.setUser({...props.user, employeeId: e.target.value})}/>
       </span>
     );
   
