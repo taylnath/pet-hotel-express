@@ -29,6 +29,7 @@ router.get('/logIn', async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500);
+    res.send('Server error');
   }
 });
 

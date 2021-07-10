@@ -3,6 +3,7 @@ import SereneCat from '../Components/images/serene_cat.jpeg';
 import BlackCat from '../Components/images/black_cat.jpeg';
 import HappyDog from '../Components/images/happy_dog.jpeg';
 import MainImage from '../Components/images/pet_hotel_home_main.jpeg'
+import {BsChevronCompactDown} from 'react-icons/bs';
 
 function Home() {
   return (
@@ -24,7 +25,7 @@ function Home() {
         {/*    </Col>*/}
         {/*  </Row>*/}
         {/*</Container>*/}
-        <Container fluid={true}>
+        <Container className="home-container" fluid={true}>
           <Row>
             <Col className={"p-0"}>
               <div id={"home-showcase"} className={"mb-1"}>
@@ -36,6 +37,11 @@ function Home() {
                   Gumustekin</a> on <a
                     href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
                 </div>
+                <a href="#pet-hotel-info">
+                  <BsChevronCompactDown 
+                    className="wiggle"
+                  />
+                </a>
               </div>
             </Col>
           </Row>

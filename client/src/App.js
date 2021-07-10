@@ -20,10 +20,8 @@ function App() {
       <Router>
       <Navbar user={user} setUser={setUser} />
       <header className="App-header">
-        Hello, {user.firstName || "nobody"}. You are a {user.type || "nobody"}.
       </header>
     {/* the route paths match the to="..." attributes from the Links in Navbar */}
-    {/* TODO: I think the routes should be lowercase */}
     <Switch>
       <Route path="/Reservations">
         <Reservations user={user} setUser={setUser}/>

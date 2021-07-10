@@ -29,7 +29,7 @@ code {
 }
 
 @media only screen and (min-width: 1201px) {
-  #home-showcase {min-height: 550px;}
+  #home-showcase {min-height: 590px;} /* I changed this to fill my screen */
 }
 
 @media only screen and (max-width: 1200px) {
@@ -53,5 +53,36 @@ code {
   }
   #showcase-photo-attr {
     display: none;
+  }
+}
+
+.wiggle {
+  color: black;
+  position: absolute;
+  top: 90%;
+  right: 50%;
+  font-size: 3em;
+  transition: top 2s ease-in-out;
+}
+
+.wiggle:hover {
+  color:red;
+  animation-duration: 1s;
+  animation-name: wiggle;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes wiggle {
+  from {
+    top: 90%;
+  }
+  50% {
+    top: 91%;
+  }
+  to {
+    top: 90%;
   }
 }
