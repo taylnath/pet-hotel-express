@@ -50,7 +50,7 @@ function ReservationModal(props) {
         <Modal animation={false} show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
           <Modal.Header closeButton>
             <Modal.Title>
-              Make a Reservation
+              {props.title}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -61,7 +61,7 @@ function ReservationModal(props) {
                     <label htmlFor="pet-select" className="col-form-label">Select a pet</label>
                     <select 
                       className="form-control"
-                      name="pet" id="pet-select" value={props.selectedPetId} onChange={e => {
+                      name="pet" id="pet-select" value={props.data.petId} onChange={e => {
                         console.log("target value is", e.target.value);
                         props.setSelectedPetId(e.target.value);
                       }
@@ -72,14 +72,14 @@ function ReservationModal(props) {
                     <label htmlFor="start-date" className="col-form-label">Checkin Date</label>
                     <input name="start-date" id="start-date" className="form-control" type="date"
                       // value={reservationDetails.startDate.toLocaleDateString('en-CA')}
-                      value={startDate}
+                      value={props.data.startDate}
                       onChange={e => setStartDate(e.target.value)}
                     ></input>
 
                     <label htmlFor="end-date" className="col-form-label">Checkout Date</label>
                     <input name="end-date" id="end-date" className="form-control" type="date"
                       // value={reservationDetails.endDate.toLocaleDateString('en-CA')}
-                      value={endDate}
+                      value={props.data.endDate}
                       onChange={e => setEndDate(e.target.value)}
                     ></input>
 

@@ -57,6 +57,17 @@ router.post('/reservations', async (req, res) => {
   }
 });
 
+router.delete('/reservations/:id', async (req, res) => {
+  try {
+    await queryAsync('delete from Stays where bookingId = ?', [req.params.id]);
+    await queryAsync('delete from Bookings where bookingId = ?', [req.params.id]);
+    res.json({"success": true});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+})
+
 router.get('/ownerPets/:ownerEmail', async (req, res) => {
   console.log("owner requested their pets:", req.params.ownerEmail);
   let pets = await queryAsync(
