@@ -21,6 +21,15 @@ function Employees(props) {
   }
   const attributes = ["employeeId", "firstName", "lastName", "jobTitle"]
   
+  const onDelete = (row) => {
+    // const employee_id =
+    console.log("deleting Employee with ID# ", row.employeeId)
+  }
+  
+  const onUpdate = (row) => {
+    console.log("updateing Employee with ID # ", row.employeeId)
+  }
+  
   useEffect(() => {
     fetchState(`${serverURL}/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
   }, []);
@@ -48,7 +57,8 @@ function Employees(props) {
                       headers={headers}
                       attributes={attributes}
                       report_rows={employees}
-                      onDelete={() => "howdy"}/>
+                      onUpdate={onUpdate}
+                      onDelete={onDelete}/>
 
         </Container>
 
