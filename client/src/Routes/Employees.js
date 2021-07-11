@@ -3,6 +3,7 @@ import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import ShowReport from "../Components/ShowReport";
+import EmployeeModal from "../Components/employeeModal";
 
 const serverURL = settings.serverURL;
 
@@ -10,6 +11,8 @@ const serverURL = settings.serverURL;
 function Employees(props) {
   const [employees, setEmployees] = useState([]);
   
+  const [reservationRenderSwitch, setReservationRenderSwitch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -27,7 +30,11 @@ function Employees(props) {
   }
   
   const onUpdate = (row) => {
-    console.log("updateing Employee with ID # ", row.employeeId)
+    console.log("updating Employee with ID # ", row.employeeId)
+  }
+  
+  const onAdd = () => {
+    console.log("sending POST to add employee")
   }
   
   useEffect(() => {
@@ -43,7 +50,15 @@ function Employees(props) {
         </Container>
         <Container>
           <h4>Add New Employee:</h4>
-          <Button variant={"success"}>Add Employee</Button>
+          <EmployeeModal
+              showModal={showModal}
+              setShowModal={setShowModal}
+              switch={reservationRenderSwitch}
+              setSwitch={setReservationRenderSwitch}
+          />
+          <Button variant="primary" onClick={() => {setShowModal(true);}}>
+            Add New Employee
+          </Button>
           <h4 className={"mt-4"}>Update Employee:</h4>
           <label className={"mr-3"}>Employee Id:</label>
           <input/>
