@@ -6,11 +6,16 @@ function dynamicQuery(tables, where, groupBy){
   let sql = 'select * from ??' + joinHelper;
   sql = mysql.format(sql, tableList);
 
-  // todo: add where, groupby
+  if (where && where.length > 0){
+    let whereList = where.split(',');
+    sql = mysql.format(sql + " where ?? = ?", whereList);
+  }
+
+  // todo: add multiple where, groupby
   return sql;
 }
 
 // console.log(dynamicQuery('Bookings,Pets,Groups'));
-// console.log(dynamicQuery('Bookings'));
+// console.log(dynamicQuery('Bookings', 'petId,1'));
 
 module.exports = dynamicQuery;

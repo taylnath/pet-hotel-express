@@ -8,6 +8,7 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PW,
   database: process.env.DB,
+  dateStrings: true,
   // flags: '-MULTI_STATEMENTS' // for initial testing from file -- do we need this?
   // TODO: export a separate connection just for testing with mullti statements
 });
