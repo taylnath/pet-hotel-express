@@ -4,7 +4,10 @@ function Reports(props) {
 
   return (
       <>
-        <ReportRows report_rows={props.report_rows} attributes={props.attributes} />
+        <ReportRows report_rows={props.report_rows}
+                    headers={[props.headers]}
+                    attributes={props.attributes}
+                    onDelete={props.onDelete} />
       </>
   );
 }

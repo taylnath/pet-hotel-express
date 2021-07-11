@@ -7,12 +7,25 @@ const ReportRows = (props) => {
   return (
       <>
         <Table striped bordered={true} hover={true}>
+          <thead>
+          {props.headers.map((row, index) => (
+                  <ReportRow key = {index}
+                             index={index}
+                             row={row}
+                             is_header={true}
+                             attributes={props.attributes}
+                             onDelete={props.onDelete} />
+              )
+          )}
+          </thead>
           <tbody>
             {props.report_rows.map((row, index) => (
                   <ReportRow key = {index}
                              index={index}
                              row={row}
-                             attributes={props.attributes} />
+                             is_header={false}
+                             attributes={props.attributes}
+                             onDelete={props.onDelete} />
               )
           )}
           </tbody>

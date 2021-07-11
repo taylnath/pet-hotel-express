@@ -47,7 +47,8 @@ function Employees(props) {
           <ShowReport title="Employee List"
                       headers={headers}
                       attributes={attributes}
-                      report_rows={[headers, ...employees]}/>
+                      report_rows={employees}
+                      onDelete={() => "howdy"}/>
 
         </Container>
 
