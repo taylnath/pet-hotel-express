@@ -14,6 +14,7 @@ const ReportRows = (props) => {
                              row={row}
                              is_header={true}
                              attributes={props.attributes}
+                             onUpdate={props.onUpdate}
                              onDelete={props.onDelete} />
               )
           )}
@@ -25,6 +26,7 @@ const ReportRows = (props) => {
                              row={row}
                              is_header={false}
                              attributes={props.attributes}
+                             onUpdate={props.onUpdate}
                              onDelete={props.onDelete} />
               )
           )}
