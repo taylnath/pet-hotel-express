@@ -15,10 +15,14 @@ const ReportRow = (props) => {
         <tr>
           {cells.map((cell, index) => (
                   <Cell key = {index}
-                             row_index={props.index}
-                             cell={cell} />
+                        row_index={props.index}
+                        is_header={props.is_header}
+                        cell={cell} />
               )
           )}
+          {props.onDelete && <Cell is_header={props.is_header}
+                                   cell={"delete me"}
+                                   onDelelete={props.onDelete}/>}
         </tr>
         
          {/* <Button variant={"danger"}*/}
