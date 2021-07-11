@@ -13,7 +13,7 @@ select * from Bookings where '2022-1-12' between startDate and (endDate - 1);
 
 -- get all rooms booked on a given date (since we don't plan to assign rooms this is not a query we'll use)
 select "get all rooms booked on a given date" as ' ';
-select R.roomId, B.startDate, B.endDate from Bookings B natural join Stays natural join Rooms R;
+select R.roomId, B.startDate, B.endDate from Bookings B natural join Rooms R;
 
 -- ============================================================================
 -- tabular reports

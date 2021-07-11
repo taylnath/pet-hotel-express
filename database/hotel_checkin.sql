@@ -19,19 +19,16 @@ insert into `Rooms` values (1, 'Our first, and best room');
 insert into `Rooms` values (2, 'Our second room is even better.');
 insert into `Rooms` values (3, 'Our third room is really the best.');
 
-insert into `Bookings` values (1, '2022-1-11', '2022-1-12', 1, 1, 2);
-insert into `Bookings` values (2, '2022-2-10', '2022-2-13', 1, 3, 2);
-insert into `Bookings` values (3, '2022-1-11', '2022-1-12', 1, 1, 2);
+insert into `Bookings` values (1, '2022-1-11', '2022-1-12', 1, 1, 1, 1);
+insert into `Bookings` values (2, '2022-1-11', '2022-1-12', 1, 1, 2, 3);
+insert into `Bookings` values (3, '2022-2-10', '2022-2-13', 1, 3, 1, null);
+insert into `Bookings` values (4, '2022-2-10', '2022-2-13', 1, 3, null, null);
+insert into `Bookings` values (5, '2022-1-11', '2022-1-12', 1, 3, null, 2);
+insert into `Bookings` values (6, '2022-1-11', '2022-1-12', 4, 3, null, 2);
 
 insert into `Guests` values (1, 1, 1);
 insert into `Guests` values (2, 1, 2);
 insert into `Guests` values (3, 3, 3);
 insert into `Guests` values (4, 1, 4);
 insert into `Guests` values (5, 4, 3);
-
-insert into `Stays` values (1, 1, 1, 1);
-insert into `Stays` values (2, 1, 2, 3);
-insert into `Stays` values (5, 2, 1, null);
-insert into `Stays` values (4, 2, 2, null);
-
 

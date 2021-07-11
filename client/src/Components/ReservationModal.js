@@ -33,7 +33,6 @@ function ReservationModal(props) {
     let response = await postState(url, {
       startDate: startDate,
       endDate: endDate,
-      numberOfRooms: 1,
       ownerId: props.user.ownerId, 
       petId: props.selectedPetId
     });

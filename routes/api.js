@@ -43,12 +43,8 @@ router.post('/reservations', async (req, res) => {
   console.log(req.body);
   try {
     let result = await queryAsync(
-      'insert into Bookings (`startDate`, `endDate`, `numberOfRooms`, `ownerId`) values (?,?,?,?)',
-      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.numberOfRooms, req.body.ownerId]
-    );
-    await queryAsync(
-      'insert into Stays (`bookingId`, `petId`) values (?, ?)',
-      [result.insertId, req.body.petId]
+      'insert into Bookings (`startDate`, `endDate`, `ownerId`, `petId`) values (?,?,?,?)',
+      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId]
     );
     res.json({"success": true});
   } catch (e) {
@@ -59,8 +55,7 @@ router.post('/reservations', async (req, res) => {
 
 router.delete('/reservations/:id', async (req, res) => {
   try {
-    await queryAsync('delete from Stays where bookingId = ?', [req.params.id]);
-    await queryAsync('delete from Bookings where bookingId = ?', [req.params.id]);
+    await queryAsync('delete from Bookings where bookingId=?', [req.params.id]);
     res.json({"success": true});
   } catch (e) {
     console.log(e);

@@ -37,10 +37,12 @@ const ReportRow = (props) => {
           {props.onDelete && <Cell is_header={props.is_header}
                                    cell={props.is_header ? "Delete" :
                                        (<Button onClick={() =>
-                                       {setLoading(!isLoading)
-                                           props.onDelete(props.row)}}
-                                                variant={"danger"}
-                                                size={"sm"}
+                                          {
+                                          // setLoading(!isLoading);
+                                          props.onDelete(props.row);
+                                          }}
+                                          variant={"danger"}
+                                          size={"sm"}
                                        disabled={isLoading}>
                                          {isLoading? "Processing ..." : "Delete"}
                                        </Button>)}

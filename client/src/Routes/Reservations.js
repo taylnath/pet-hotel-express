@@ -76,7 +76,7 @@ function Reservations(props) {
   }, [props.user.ownerId]);
 
   useEffect(() => {
-    fetchState(`${serverURL}/api/getReport?tables=Bookings,Stays,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
+    fetchState(`${serverURL}/api/getReport?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
     console.log('reservations changed...');
   }, [props.user.ownerId, reservationRenderSwitch]);
   useEffect(() => console.log("res is", userReservations), [userReservations]);
