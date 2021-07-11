@@ -33,6 +33,5 @@ insert into `Stays` values (1, 1, 1, 1);
 insert into `Stays` values (2, 1, 2, 3);
 insert into `Stays` values (5, 2, 1, null);
 insert into `Stays` values (4, 2, 2, null);
-insert into `Stays` values (3, 3, 3, null);
 
 

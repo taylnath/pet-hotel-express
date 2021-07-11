@@ -1,7 +1,7 @@
 import ReservationModal from '../Components/ReservationModal';
 import {useState, useEffect} from 'react';
 import settings from '../appSettings';
-import {Button} from 'react-bootstrap';
+import {Button, Container} from 'react-bootstrap';
 import fetchState from '../DataAccess/fetchState';
 import ShowReport from '../Components/ShowReport';
 const serverURL = settings.serverURL;
@@ -12,6 +12,7 @@ function Reservations(props) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [userReservations, setUserReservations] = useState([]);
+  const [reservationRenderSwitch, setReservationRenderSwitch] = useState(false);
   // useEffect(() => getPets, [props.user.ownerId]);
   useEffect(() => {
     console.log("getting pets");
@@ -32,13 +33,14 @@ function Reservations(props) {
   }, [props.user.ownerId]);
 
   useEffect(() => {
-    fetchState(`${serverURL}/api/getReport?tables=Bookings,Stays,Pets`, setIsLoaded, setUserReservations, setError);
-  }, [props.user.ownerId]);
+    fetchState(`${serverURL}/api/getReport?tables=Bookings,Stays,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
+    console.log('reservations changed...');
+  }, [props.user.ownerId, reservationRenderSwitch]);
   useEffect(() => console.log("res is", userReservations), [userReservations]);
   console.log(userPets);
   const bloop = ['hi', 'hello', 'hey'];
   const headers = {
-    bookingId : "Id",
+    bookingId : "Booking Id",
     name: "Pet",
     startDate: "Start Date",
     endDate: "End Date"
@@ -47,42 +49,41 @@ function Reservations(props) {
   const attributes = Object.keys(headers);
   return (
     <div>
-      <h1>Reservations</h1>
-      TODO: make reservations personalized... also format date.
-      <p>
-        Your name: {props.user.firstName}
-        Your user id: {props.user.ownerId}
-      </p>
-      <ReservationModal 
-        loginVisible={loginVisible} 
-        user={props.user} 
-        setUser={props.setUser} 
-        setLoginVisible={setLoginVisible}
-        userPets={userPets}
-        selectedPetId={selectedPetId}
-        setSelectedPetId={setSelectedPetId}
-      />
-      <Button variant="danger" disabled={!props.user.logged_in} onClick={() => {
-        if (props.user.logged_in){
-          setLoginVisible(true);
-        }
-        else {
-          console.log("no user logged in for reservations");
-        }
-      }}>Make a reservation</Button>
-      <div>{userPets.length > 0 && "Your pets:"}
-        <ul>
-          {userPets.map(pet => <li key={pet.name}>{pet.name}</li>)}
-        </ul>
-      </div>
-      <h2>Your Reservations</h2>
-      TODO: show the user's reservations in a table or something.
-      <ShowReport 
-        title="Your Reservations"
-        headers={headers}
-        attributes={attributes}
-        report_rows={userReservations}
-      />
+      <Container className="m-5">
+        <h1>Reservations</h1>
+        <ReservationModal 
+          loginVisible={loginVisible} 
+          user={props.user} 
+          setUser={props.setUser} 
+          setLoginVisible={setLoginVisible}
+          userPets={userPets}
+          selectedPetId={selectedPetId}
+          setSelectedPetId={setSelectedPetId}
+          switch={reservationRenderSwitch}
+          setSwitch={setReservationRenderSwitch}
+        />
+        <Button variant="danger" disabled={!props.user.logged_in} onClick={() => {
+          if (props.user.logged_in){
+            setLoginVisible(true);
+          }
+          else {
+            console.log("no user logged in for reservations");
+          }
+          }}>Make a reservation
+        </Button>
+        <div>{userPets.length > 0 && "Your pets:"}
+          <ul>
+            {userPets.map(pet => <li key={pet.name}>{pet.name}</li>)}
+          </ul>
+        </div>
+        <h2>Your Reservations</h2>
+        <ShowReport 
+          title="Your Reservations"
+          headers={headers}
+          attributes={attributes}
+          report_rows={[headers, ...userReservations]}
+        />
+      </Container>
     </div>
   );
 }

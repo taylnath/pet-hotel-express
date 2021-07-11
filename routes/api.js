@@ -6,6 +6,7 @@ const { query } = require('express');
 var app = express();
 app.use(express.urlencoded({extended:false}));
 const dynamicQuery = require('../database/dynamicQuery');
+const sqlDate = require('../database/sqlDate');
 
 
 // @route   GET /api/logIn
@@ -38,9 +39,22 @@ router.get('/logIn', async (req, res) => {
 // @route POST /api/reservations
 // @desc  Make a reservation (i.e. a booking)
 // @access Public
-router.post('/reservations', (req, res) => {
+router.post('/reservations', async (req, res) => {
   console.log(req.body);
-  res.json({"success": true});
+  try {
+    let result = await queryAsync(
+      'insert into Bookings (`startDate`, `endDate`, `numberOfRooms`, `ownerId`) values (?,?,?,?)',
+      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.numberOfRooms, req.body.ownerId]
+    );
+    await queryAsync(
+      'insert into Stays (`bookingId`, `petId`) values (?, ?)',
+      [result.insertId, req.body.petId]
+    );
+    res.json({"success": true});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
 });
 
 router.get('/ownerPets/:ownerEmail', async (req, res) => {
@@ -57,7 +71,7 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
 
 // working on this as of July 9 - TODO
 router.get('/getReport', async (req, res) => {
-  let report = await queryAsync(dynamicQuery(req.query.tables))
+  let report = await queryAsync(dynamicQuery(req.query.tables, req.query.where))
   .then(result => {
     console.log(result);
     return res.json(result);

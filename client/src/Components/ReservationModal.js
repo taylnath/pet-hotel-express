@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import blankUser from '../Models/UserModel';
 import { propTypes } from 'react-bootstrap/esm/Image';
+import {today, tomorrow} from '../Helpers/dateHelpers';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 
@@ -16,31 +17,30 @@ function ReservationModal(props) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [ownerPets, setOwnerPets] = useState([]);
-  // TODO: get user's time zone (not sure how to do that)
-  // get tomorrow's date
-  let today = new Date();
-  let tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const [reservationDetails, setReservationDetails] = useState({
-    startDate: today,
-    endDate: tomorrow,
-    numberOfRooms: 1
-  });
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrow);
 
   async function makeReservation(e) {
     e.preventDefault();
     props.setLoginVisible(false);
     
-    // Could use fetchState if we want a "loading" screen later
     const url = serverURL + `/api/reservations`;
     console.log("Loaded?", loaded);
     console.log("Error?", error);
     console.log("selected pet", props.selectedPetId);
     console.log("user id", props.user.ownerId);
 
-    let response = await postState(url, {...reservationDetails, ownerId: props.user.ownerId, petId: props.selectedPetId});
+    let response = await postState(url, {
+      startDate: startDate,
+      endDate: endDate,
+      numberOfRooms: 1,
+      ownerId: props.user.ownerId, 
+      petId: props.selectedPetId
+    });
     let body = await response.json();
     console.log(body);
+    console.log(props.switch);
+    props.setSwitch((props.switch) ? false : true);
   };
 
     if (!props.user.logged_in){
@@ -50,11 +50,11 @@ function ReservationModal(props) {
         <Modal animation={false} show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {(props.user.type == "employee") ? "Employee Login" : "Owner Login"}
+              Make a Reservation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Selected pet: {props.selectedPetId}.
+            {/* Selected pet: {props.selectedPetId}. */}
             <form onSubmit={makeReservation}>
               <Container fluid>
 
@@ -64,7 +64,6 @@ function ReservationModal(props) {
                       name="pet" id="pet-select" value={props.selectedPetId} onChange={e => {
                         console.log("target value is", e.target.value);
                         props.setSelectedPetId(e.target.value);
-                        setReservationDetails({...reservationDetails, petId: e.target.value});
                       }
                     }>
                       {props.userPets.map(pet => <option key={pet.petId} value={pet.petId}>{pet.name}</option>)}
@@ -72,14 +71,16 @@ function ReservationModal(props) {
 
                     <label htmlFor="start-date" className="col-form-label">Checkin Date</label>
                     <input name="start-date" id="start-date" className="form-control" type="date"
-                      value={reservationDetails.startDate.toLocaleDateString('en-CA')}
-                      onChange={e => setReservationDetails({...reservationDetails, startDate: e.target.value})}
+                      // value={reservationDetails.startDate.toLocaleDateString('en-CA')}
+                      value={startDate}
+                      onChange={e => setStartDate(e.target.value)}
                     ></input>
 
                     <label htmlFor="end-date" className="col-form-label">Checkout Date</label>
                     <input name="end-date" id="end-date" className="form-control" type="date"
-                      value={reservationDetails.endDate.toLocaleDateString('en-CA')}
-                      onChange={e => setReservationDetails({...reservationDetails, endDate: e.target.value})}
+                      // value={reservationDetails.endDate.toLocaleDateString('en-CA')}
+                      value={endDate}
+                      onChange={e => setEndDate(e.target.value)}
                     ></input>
 
               </Container>
@@ -90,11 +91,11 @@ function ReservationModal(props) {
                     Submit
                   </Button>
                   </Col>
-                  <Col>
+                  {/* <Col>
                   <Button variant="success" md={4}>
                     Add
                   </Button>
-                  </Col>
+                  </Col> */}
                   <Col>
                   <Button variant="secondary" md={4} onClick={() => props.setLoginVisible(false)}>
                     Cancel
