@@ -81,7 +81,7 @@ function Reservations(props) {
           title="Your Reservations"
           headers={headers}
           attributes={attributes}
-          report_rows={[headers, ...userReservations]}
+          report_rows={userReservations}
         />
       </Container>
     </div>
