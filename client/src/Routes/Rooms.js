@@ -21,6 +21,7 @@ function Rooms() {
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   
   // user, data states
   const [rooms, setRooms] = useState([]);
@@ -33,6 +34,7 @@ function Rooms() {
     if (!modalVisible) {
       setUpdateMode(false);
       setDescription('');
+      setRoomId('')
     }
   }, [modalVisible])
   
@@ -65,12 +67,13 @@ function Rooms() {
     await refreshRooms()
   }
   
-  async function deleteRoom(row){
-    let result = await fetch(`${serverURL}/api/rooms/${row.roomId}`, {
+  async function deleteRoom(){
+    let result = await fetch(`${serverURL}/api/rooms/${roomId}`, {
       method: 'DELETE',
       headers: {'Content-type': 'application/json'}
     }).then(res => res.json());
-    console.log(result)
+    console.log(result);
+    setRoomId('');
     await refreshRooms()
   }
   
@@ -82,6 +85,14 @@ function Rooms() {
     setDescription(row.description);
     setModalVisible(true);
     console.log('updating row:', row);
+  }
+  
+  // initialize the confirm delete modal after clicking on a row's delete button
+  function confirmDelete(row){
+    console.log("row = ", row)
+    setRoomId(row.roomId);
+    setConfirmDeleteVisible(true);
+    console.log('deleting row:', row);
   }
   
   // prepare for ShowReports
@@ -118,6 +129,14 @@ function Rooms() {
                 setValue={setDescription}
             />
           </GenericModal>
+  
+          <GenericModal
+              title={`Are you sure you want to room  ${roomId}?`}
+              visible={confirmDeleteVisible}
+              setVisible={setConfirmDeleteVisible}
+              action={deleteRoom}
+          />
+          
         </Container>
         
         <Container>
@@ -128,7 +147,7 @@ function Rooms() {
                       attributes={attributes}
                       report_rows={rooms}
                       onUpdate={makeUpdateModal}
-                      onDelete={deleteRoom}/>
+                      onDelete={confirmDelete}/>
         
         </Container>
       
