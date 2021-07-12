@@ -46,11 +46,8 @@ function Employees() {
   
   // --- actions ---
   // add / update employee
-  
-  console.log("beforeUpdate")
-  
+
   async function updateEmployee() {
-    console.log("afterUpdate")
     const url = serverURL + '/api/employees';
     let response;
     const data = {
@@ -104,8 +101,6 @@ function Employees() {
   const attributes = ["employeeId", "firstName", "lastName", "jobTitle"]
  
   useEffect(() => {refreshEmployees()}, []);
-  
-  console.log("I'm here right before return")
   
   return (
       <div>
@@ -165,13 +160,3 @@ function Employees() {
 }
 
 export default Employees;
-
-
-// <h4>Add New Employee:</h4>
-// <EmployeeModal
-//     title={"Add Employee"}
-//     visible={showModal}
-//     setVisible={setShowModal}
-//     action={onAdd}
-//     children={<AddChildren />}
-// />

@@ -130,11 +130,54 @@ router.delete('/employees/:id', async (req, res) => {
 
 // --------------- end (Employees)  -------------------------------------------
 
+// --------------- routes for Rooms ---------------------------------------
+
+router.post('/rooms', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+        'insert into Rooms (`description`) values (?)',
+        [req.body.description]
+    );
+    res.json({"success": true, "operation": "insert"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
+router.put('/rooms', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+        'update Rooms set `description`=? where `roomId`=?',
+        [req.body.description, req.body.roomId]
+    );
+    res.json({"success": true, "operation": "update"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
+router.delete('/rooms/:id', async (req, res) => {
+  try {
+    await queryAsync('delete from Rooms where roomId=?', [req.params.id]);
+    res.json({"success": true});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+})
+
+// --------------- end (Employees)  -------------------------------------------
+
+
 // working on this as of July 9 - TODO
 router.get('/getReport', async (req, res) => {
   let report = await queryAsync(dynamicQuery(req.query.tables, req.query.where))
   .then(result => {
-    // console.log(result);
+    console.log(result);
     return res.json(result);
   });
 });
