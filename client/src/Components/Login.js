@@ -44,58 +44,58 @@ function Login(props) {
     // }
     // log_owner_in()
   };
-
+  
   let loginField = (props.user.type === "owner") ?
-    (
-      <span>
+      (
+          <span>
         <label className={"col-form-label"}>
           E-mail:
         </label>
         <input type={"email"} className={"form-control"}
-                id={"owner-email"} value={props.user.email}
-              onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
+               id={"owner-email"} value={props.user.email}
+               onChange={(e) => props.setUser({...props.user, email: e.target.value})}/>
       </span>
-    ) : (
-      <span>
+      ) : (
+          <span>
         <label className={"col-form-label"}>
           Employee Id:
         </label>
         <input type={"text"} className={"form-control"}
-                id={"employee-id"} value={props.user.employeeId}
-              onChange={(e) => props.setUser({...props.user, employeeId: e.target.value})}/>
+               id={"employee-id"} value={props.user.employeeId}
+               onChange={(e) => props.setUser({...props.user, employeeId: e.target.value})}/>
       </span>
-    );
+      );
   
-    return (
-        <Modal animation={false} show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              {(props.user.type == "employee") ? "Employee Login" : "Owner Login"}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <form onSubmit={logInOwner}>
-              {loginField}
-              <Container className={"p-3"}>
-                <Row>
-                  <Col>
+  return (
+      <Modal animation={false} show={props.loginVisible} onHide={() => props.setLoginVisible(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {(props.user.type == "employee") ? "Employee Login" : "Owner Login"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={logInOwner}>
+            {loginField}
+            <Container className={"p-3"}>
+              <Row>
+                <Col>
                   <Button variant="primary" md={4} type={"submit"}>
                     Log in
                   </Button>
-                  </Col>
-                  <Col>
+                </Col>
+                <Col>
                   <Button variant="secondary" md={4} onClick={() => props.setLoginVisible(false)}>
                     Cancel
                   </Button>
-                  </Col>
-                </Row>
-              </Container>
-            </form>
-          </Modal.Body>
-          <Modal.Footer>
-          </Modal.Footer>
-        </Modal>
-    );
+                </Col>
+              </Row>
+            </Container>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+        </Modal.Footer>
+      </Modal>
+  );
 }
 
 export default Login;

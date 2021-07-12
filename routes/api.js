@@ -108,7 +108,7 @@ router.put('/employees', async (req, res) => {
   console.log(req.body);
   try {
     let result = await queryAsync(
-        'update Employees set `firstName`=?, `lastName`=?, `jobTitle`=? where `employeeIId`=?',
+        'update Employees set `firstName`=?, `lastName`=?, `jobTitle`=? where `employeeId`=?',
         [req.body.firstName, req.body.lastName, req.body.jobTitle, req.body.employeeId]
     );
     res.json({"success": true, "operation": "update"});
