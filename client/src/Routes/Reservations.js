@@ -5,6 +5,10 @@ import {Button, Container} from 'react-bootstrap';
 import fetchState from '../DataAccess/fetchState';
 import ShowReport from '../Components/ShowReport';
 import {today, tomorrow} from '../Helpers/dateHelpers';
+
+import GenericModal from '../Components/GenericModal';
+import Select from '../Components/Forms/Select';
+import Date from '../Components/Forms/Date';
 const serverURL = settings.serverURL;
 function Reservations(props) {
   const [loginVisible, setLoginVisible] = useState(false);
@@ -22,17 +26,22 @@ function Reservations(props) {
   });
   const [showUpdate, setShowUpdate] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrow);
+
   // this updates the modalData whenever userPets or loginVisible changes
   // it sets up the data initially, and clears after the modal gets closed
   useEffect(() => {
     if (!loginVisible){
+      setSelectedPetId((userPets && userPets.length && userPets[0].petId)? userPets[0].petId : '');
       setModalData({
         petId: userPets && userPets.length && userPets[0].petId,
         startDate: today,
         endDate: tomorrow
       });
     }
-  }, [userPets, loginVisible]);
+  }, [userPets, loginVisible, modalVisible]);
 
   // reset modal title
   useEffect(() => (!loginVisible) && setModalTitle('Make a Reservation'), [loginVisible]);
@@ -61,7 +70,7 @@ function Reservations(props) {
     console.log("getting pets");
     if (props.user.ownerId != null) {
       console.log("found pets for user");
-      fetch(`${serverURL}/api/ownerPets/${props.user.email}`)
+      fetch(`${serverURL}/api/ownerPets/${props.user.email}`) // todo: change this to id
         .then(res => res.json()).then(res => {
           console.log(res);
           setSelectedPetId(res[0].petId);
@@ -80,7 +89,7 @@ function Reservations(props) {
     console.log('reservations changed...');
   }, [props.user.ownerId, reservationRenderSwitch]);
   useEffect(() => console.log("res is", userReservations), [userReservations]);
-  console.log(userPets);
+  // console.log(userPets);
   const bloop = ['hi', 'hello', 'hey'];
   const headers = {
     bookingId : "Booking Id",
@@ -118,6 +127,49 @@ function Reservations(props) {
           }
           }}>Make a reservation
         </Button>
+        <Button 
+          variant="success" 
+          disabled={!props.user.logged_in} 
+          onClick={() => (props.user.logged_in) ? setModalVisible(true) : console.log("not logged in")}
+        >
+          Make a reservation
+        </Button>
+
+        {/* begin generic modal example */}
+        <GenericModal 
+          title="Make a Reservation"
+          visible={modalVisible}
+          setVisible={setModalVisible}
+          action={() => console.log("submitted")}
+        >
+          <Select 
+            id="select-a-pet"
+            label="Select a pet"
+            name="pet"
+            value={selectedPetId} 
+            setValue={setSelectedPetId}
+            optionsList={userPets}
+            optionKey="petId"
+            optionValue="name"
+          />
+          <Date
+            id="start-date"
+            label="Checkin Date"
+            name="start-date"
+            value={startDate} // todo: couple this with data that actually gets sent
+            setValue={setStartDate}
+          />
+          <Date
+            id="end-date"
+            label="Checkout Date"
+            name="end-date"
+            value={endDate} // todo: couple this with data that actually gets sent
+            setValue={setEndDate}
+          />
+
+        </GenericModal>
+        {/* end generic modal example */}
+
         <div>{userPets.length > 0 && "Your pets:"}
           <ul>
             {userPets.map(pet => <li key={pet.name}>{pet.name}</li>)}
