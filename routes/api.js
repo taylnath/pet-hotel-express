@@ -88,6 +88,47 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
   });
 });
 
+// --------------- routes for Employees ---------------------------------------
+
+router.post('/employees', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+        'insert into Employees (`firstName`, `lastName`, `jobTitle`) values (?,?,?)',
+        [req.body.firstName, req.body.lastName, req.body.jobTitle]
+    );
+    res.json({"success": true, "operation": "insert"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
+router.put('/employees', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+        'update Employees set `firstName`=?, `lastName`=?, `jobTitle`=? where `employeeIId`=?',
+        [req.body.firstName, req.body.lastName, req.body.jobTitle, req.body.employeeId]
+    );
+    res.json({"success": true, "operation": "update"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
+router.delete('/employees/:id', async (req, res) => {
+  try {
+    await queryAsync('delete from Employees where employeeId=?', [req.params.id]);
+    res.json({"success": true});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+})
+
+// --------------- end (Employees)  -------------------------------------------
 
 // working on this as of July 9 - TODO
 router.get('/getReport', async (req, res) => {
