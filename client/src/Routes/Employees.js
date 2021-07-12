@@ -21,6 +21,7 @@ function Employees() {
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   
   // user, data states
   const [employees, setEmployees] = useState([]);
@@ -37,6 +38,7 @@ function Employees() {
       setFirstName('');
       setLastName('');
       setJobTitle('');
+      setEmployeeId('');
     }
   }, [modalVisible])
   
@@ -70,11 +72,14 @@ function Employees() {
     await refreshEmployees()
   }
   
-  async function deleteEmployee(row){
-    let result = await fetch(`${serverURL}/api/employees/${row.employeeId}`, {
+  async function deleteEmployee(){
+    let result = await fetch(`${serverURL}/api/employees/${employeeId}`, {
       method: 'DELETE',
       headers: {'Content-type': 'application/json'}
         }).then(res => res.json());
+    setEmployeeId('');
+    setFirstName('');
+    setLastName('');
     console.log(result)
     await refreshEmployees()
   }
@@ -89,6 +94,17 @@ function Employees() {
     setJobTitle(row.jobTitle)
     setModalVisible(true);
     console.log('updating row:', row);
+  }
+  
+  
+  // initialize the confirm delete modal after clicking on a row's delete button
+  function confirmDelete(row){
+    console.log("row = ", row)
+    setEmployeeId(row.employeeId);
+    setFirstName(row.firstName);
+    setLastName(row.lastName);
+    setConfirmDeleteVisible(true);
+    console.log('deleting row:', row);
   }
   
   // prepare for ShowReports
@@ -141,6 +157,14 @@ function Employees() {
                 setValue={setJobTitle}
             />
           </GenericModal>
+  
+          <GenericModal
+              title={`Are you sure you want to delete ${firstName} ${lastName}?`}
+              visible={confirmDeleteVisible}
+              setVisible={setConfirmDeleteVisible}
+              action={deleteEmployee}
+          />
+          
         </Container>
         
         <Container>
@@ -151,7 +175,7 @@ function Employees() {
                       attributes={attributes}
                       report_rows={employees}
                       onUpdate={makeUpdateModal}
-                      onDelete={deleteEmployee}/>
+                      onDelete={confirmDelete}/>
 
         </Container>
 
