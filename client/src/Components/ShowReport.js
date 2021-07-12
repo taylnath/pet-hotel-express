@@ -1,5 +1,4 @@
 import ReportRows from "./ReportRows";
-import ReportRow from "./ReportRow";
 
 function Reports(props) {
 
