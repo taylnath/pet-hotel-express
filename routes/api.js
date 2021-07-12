@@ -46,7 +46,21 @@ router.post('/reservations', async (req, res) => {
       'insert into Bookings (`startDate`, `endDate`, `ownerId`, `petId`) values (?,?,?,?)',
       [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId]
     );
-    res.json({"success": true});
+    res.json({"success": true, "operation": "insert"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
+router.put('/reservations', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+      'update Bookings set `startDate`=?, `endDate`=?, `ownerId`=?, `petId`=? where `bookingId`=?',
+      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId, req.body.bookingId]
+    );
+    res.json({"success": true, "operation": "update"});
   } catch (e) {
     console.log(e);
     res.json({"success": false});
@@ -69,7 +83,7 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
     "select * from Pets p join Guests g on g.petId = p.petId join Owners o on o.ownerId = g.ownerId where o.ownerId=(select ownerId from Owners where email=?)",
     [req.params.ownerEmail]
   ).then(result => {
-    console.log(result);
+    // console.log(result);
     return res.json(result);
   });
 });
@@ -79,7 +93,7 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
 router.get('/getReport', async (req, res) => {
   let report = await queryAsync(dynamicQuery(req.query.tables, req.query.where))
   .then(result => {
-    console.log(result);
+    // console.log(result);
     return res.json(result);
   });
 });
