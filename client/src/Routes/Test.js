@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import settings from '../appSettings';
 import fetchState from '../DataAccess/fetchState';
+import GenericModal from '../Components/GenericModal';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 
@@ -27,6 +28,8 @@ function Test() {
     fetchState(`${serverURL}/api/testData`, setIsDataLoaded, setDataResult, setError);
   }, []);
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   if (error) return <div>Error: {error.message}</div>;
   else if (!isLoaded) return <div>Loading...</div>;
   else return (
@@ -38,6 +41,17 @@ function Test() {
       <p>
         Here is the data: {JSON.stringify(dataResult)}.
       </p>
+      <button onClick={() => setModalVisible(true)}>Turn on modal</button>
+      <GenericModal
+        title="this is a modal"
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        action={() => console.log("modal submitted")}
+      >
+        <div>hi</div>
+        <div>hello</div>
+        <div>hey</div>
+      </GenericModal>
     </div>
   );
 }
