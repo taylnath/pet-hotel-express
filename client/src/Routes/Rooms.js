@@ -13,7 +13,7 @@ const serverURL = settings.serverURL;
 
 
 function Rooms() {
-  // --- state ---
+  // -------- state --------
   // loading state
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(true);
@@ -28,13 +28,13 @@ function Rooms() {
   const [description, setDescription] = useState('');
   const [roomId, setRoomId] = useState('');
   
-  // --- effects ---
+  // -------- effects --------
   // reset modal data when it closes
   useEffect(() => {
     if (!modalVisible) {
       setUpdateMode(false);
       setDescription('');
-      setRoomId('')
+      setRoomId('');
     }
   }, [modalVisible])
   
@@ -43,7 +43,7 @@ function Rooms() {
     await fetchState(`${serverURL}/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
   }
   
-  // --- actions ---
+  // -------- actions --------
   // add / update room
   
   async function updateRoom() {
@@ -77,6 +77,7 @@ function Rooms() {
     await refreshRooms()
   }
   
+  // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row){
     console.log("row = ", row)
@@ -95,7 +96,7 @@ function Rooms() {
     console.log('deleting row:', row);
   }
   
-  // prepare for ShowReports
+  // report headers
   const headers = {
     roomId: "Id",
     description: "Description"

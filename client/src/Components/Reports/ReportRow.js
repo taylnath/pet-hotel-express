@@ -47,6 +47,22 @@ const ReportRow = (props) => {
                                          {isLoading? "Processing ..." : "Delete"}
                                        </Button>)}
                                    />}
+  
+          {props.onCheckIn && <Cell is_header={props.is_header}
+                                   cell={props.is_header ? "CheckIn" :
+                                       (<Button onClick={() =>
+                                       {
+                                         // setLoading(!isLoading);
+                                         props.onCheckIn(props.row);
+                                       }}
+                                                variant={props.checkedIn ?
+                                                    "warning" : "info"}
+                                                size={"sm"}
+                                                disabled={isLoading}>
+                                         {isLoading? "Processing ..." : "Check In"}
+                                       </Button>)}
+          />}
+          
         </tr>
         
          {/* <Button variant={"danger"}*/}

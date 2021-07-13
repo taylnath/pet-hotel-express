@@ -9,25 +9,29 @@ const ReportRows = (props) => {
         <Table striped bordered={true} hover={true}>
           <thead>
           {props.headers.map((row, index) => (
-                  <ReportRow key = {index}
+                  <ReportRow key={index}
                              index={index}
                              row={row}
                              is_header={true}
                              attributes={props.attributes}
                              onUpdate={props.onUpdate}
-                             onDelete={props.onDelete} />
+                             onDelete={props.onDelete}
+                             onCheckIn={props.onCheckIn}
+                             checkedIn={props.checkedIn} />
               )
           )}
           </thead>
           <tbody>
-            {props.report_rows.map((row, index) => (
-                  <ReportRow key = {index}
+          {props.report_rows.map((row, index) => (
+                  <ReportRow key={index}
                              index={index}
                              row={row}
                              is_header={false}
                              attributes={props.attributes}
                              onUpdate={props.onUpdate}
-                             onDelete={props.onDelete} />
+                             onDelete={props.onDelete}
+                             onCheckIn={props.onCheckIn}
+                             checkedIn={props.checkedIn} />
               )
           )}
           </tbody>

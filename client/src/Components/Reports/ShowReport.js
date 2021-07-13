@@ -8,7 +8,9 @@ function Reports(props) {
                     headers={[props.headers]}
                     attributes={props.attributes}
                     onUpdate={props.onUpdate}
-                    onDelete={props.onDelete} />
+                    onDelete={props.onDelete}
+                    onCheckIn={props.onCheckIn}
+                    checkedIn={props.checkedIn} />
       </>
   );
 }
