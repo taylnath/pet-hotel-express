@@ -10,11 +10,11 @@ import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 const serverURL = settings.serverURL;
 
-// Reservations
-// Page for owners to make reservations
+// OwnerProfile
+// Page for owners to change their pets
 // Props: user
 
-function Reservations(props) {
+function OwnerProfile(props) {
   // --- state ---
   // loading state
   const [error, setError] = useState(null);
@@ -26,52 +26,54 @@ function Reservations(props) {
 
   // user state
   const [userPets, setUserPets] = useState([]);
-  const [selectedPetId, setSelectedPetId] = useState('');
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(tomorrow);
-  const [bookingId, setBookingId] = useState('');
-  const [userReservations, setUserReservations] = useState([]);
+  const [petId, setPetId] = useState('');
+  const [petName, setPetName] = useState('');
+  const [petPreferences, setPetPreferences] = useState('');
+  const [petType, setPetType] = useState('');
+
+  // put the values of a database row into the state
+  // also when used without row (or with row == null), 
+  // clears state
+  function mapRowToState(row)
+  {
+    let clearState = (row == null);
+    setPetId((clearState)? '' : row.petId);
+    setPetName((clearState)? '' : row.name);
+    setPetPreferences((clearState)? '' : row.preferences);
+    setPetType((clearState)? '' : row.type);
+  }
 
   // --- effects ---
   // reset modal data when it closes
   useEffect(() => {
     if (!modalVisible){
       setUpdateMode(false);
-      setSelectedPetId((userPets && userPets.length)? userPets[0].petId : '');
-      setStartDate(today);
-      setEndDate(tomorrow);
-      setBookingId('');
+      mapRowToState(null);
     } 
   }, [modalVisible]);
 
   // get/refresh user pets
-  useEffect(() => {
+  async function refreshPets()
+  {
     console.log("getting pets");
     if (props.user && props.user.ownerId && props.user.ownerId != null) {
       console.log("found pets for user");
-      fetch(`${serverURL}/api/ownerPets/${props.user.email}`) // todo: change this to id
-        .then(res => res.json()).then(res => {
-          setSelectedPetId((res && res.length)? res[0].petId : '');
-          return setUserPets(res);
-        });
+      await fetchState(`${serverURL}/api/ownerPets/${props.user.email}`, setIsLoaded, setUserPets, setError); // todo: change this to id
     } else {
       console.log("no logged in user to find pets for");
-      setSelectedPetId('');
       setUserPets([]);
     }
-  }, [props.user.ownerId]);
+  }
 
-  // refresh reservations on owner change and visible modal change
-  async function refreshReservations(){
-    fetchState(`${serverURL}/api/getReport?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
-    console.log('updated reservations');
-  };
-  useEffect(() => refreshReservations(), [props.user.ownerId, modalVisible]);
+  // refresh pets on owner change and visible modal change
+  useEffect(() => refreshPets(), [props.user.ownerId, modalVisible]);
+
+  // TODO: allow adding other owner's pets, i.e. linking pets together
 
   // --- actions ---
-  // make a new reservation or update one, depending on mode
+  // add or update a pet, depending on mode
   async function makeReservation() {
-    const url = serverURL + `/api/reservations`;
+    const url = serverURL + `/api/pets`;
     let response;
     const data = {
       startDate: startDate,
@@ -192,4 +194,4 @@ function Reservations(props) {
   );
 }
 
-export default Reservations;
+export default OwnerProfile;

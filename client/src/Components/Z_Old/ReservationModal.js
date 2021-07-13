@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import settings from '../appSettings';
-import fetchState from '../DataAccess/fetchState';
-import postState from '../DataAccess/postState';
+import settings from '../../appSettings';
+import fetchState from '../../DataAccess/fetchState';
+import postState from '../../DataAccess/postState';
 import {
   Button, Modal, Container, Row, Col,
   Form
 } from 'react-bootstrap';
-import blankUser from '../Models/UserModel';
+import blankUser from '../../Models/UserModel';
 import { propTypes } from 'react-bootstrap/esm/Image';
-import {today, tomorrow} from '../Helpers/dateHelpers';
+import {today, tomorrow} from '../../Helpers/dateHelpers';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 

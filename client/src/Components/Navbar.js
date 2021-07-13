@@ -3,7 +3,7 @@ import {
   Row, Col
 } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import { ReactComponent as Logo } from './fabicon.svg';
+import { ReactComponent as Logo } from './images/fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
 import settings from "../appSettings";
