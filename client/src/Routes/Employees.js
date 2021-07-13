@@ -33,14 +33,14 @@ function Employees() {
   // --- effects ---
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible) {
+    if (!modalVisible && !confirmDeleteVisible) {
       setUpdateMode(false);
       setFirstName('');
       setLastName('');
       setJobTitle('');
       setEmployeeId('');
     }
-  }, [modalVisible])
+  }, [modalVisible, confirmDeleteVisible])
   
   async function refreshEmployees() {
     fetchState(`${serverURL}/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
@@ -77,11 +77,11 @@ function Employees() {
       method: 'DELETE',
       headers: {'Content-type': 'application/json'}
         }).then(res => res.json());
-    setEmployeeId('');
-    setFirstName('');
-    setLastName('');
-    console.log(result)
-    await refreshEmployees()
+    // setEmployeeId(''); // I don't think these are necessary, but I don't think they hurt either
+    // setFirstName('');
+    // setLastName('');
+    console.log(result);
+    await refreshEmployees(); // does this need to be awaited? I'm not sure either way
   }
   
   // initialize the update modal after clicking on a row's update button
@@ -116,7 +116,7 @@ function Employees() {
   }
   const attributes = ["employeeId", "firstName", "lastName", "jobTitle"]
  
-  useEffect(() => {refreshEmployees()}, []);
+  useEffect(() => refreshEmployees(), []);
   
   return (
       <div>

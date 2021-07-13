@@ -131,7 +131,7 @@ function Rooms() {
           </GenericModal>
   
           <GenericModal
-              title={`Are you sure you want to room  ${roomId}?`}
+              title={`Are you sure you want to delete room ${roomId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteRoom}
