@@ -3,6 +3,7 @@ import { Switch, Route, Link, BrowserRouter as Router } from 'react-router-dom';
 import  Admin  from './Routes/Admin';
 import  Employees  from './Routes/Employees';
 import  Rooms  from './Routes/Rooms';
+import  Bookings  from './Routes/Bookings';
 import  Reports  from './Routes/Reports';
 import  Reservations  from './Routes/Reservations';
 import Guests from './Routes/Guests';
@@ -38,6 +39,9 @@ function App() {
       </Route>
       <Route path="/Rooms">
         <Rooms />
+      </Route>
+      <Route path="/Bookings">
+        <Bookings />
       </Route>
       <Route path="/Test">
         <Test/>

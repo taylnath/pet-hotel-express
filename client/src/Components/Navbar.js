@@ -44,6 +44,7 @@ function CustomNavbar(props) {
           <NavDropdown hidden={props.user.type === "owner"}
                        id={"admin-nav-dropdown"}
                        title={"Admin"}>
+            <NavDropdown.Item href="/Bookings">Bookings</NavDropdown.Item>
             <NavDropdown.Item href="/Employees">Employees</NavDropdown.Item>
             <NavDropdown.Item href="/Rooms">Rooms</NavDropdown.Item>
           </NavDropdown>
