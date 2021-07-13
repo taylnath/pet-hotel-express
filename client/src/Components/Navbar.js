@@ -48,12 +48,8 @@ function CustomNavbar(props) {
             <NavDropdown.Item href="/Rooms">Rooms</NavDropdown.Item>
           </NavDropdown>
           <Nav.Link as={Link} to="/Test">Test</Nav.Link>
-          <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+          <NavDropdown title="Manage" id="manage" hidden={props.user.type === "owner"}>
+          <NavDropdown.Item href="/Guests">Guests</NavDropdown.Item>
         </NavDropdown>
         </Nav>
         <DropdownButton variant={props.user.logged_in ? "success" : "dark"}

@@ -5,6 +5,7 @@ import  Employees  from './Routes/Employees';
 import  Rooms  from './Routes/Rooms';
 import  Reports  from './Routes/Reports';
 import  Reservations  from './Routes/Reservations';
+import Guests from './Routes/Guests';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
 import {useState, useEffect} from "react";
@@ -24,7 +25,7 @@ function App() {
     {/* the route paths match the to="..." attributes from the Links in Navbar */}
     <Switch>
       <Route path="/Reservations">
-        <Reservations user={user} setUser={setUser}/>
+        <Reservations user={user} setUser={setUser}/> {/* todo: does user need to be a prop? */}
       </Route>
       <Route path="/Reports">
         <Reports/>
@@ -40,6 +41,9 @@ function App() {
       </Route>
       <Route path="/Test">
         <Test/>
+      </Route>
+      <Route path="/Guests">
+        <Guests/>
       </Route>
       {/* the root route apparently needs to go here so it doesn't eat the other routes */}
       <Route path="/">

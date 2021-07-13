@@ -36,6 +36,16 @@ router.get('/logIn', async (req, res) => {
   }
 });
 
+router.get('/owners', async (req, res) => {
+  try {
+    let result = await queryAsync('select * from Owners', []).then(result => res.json(result));
+  } catch (e) {
+    console.log(e);
+    res.status(500);
+    res.json({"success": false});
+  }
+})
+
 // @route POST /api/reservations
 // @desc  Make a reservation (i.e. a booking)
 // @access Public
@@ -170,7 +180,7 @@ router.delete('/rooms/:id', async (req, res) => {
   }
 })
 
-// --------------- end (Employees)  -------------------------------------------
+// --------------- end (Rooms)  -------------------------------------------
 
 
 // working on this as of July 9 - TODO
