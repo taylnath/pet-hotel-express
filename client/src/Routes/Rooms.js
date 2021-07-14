@@ -27,12 +27,14 @@ function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [description, setDescription] = useState('');
   const [roomId, setRoomId] = useState('');
+  const [petName, setPetName] = useState('');
   
   // -------- effects --------
   // reset modal data when it closes
   useEffect(() => {
     if (!modalVisible) {
       setUpdateMode(false);
+      setPetName('');
       setDescription('');
       setRoomId('');
     }
@@ -40,7 +42,21 @@ function Rooms() {
   
   async function refreshRooms() {
     console.log("in Refresh rooms");     // TODO
-    await fetchState(`${serverURL}/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
+    let url = serverURL + '/api/simpleQuery'
+    let simpleQuery = "select `Rooms`.`roomId` as roomId, `Rooms`.`description` " +
+        "as description, `Pets`.`name` as petName from `Rooms` left join" +
+        " `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
+        "`Pets` on `Pets`.`petId` = `Bookings`.`petId`;"
+  
+    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setRooms, setError);
+
+    // let response;
+    // const data = {simpleQuery: simpleQuery};
+    // response = await postState(url, data);
+    // let body = await response.json()
+    // console.log('Rooms Refreshed.  Got response', body)
+    
+    // await fetchState(`${serverURL}/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
   }
   
   // -------- actions --------
@@ -99,9 +115,10 @@ function Rooms() {
   // report headers
   const headers = {
     roomId: "Id",
-    description: "Description"
+    description: "Description",
+    petName: "Pet Guest"
   }
-  const attributes = ["roomId", "description"]
+  const attributes = ["roomId", "description", "petName"]
   
   useEffect(() => refreshRooms().then(console.log("done!")), []);
 
