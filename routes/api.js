@@ -98,6 +98,22 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
   });
 });
 
+// --------------- routes for Pets ---------------------------------------
+
+router.get('/pets', async (req, res) => {
+  try {
+    let result = await queryAsync('select * from Pets');
+    console.log("past query");
+    res.json(result);
+  } catch (e) {
+    console.log(e);
+    res.status(500);
+    res.json({"success": false});
+  }
+})
+
+// --------------- routes for Pets ---------------------------------------
+
 // --------------- routes for Employees ---------------------------------------
 
 router.post('/employees', async (req, res) => {

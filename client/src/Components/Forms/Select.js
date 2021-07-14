@@ -12,6 +12,8 @@
 //    optionValue: string key to associate to each option value i.e. 'name'
 
 function Select(props){
+  console.log("options passed to select:", props.optionsList);
+
   return (
     <>
       <label htmlFor={props.id} className="col-form-label">
