@@ -208,6 +208,20 @@ router.get('/getReport', async (req, res) => {
   });
 });
 
+// generic "just send this query"
+// Allows construction of query statement by front end, during development or
+// for particularly complex queries
+router.get('/simpleQuery', async (req, res) => {
+  console.log("In simpleQuery.  req.query = ", req.query.query, typeof req.query);
+
+  let report = await queryAsync(req.query.query)
+  .then(result => {
+    return res.json(result);
+  });
+
+});
+
+
 // // @route   POST api/items
 // // @desc    Create an Item
 // // @access  Public
