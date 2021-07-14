@@ -9,9 +9,11 @@ function dynamicQuery(tables, where, groupBy){
   if (where && where.length > 0){
     let whereList = where.split(',');
     sql = mysql.format(sql + " where ?? = ?", whereList);
+
   }
 
   // todo: add multiple where, groupby
+  console.log("dynamicQuery = ", sql)
   return sql;
 }
 

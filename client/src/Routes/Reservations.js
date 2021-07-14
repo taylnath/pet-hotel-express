@@ -93,7 +93,8 @@ function Reservations(props) {
     }
     let body = await response.json();
     console.log('made reservation. Got response', body);
-  };
+    await refreshReservations();
+  }
 
   async function deleteReservation(row){
     console.log(row);
