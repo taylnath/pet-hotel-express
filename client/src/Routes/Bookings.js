@@ -28,6 +28,7 @@ function Bookings() {
   
   // user, data states
   const [ownerId, setOwnerId] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
   const [userPets, setUserPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState('');
   const [startDate, setStartDate] = useState(today);
@@ -50,9 +51,17 @@ function Bookings() {
   
   async function refreshBookings() {
     console.log("in Refresh bookings");     // TODO
-    await fetchState(`${serverURL}/api/getReport?tables=Bookings,Owners,Rooms&type=left`,
-        setIsLoaded, setBookings, setError);
-    console.log('updated bookings');
+    let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
+        "`Owners`.`email` as `ownerEmail`, " +
+        "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
+        "`Owners`.`ownerId` as ownerId,  `Pets`.`name` as `petName`, " +
+        "`Bookings`.`startDate` as `startDate`, `Bookings`.`endDate` as " +
+        "`endDate`, `Rooms`.`roomId` as roomId  from `Bookings` left join " +
+        "`Owners` on `Owners`.`ownerId` = `Bookings`.`ownerId` " +
+        "left join `Pets` on `Pets`.`petId` = `Bookings`.`petId` left join " +
+        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId`;"
+  
+    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
   }
   
   useEffect(() => refreshBookings(), []);
@@ -84,10 +93,27 @@ function Bookings() {
     let body = await response.json();
     console.log('made booking. Got response', body);
   }
-    
+  
+  // Get an Owner's Pets
+  async function getPets(row) {
+    console.log("getting pets");
+
+    fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
+          .then(res => res.json()).then(res => {
+            for (let i = 0; i < res.length; i++) {
+              if (res[i].name === row.petName) {
+                setSelectedPetId(res[i].petid)
+              }
+            }
+        setSelectedPetId((res && res.length)? res[0].petId : '');
+        return setUserPets(res);
+      });
+  };
+  
+  // Delete a Booking
     async function deleteReservation(row){
       console.log(row);
-      let result = await fetch(`${serverURL}/api/reservations/${row.bookingId}`, {
+      let result = await fetch(`${serverURL}/api/reservations/${bookingId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -98,8 +124,8 @@ function Bookings() {
     }
   
   
+  // Check in or check out a guest
   async function checkIn(row){
-  // Check in / check out booking
     await refreshBookings();
   }
   
@@ -107,13 +133,14 @@ function Bookings() {
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row){
     console.log("row = ", row)
+    getPets(row)
     setUpdateMode(true);
     setBookingId(row.bookingId);
+    setOwnerEmail(row.ownerEmail);
     setSelectedPetId(row.petId);
     setStartDate(row.startDate);
     setEndDate(row.endDate);
     setModalVisible(true);
-    console.log('updating row:', row);
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
@@ -127,10 +154,11 @@ function Bookings() {
   // report headers
   const headers = {
     bookingId : "Booking Id",
-    name: "Pet",
+    ownerName: "Owner",
+    petName: "Pet",
     startDate: "Start Date",
     endDate: "End Date",
-    room: "Room"
+    roomId: "Room",
   };
   const attributes = Object.keys(headers);
   
