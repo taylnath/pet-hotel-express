@@ -10,6 +10,7 @@ import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
+
 const serverURL = settings.serverURL;
 
 // Bookings
@@ -55,18 +56,22 @@ function Bookings() {
   }, [modalVisible])
   
   async function refreshBookings(filter) {
-    console.log("in Refresh bookings");     // TODO
-    console.log("filter? ", filter);
-    let where= " where 1 ";
+    
+    // Set 'where' conditions, or set to 1 (so subsequent wheres start with 'and')
+    let where = " where 1 ";
     if (!(filter === 'all')) {
       filter === 'today' ?
           where = " where `Bookings`.`startDate` = " + `'${today}' ` :
           where = " where `Bookings`.`startDate` = " + `'${tomorrow}' `
     }
     
-    if (searchFirst) {where += " and `Owners`.`firstName` like '" + `${searchFirst}` + escape('%') + "' " }
-    if (searchLast) {where += " and `Owners`.`lastName` like '" + `${searchLast}` + escape('%') + "' " }
-
+    if (searchFirst) {
+      where += " and `Owners`.`firstName` like '" + `${searchFirst}` + escape('%') + "' "
+    }
+    if (searchLast) {
+      where += " and `Owners`.`lastName` like '" + `${searchLast}` + escape('%') + "' "
+    }
+    
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
         "`Owners`.`email` as `ownerEmail`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
@@ -78,7 +83,17 @@ function Bookings() {
         "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` " + where + ";"
     
     console.log(simpleQuery)
-  
+    
+    // Clear search criteria so they don't interfere with future refreshes
+    setSearchFirst('');
+    setSearchLast('');
+    
+    // Clear search input fields for same reason
+    Array.from(document.querySelectorAll("input")).forEach(
+        input => (input.value = "")
+    );
+    
+    
     await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
   }
   
@@ -87,6 +102,7 @@ function Bookings() {
   // -------- actions --------
   // add / update booking
   
+  // Not working as of 7/15 because I need owner selector / search  TODO
   async function makeReservation() {
     const url = serverURL + `/api/reservations`;
     let response;
@@ -116,42 +132,42 @@ function Bookings() {
   // Get an Owner's Pets
   async function getPets(row) {
     console.log("getting pets");
-
+    
     fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
-          .then(res => res.json()).then(res => {
-            for (let i = 0; i < res.length; i++) {
-              if (res[i].name === row.petName) {
-                setSelectedPetId(res[i].petid)
-              }
-            }
-        setSelectedPetId((res && res.length)? res[0].petId : '');
-        return setUserPets(res);
-      });
+        .then(res => res.json()).then(res => {
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].name === row.petName) {
+          setSelectedPetId(res[i].petid)
+        }
+      }
+      setSelectedPetId((res && res.length) ? res[0].petId : '');
+      return setUserPets(res);
+    });
   }
   
   // Delete a Booking
-    async function deleteReservation(row){
-      console.log(row);
-      let result = await fetch(`${serverURL}/api/reservations/${bookingId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(res => res.json());
-      console.log(result);
-      await refreshBookings(filterBy);
-    }
+  async function deleteReservation(row) {
+
+    let result = await fetch(`${serverURL}/api/reservations/${bookingId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json());
+    
+    await refreshBookings(filterBy);
+  }
   
-  
+  // Not working as of 7/15 TODO
   // Check in or check out a guest
-  async function checkIn(row){
+  async function checkIn(row) {
     await refreshBookings(filterBy);
   }
   
   // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
-  function makeUpdateModal(row){
-    console.log("row = ", row)
+  function makeUpdateModal(row) {
+
     getPets(row)
     setUpdateMode(true);
     setBookingId(row.bookingId);
@@ -164,7 +180,7 @@ function Bookings() {
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
-  function confirmDelete(row){
+  function confirmDelete(row) {
     console.log("row = ", row)
     setBookingId(row.bookingId);
     setConfirmDeleteVisible(true);
@@ -173,7 +189,7 @@ function Bookings() {
   
   // report headers
   const headers = {
-    bookingId : "Booking Id",
+    bookingId: "Booking Id",
     ownerName: "Owner",
     petName: "Pet",
     startDate: "Start Date",
@@ -187,10 +203,10 @@ function Bookings() {
         <Container>
           <h1 className={"mt-4 mb-3"}>Manage Bookings</h1>
         </Container>
-      
-        <Container>
         
-          <Button className={"mb-3 mt-1 mr-5"} variant="success" onClick={() => {
+        <Container>
+          
+          <Button className={"mb-3 mt-1 mr-5 shadow"} variant="success" onClick={() => {
             setModalVisible(true);
           }}>
             Add New Reservation
@@ -203,15 +219,16 @@ function Bookings() {
           <div>
             <Form className={"border rounded p-3"}
                   onSubmit={e => {
-              e.preventDefault();
-              return refreshBookings(filterBy, searchFirst, searchLast);
-            }}>
+                    e.preventDefault();
+                    return refreshBookings(filterBy, searchFirst, searchLast);
+                  }}>
               <label>Search for bookings by owner</label>
               <Row>
                 <Col>
                   <Form.Control type="text"
+                                id={"search-first-name"}
                                 placeholder="First Name"
-                                onChange={e=> setSearchFirst(e.target.value)}/>
+                                onChange={e => setSearchFirst(e.target.value)}/>
                   <Form.Text className="text-muted">
                     Search by first or last name, or both, using full name or starting letters
                   </Form.Text>
@@ -219,15 +236,17 @@ function Bookings() {
                 <Col>
                   <Form.Control type="text"
                                 placeholder="Last Name"
-                                onChange={e=> setSearchLast(e.target.value)}/>
+                                onChange={e => setSearchLast(e.target.value)}/>
                 </Col>
               </Row>
               <Button variant="info" type="submit">
                 Search Bookings
               </Button>
+              <Button variant="secondary" className={"ml-5"} onClick={() => refreshBookings(filterBy)}>
+                Clear Search - Show All</Button>
             </Form>
           </div>
-        
+          
           <GenericModal
               title={(updateMode) ? 'Update a Reservation' : 'Make a Reservation'}
               visible={modalVisible}
@@ -259,18 +278,18 @@ function Bookings() {
                 setValue={setEndDate}
             />
           </GenericModal>
-        
+          
           <GenericModal
               title={`Are you sure you want to delete booking ${bookingId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteReservation}
           />
-      
-        </Container>
-      
-        <Container>
         
+        </Container>
+        
+        <Container>
+          
           <h4 className={"mt-5"}>Bookings:</h4>
           <ShowReport title="Bookings"
                       headers={headers}
@@ -279,9 +298,9 @@ function Bookings() {
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}
                       onCheckIn={checkIn}/>
-      
+        
         </Container>
-    
+      
       </div>
   );
 }
