@@ -53,8 +53,11 @@ function CustomNavbar(props) {
           <NavDropdown.Item href="/Guests">Guests</NavDropdown.Item>
         </NavDropdown>
         </Nav>
-        <DropdownButton variant={props.user.logged_in ? "success" : "dark"}
-                        title={props.user.logged_in ? props.user.firstName + " logged in" : "Log in"}>
+        <DropdownButton 
+          variant={props.user.logged_in ? "success" : "dark"}
+          title={props.user.logged_in ? props.user.firstName + " logged in" : "Log in"}
+          className="ml-auto"
+        >
           {props.user.logged_in ?
               <DropdownItem onClick={logOut}>Log Out</DropdownItem> :
               <DropdownItem onClick={employeeLogin}>Employee Login</DropdownItem>}
