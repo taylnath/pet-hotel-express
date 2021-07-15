@@ -4,7 +4,7 @@ import fetchState from '../DataAccess/fetchState';
 import {
   Button, Modal, Container, Row, Col
 } from 'react-bootstrap';
-import blankUser from '../Models/UserModel';
+import superUser from '../Models/superUser';
 const serverURL = settings.serverURL;
 console.log(serverURL);
 
@@ -32,7 +32,7 @@ function Login(props) {
                                     // TODO: verify employees are actually employees (type for model?)
     } else {                        // if no match, reset local State
       console.log(users[0]?.type, "doesn't match", props.user.type);
-      props.setUser(blankUser);
+      props.setUser(superUser);
     }
   
     console.log('user now = ', props.user);

@@ -8,8 +8,6 @@ const blankUser = {
   email: "",
   employeeId: null,
   logged_in: false,
-  /* This looked like a duplicate     TODO */
-  // type: ""
 }
 
 export default blankUser;

@@ -60,7 +60,6 @@ export default EmployeeModal;
 //   Button, Modal, Container, Row, Col,
 //   Form
 // } from 'react-bootstrap';
-// import blankUser from '../Models/UserModel';
 // import { propTypes } from 'react-bootstrap/esm/Image';
 // const serverURL = settings.serverURL;
 // console.log(serverURL);

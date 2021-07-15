@@ -6,7 +6,6 @@ import {
   Button, Modal, Container, Row, Col,
   Form
 } from 'react-bootstrap';
-import blankUser from '../../Models/UserModel';
 import { propTypes } from 'react-bootstrap/esm/Image';
 import {today, tomorrow} from '../../Helpers/dateHelpers';
 const serverURL = settings.serverURL;

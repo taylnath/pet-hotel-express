@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
 import settings from "../appSettings";
 import Login  from './Login'
-import blankUser from '../Models/UserModel';
+import superUser from '../Models/superUser';
 const serverURL = settings.serverURL;
 
 function CustomNavbar(props) {
@@ -17,7 +17,7 @@ function CustomNavbar(props) {
 
   const[loginVisible, setLoginVisible] = useState(false);
   
-  const logOut = () => props.setUser(blankUser);
+  const logOut = () => props.setUser(superUser);
   const ownerLogin = () => {
     props.setUser({...props.user, type: "owner"});
     setLoginVisible(true);

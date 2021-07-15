@@ -10,12 +10,12 @@ import Guests from './Routes/Guests';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
 import {useState, useEffect} from "react";
-import blankUser from './Models/UserModel';
+import superUser from './Models/superUser';
 
 function App() {
   
   {/* this allows app to know who is logged in (user), with what privileges */}
-  const [user, setUser] = useState(blankUser);
+  const [user, setUser] = useState(superUser);
 
   return (
     <div className="App">

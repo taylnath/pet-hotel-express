@@ -5,10 +5,11 @@ insert into `Owners` values (2, 'Mario', 'Robertson', 'mario@email.biz');
 insert into `Owners` values (3, 'Rob', 'Bobertson', 'rob@email.biz');
 insert into `Owners` values (4, 'Alice', 'Bobertson', 'alice@email.biz');
 
-insert into `Employees` values (1, 'Mike', 'Michaels', 'Concierge');
-insert into `Employees` values (2, 'Erik', 'Marcusson', 'Grooming/Pet Care');
-insert into `Employees` values (3, 'Jenna', 'Michaels', 'Pet Play Facilitator');
-insert into `Employees` values (4, 'Greg', 'Martin', 'Manager');
+insert into `Employees` values (1, 'Bob', 'Robertson', 'Janitor');
+insert into `Employees` values (2, 'Mike', 'Michaels', 'Concierge');
+insert into `Employees` values (3, 'Erik', 'Marcusson', 'Grooming/Pet Care');
+insert into `Employees` values (4, 'Jenna', 'Michaels', 'Pet Play Facilitator');
+insert into `Employees` values (5, 'Greg', 'Martin', 'Manager');
 
 insert into `Pets` values (1, 'Fluffy', 'Only likes dogs', 'cat');
 insert into `Pets` values (2, 'Scruffy', 'Only likes cats', 'dog');
