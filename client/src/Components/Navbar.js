@@ -29,7 +29,9 @@ function CustomNavbar(props) {
   
   return (
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand as={Link} to="/"
+          title="Our Homepage"
+        >
           <Logo
             width="30"
             height="30"
@@ -39,20 +41,38 @@ function CustomNavbar(props) {
           Pet Hotel
         </Navbar.Brand>
         <Nav>
-          <Nav.Link as={Link} to="/Reservations">Reservations</Nav.Link>
-          <Nav.Link as={Link} to="/Reports">Reports</Nav.Link>
-          <NavDropdown hidden={props.user.type === "owner"}
+          <Nav.Link as={Link} to="/Reservations" 
+            title="Reservations page for owners--create, read, update and delete reservations for one specific Owner."
+          >Reservations</Nav.Link>
+          <Nav.Link as={Link} to="/Reports"
+            title="Make reports, of course!"
+          >Reports</Nav.Link>
+          {/* <NavDropdown hidden={props.user.type === "owner"}
                        id={"admin-nav-dropdown"}
                        title={"Admin"}>
             <NavDropdown.Item href="/Bookings">Bookings</NavDropdown.Item>
             <NavDropdown.Item href="/Employees">Employees</NavDropdown.Item>
             <NavDropdown.Item href="/Rooms">Rooms</NavDropdown.Item>
-          </NavDropdown>
-          <Nav.Link as={Link} to="/Test">Test</Nav.Link>
-          <NavDropdown title="Manage" id="manage" hidden={props.user.type === "owner"}>
-          <NavDropdown.Item href="/Guests">Guests</NavDropdown.Item>
-        </NavDropdown>
+          </NavDropdown> */}
+          <Nav.Link as={Link} to="/Bookings" 
+            title="Create, read, update, and delete Bookings for the Hotel"
+          >Bookings</Nav.Link>
+          <Nav.Link as={Link} to="/Employees"
+            title="Create, read, update, and delete Employees of the Hotel"
+          >Employees</Nav.Link>
+          <Nav.Link as={Link} to="/Rooms"
+            title="Create, read, update, and delete Rooms of the Hotel"
+          >Rooms</Nav.Link>
+          <Nav.Link as={Link} to="/Guests"
+            title="Create, read, update, and delete relationships (i.e. the Guests table) between Pets and Owners (without affecting the Pets or Owners tables)."
+          >Guests</Nav.Link>
+
+          <Nav.Link as={Link} to="/Test"
+            title="This page is for testing new features. Nothing to see here..."
+          >Test</Nav.Link>
         </Nav>
+
+        {/* login button */}
         <DropdownButton 
           variant={props.user.logged_in ? "success" : "dark"}
           title={props.user.logged_in ? props.user.firstName + " logged in" : "Log in"}
@@ -68,7 +88,6 @@ function CustomNavbar(props) {
         {/* Upon login, button will change to show props.user name, and navbar menus will */}
         {/* be tailored to the props.user. TODO */}
 
-        {/* TODO: how to move login to right of screen */}
         <Login
          user={props.user} 
          setUser={props.setUser} 

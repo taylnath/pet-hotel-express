@@ -11,14 +11,35 @@ import Home from './Routes/Home';
 import Test from './Routes/Test';
 import {useState, useEffect} from "react";
 import superUser from './Models/superUser';
+import {Toast} from 'react-bootstrap';
+import {ReactComponent as Logo} from './Components/images/fabicon.svg';
 
 function App() {
   
   {/* this allows app to know who is logged in (user), with what privileges */}
   const [user, setUser] = useState(superUser);
+  const [showToast, setShowToast] = useState(true);
 
   return (
     <div className="App">
+
+      {/* toast to remind about titles */}
+      <Toast 
+      style={{position: "absolute", right: 0, top: 0, margin: "5%", zIndex: 999}}
+      show={showToast} onClose={() => setShowToast(false)}>
+          <Toast.Header>
+            <Logo
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt="Pet Hotel Logo"
+          />
+            <span className="ml-2 mr-auto"><strong>Pet Hotel</strong> says:</span>
+          </Toast.Header>
+          <Toast.Body>Hover over the navbar links to see descriptive titles of each page!</Toast.Body>
+        </Toast>
+      {/* toast to remind about titles */}
+
       <Router>
       <Navbar user={user} setUser={setUser} />
       <header className="App-header">
