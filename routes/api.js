@@ -5,7 +5,7 @@ const fs = require('fs');
 const { query } = require('express');
 var app = express();
 app.use(express.urlencoded({extended:false}));
-const dynamicQuery = require('../database/dynamicQuery');
+const {dynamicSelect, dynamicUpdate, dynamicPost} = require('../database/dynamicQueries');
 const sqlDate = require('../database/sqlDate');
 
 
@@ -199,14 +199,40 @@ router.delete('/rooms/:id', async (req, res) => {
 // --------------- end (Rooms)  -------------------------------------------
 
 
+// --------------- Super cool generic routes  -------------------------------------------
 // working on this as of July 9 - TODO
+
+// todo: add failure catching to these
+// todo: make accessing these more uniform?
+
 router.get('/getReport', async (req, res) => {
-  let report = await queryAsync(dynamicQuery(req.query.tables, req.query.where))
+  let report = await queryAsync(dynamicSelect(req.query.tables, req.query.where))
   .then(result => {
     console.log(result);
     return res.json(result);
   });
 });
+
+router.post('/dynamicPost', async (req, res) => {
+  await queryAsync(dynamicPost(req.body.table, req.body.fieldValues))
+    .then(result => {
+      console.log("dynamicPost: found", result)
+      return res.json(result);
+    });
+})
+
+router.put('/dynamicUpdate', async (req, res) => {
+  await queryAsync(dynamicUpdate(req.body.table, req.body.fieldValues, req.body.identifier, req.body.id))
+    .then(result => {
+      console.log("dynamicUpdate: found", result)
+      return res.json(result);
+    });
+});
+
+router.delete('/dynamicDelete/:table/:identifier/:id', async (req, res) => {
+  await queryAsync('delete from ?? where ?? = ?', [req.params.table, req.params.identifier, req.params.id]);
+  res.json({"success": true});
+})
 
 // generic "just send this query"
 // Allows construction of query statement by front end, during development or
@@ -220,6 +246,7 @@ router.get('/simpleQuery', async (req, res) => {
   });
 
 });
+// --------------- end Super cool generic routes  -------------------------------------------
 
 
 // // @route   POST api/items

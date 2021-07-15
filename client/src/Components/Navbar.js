@@ -63,6 +63,12 @@ function CustomNavbar(props) {
           <Nav.Link as={Link} to="/Rooms"
             title="Create, read, update, and delete Rooms of the Hotel"
           >Rooms</Nav.Link>
+          <Nav.Link as={Link} to="/Owners"
+            title="Create, read, update, and delete Owners of the Hotel"
+          >Owners</Nav.Link>
+          <Nav.Link as={Link} to="/Pets"
+            title="Create, read, update, and delete Pets of the Hotel"
+          >Pets</Nav.Link>
           <Nav.Link as={Link} to="/Guests"
             title="Create, read, update, and delete relationships (i.e. the Guests table) between Pets and Owners (without affecting the Pets or Owners tables)."
           >Guests</Nav.Link>

@@ -9,6 +9,8 @@ import  Reservations  from './Routes/Reservations';
 import Guests from './Routes/Guests';
 import Home from './Routes/Home';
 import Test from './Routes/Test';
+import Pets from './Routes/Pets';
+import Owners from './Routes/Owners';
 import {useState, useEffect} from "react";
 import superUser from './Models/superUser';
 import {Toast} from 'react-bootstrap';
@@ -69,6 +71,12 @@ function App() {
       </Route>
       <Route path="/Guests">
         <Guests/>
+      </Route>
+      <Route path="/Pets">
+        <Pets/>
+      </Route>
+      <Route path="/Owners">
+        <Owners/>
       </Route>
       {/* the root route apparently needs to go here so it doesn't eat the other routes */}
       <Route path="/">
