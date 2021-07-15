@@ -1,4 +1,4 @@
-import {Container, Button} from "react-bootstrap";
+import {Container, Button, Form, Row, Col} from "react-bootstrap";
 import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
@@ -37,6 +37,8 @@ function Bookings() {
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
   const [bookingId, setBookingId] = useState('');
+  const [searchFirst, setSearchFirst] = useState('');
+  const [searchLast, setSearchLast] = useState('');
   const [bookings, setBookings] = useState([]);
   
   // -------- effects --------
@@ -55,15 +57,16 @@ function Bookings() {
   async function refreshBookings(filter) {
     console.log("in Refresh bookings");     // TODO
     console.log("filter? ", filter);
-    let where= '';
+    let where= " where 1 ";
     if (!(filter === 'all')) {
       filter === 'today' ?
           where = " where `Bookings`.`startDate` = " + `'${today}' ` :
           where = " where `Bookings`.`startDate` = " + `'${tomorrow}' `
     }
-    console.log("today = ", today, "tomorrow = ", tomorrow)
     
-    console.log("where = ", where)
+    if (searchFirst) {where += " and `Owners`.`firstName` like '" + `${searchFirst}` + escape('%') + "' " }
+    if (searchLast) {where += " and `Owners`.`lastName` like '" + `${searchLast}` + escape('%') + "' " }
+
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
         "`Owners`.`email` as `ownerEmail`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
@@ -124,7 +127,7 @@ function Bookings() {
         setSelectedPetId((res && res.length)? res[0].petId : '');
         return setUserPets(res);
       });
-  };
+  }
   
   // Delete a Booking
     async function deleteReservation(row){
@@ -182,23 +185,48 @@ function Bookings() {
   return (
       <div>
         <Container>
-          <h1 className={"mt-5 mb-5"}>Manage Bookings</h1>
+          <h1 className={"mt-4 mb-3"}>Manage Bookings</h1>
         </Container>
       
         <Container>
-
-              <Button className={"mb-3 mt-1 mr-5"} variant="success" onClick={() => {
-                setModalVisible(true);
-              }}>
-                Add New Reservation
+        
+          <Button className={"mb-3 mt-1 mr-5"} variant="success" onClick={() => {
+            setModalVisible(true);
+          }}>
+            Add New Reservation
+          </Button>
+          <span className={"lead font-weight-bold mb-3 mr-2"}>Filter List: </span>
+          <FilterRadioButton setFilterBy={setFilterBy}
+                             refresh={refreshBookings}
+                             filterBy={filterBy}
+          />
+          <div>
+            <Form className={"border rounded p-3"}
+                  onSubmit={e => {
+              e.preventDefault();
+              return refreshBookings(filterBy, searchFirst, searchLast);
+            }}>
+              <label>Search for bookings by owner</label>
+              <Row>
+                <Col>
+                  <Form.Control type="text"
+                                placeholder="First Name"
+                                onChange={e=> setSearchFirst(e.target.value)}/>
+                  <Form.Text className="text-muted">
+                    Search by first or last name, or both, using full name or starting letters
+                  </Form.Text>
+                </Col>
+                <Col>
+                  <Form.Control type="text"
+                                placeholder="Last Name"
+                                onChange={e=> setSearchLast(e.target.value)}/>
+                </Col>
+              </Row>
+              <Button variant="info" type="submit">
+                Search Bookings
               </Button>
-              <span className={"lead font-weight-bold mb-3 mr-2"}>Filter List: </span>
-              <FilterRadioButton setFilterBy={setFilterBy}
-                                 refresh={refreshBookings}
-                                 filterBy={filterBy}
-              />
-
-          <div>{filterBy}</div>
+            </Form>
+          </div>
         
           <GenericModal
               title={(updateMode) ? 'Update a Reservation' : 'Make a Reservation'}
