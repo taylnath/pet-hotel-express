@@ -6,6 +6,7 @@ import postState from "../DataAccess/postState";
 import ShowReport from "../Components/Reports/ShowReport";
 import {today, tomorrow} from '../Helpers/dateHelpers';
 import Input from "../Components/Forms/Input";
+import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
@@ -27,6 +28,8 @@ function Bookings() {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   
   // user, data states
+  
+  const [filterBy, setFilterBy] = useState('all');
   const [ownerId, setOwnerId] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
   const [userPets, setUserPets] = useState([]);
@@ -49,8 +52,18 @@ function Bookings() {
     }
   }, [modalVisible])
   
-  async function refreshBookings() {
+  async function refreshBookings(filter) {
     console.log("in Refresh bookings");     // TODO
+    console.log("filter? ", filter);
+    let where= '';
+    if (!(filter === 'all')) {
+      filter === 'today' ?
+          where = " where `Bookings`.`startDate` = " + `'${today}' ` :
+          where = " where `Bookings`.`startDate` = " + `'${tomorrow}' `
+    }
+    console.log("today = ", today, "tomorrow = ", tomorrow)
+    
+    console.log("where = ", where)
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
         "`Owners`.`email` as `ownerEmail`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
@@ -59,12 +72,14 @@ function Bookings() {
         "`endDate`, `Rooms`.`roomId` as roomId  from `Bookings` left join " +
         "`Owners` on `Owners`.`ownerId` = `Bookings`.`ownerId` " +
         "left join `Pets` on `Pets`.`petId` = `Bookings`.`petId` left join " +
-        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId`;"
+        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` " + where + ";"
+    
+    console.log(simpleQuery)
   
     await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
   }
   
-  useEffect(() => refreshBookings(), []);
+  useEffect(() => refreshBookings(filterBy), []);
   
   // -------- actions --------
   // add / update booking
@@ -92,6 +107,7 @@ function Bookings() {
     }
     let body = await response.json();
     console.log('made booking. Got response', body);
+    await refreshBookings(filterBy);
   }
   
   // Get an Owner's Pets
@@ -120,13 +136,13 @@ function Bookings() {
         }
       }).then(res => res.json());
       console.log(result);
-      await refreshBookings();
+      await refreshBookings(filterBy);
     }
   
   
   // Check in or check out a guest
   async function checkIn(row){
-    await refreshBookings();
+    await refreshBookings(filterBy);
   }
   
   // -------- ShowReport Interactions --------
@@ -136,7 +152,8 @@ function Bookings() {
     getPets(row)
     setUpdateMode(true);
     setBookingId(row.bookingId);
-    setOwnerEmail(row.ownerEmail);
+    setOwnerId(row.ownerId);
+    setOwnerEmail(row.email);
     setSelectedPetId(row.petId);
     setStartDate(row.startDate);
     setEndDate(row.endDate);
@@ -165,16 +182,26 @@ function Bookings() {
   return (
       <div>
         <Container>
-          <h1 className={"mt-5 mb-3"}>Manage Reservations</h1>
+          <h1 className={"mt-5 mb-5"}>Manage Bookings</h1>
         </Container>
-        
+      
         <Container>
-          <Button variant="success" onClick={() => {setModalVisible(true);}}>
-            Add New Reservation
-          </Button>
-  
+
+              <Button className={"mb-3 mt-1 mr-5"} variant="success" onClick={() => {
+                setModalVisible(true);
+              }}>
+                Add New Reservation
+              </Button>
+              <span className={"lead font-weight-bold mb-3 mr-2"}>Filter List: </span>
+              <FilterRadioButton setFilterBy={setFilterBy}
+                                 refresh={refreshBookings}
+                                 filterBy={filterBy}
+              />
+
+          <div>{filterBy}</div>
+        
           <GenericModal
-              title={(updateMode)? 'Update a Reservation' : 'Make a Reservation'}
+              title={(updateMode) ? 'Update a Reservation' : 'Make a Reservation'}
               visible={modalVisible}
               setVisible={setModalVisible}
               action={makeReservation}
@@ -204,18 +231,18 @@ function Bookings() {
                 setValue={setEndDate}
             />
           </GenericModal>
-          
+        
           <GenericModal
               title={`Are you sure you want to delete booking ${bookingId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteReservation}
           />
-        
+      
         </Container>
-        
+      
         <Container>
-          
+        
           <h4 className={"mt-5"}>Bookings:</h4>
           <ShowReport title="Bookings"
                       headers={headers}
@@ -224,9 +251,9 @@ function Bookings() {
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}
                       onCheckIn={checkIn}/>
-        
-        </Container>
       
+        </Container>
+    
       </div>
   );
 }
