@@ -38,6 +38,7 @@ app.use('/api', testRoutes);
 app.use('/coffee', coffeeRoutes);
 
 // server static assets if in production
+console.log("running in", process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production'){
   // set static folder
   app.use(express.static('client/build'));
@@ -47,6 +48,12 @@ if (process.env.NODE_ENV === 'production'){
     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
   });
 }
+
+app.get('*', (req, res) => {
+  res.status(500).json({
+    msg: 'Oops this page was not supposed to happen.'
+  })
+});
 
 const port = process.env.PORT || 5000;
 

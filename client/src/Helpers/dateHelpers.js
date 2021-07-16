@@ -32,10 +32,6 @@ let formatToday = formatDate(todayDate);
 let formatTomorrow = formatDate(tomorrowDate);
 console.log(formatToday);
 console.log(formatTomorrow);
-const today = textDateToFormDate(formatToday);
-const tomorrow = textDateToFormDate(formatTomorrow);
+export const today = textDateToFormDate(formatToday);
+export const tomorrow = textDateToFormDate(formatTomorrow);
 
-module.exports = {
-  today: today,
-  tomorrow: tomorrow,
-};

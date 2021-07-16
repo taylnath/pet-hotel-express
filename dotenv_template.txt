@@ -4,4 +4,6 @@ DB_HOST=classmysql.engr.oregonstate.edu
 DB_USER=cs340_<onid>
 DB_PW=<password>
 DB=cs340_<onid>
+NODE_ENV=<development or production (or blank)>
+PORT=<whatever, or blank>
 # name of your local database name for the project
