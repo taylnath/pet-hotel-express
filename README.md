@@ -15,6 +15,8 @@ Put database credentials in dotenv_template.txt, then rename to .env
 
 ## Deploying Steps:
 - Clone project
+- from database directory, in mysql run `source setup_hotel.sql`
+- edit and copy/rename dotenv_template with correct db stuff and NODE_ENV=production
 - `npm install`
 - `npm audit fix` ?
 - `npm run build --prefix client` (this should probably be in our server package.json)
