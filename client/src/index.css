@@ -86,3 +86,9 @@ html {
     top: 90%;
   }
 }
+
+.bookings-modal {
+  color: #000099;
+  font-weight: 500;
+  font-size: large;
+}

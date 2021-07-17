@@ -87,6 +87,20 @@ router.delete('/reservations/:id', async (req, res) => {
   }
 })
 
+router.put('/bookings', async (req, res) => {
+  console.log(req.body);
+  try {
+    let result = await queryAsync(
+        'update Bookings set `startDate`=?, `endDate`=?, `ownerId`=?, `petId`=?, `roomId`=? where `bookingId`=?',
+        [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId, req.body.roomId, req.body.bookingId]
+    );
+    res.json({"success": true, "operation": "update"});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});
+
 router.get('/ownerPets/:ownerEmail', async (req, res) => {
   console.log("owner requested their pets:", req.params.ownerEmail);
   let pets = await queryAsync(
@@ -208,7 +222,7 @@ router.delete('/rooms/:id', async (req, res) => {
 router.get('/getReport', async (req, res) => {
   let report = await queryAsync(dynamicSelect(req.query.tables, req.query.where))
   .then(result => {
-    console.log(result);
+    // console.log(result);
     return res.json(result);
   });
 });
