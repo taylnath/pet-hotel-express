@@ -27,27 +27,35 @@ function Bookings() {
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+  const [checkInMode, setCheckInMode] = useState(false);
   
   // user, data states
   
   const [filterBy, setFilterBy] = useState('all');
+  const [owners, setOwners] = useState([]);
   const [ownerId, setOwnerId] = useState('');
-  const [ownerEmail, setOwnerEmail] = useState('');
+  const [ownerName, setownerName] = useState('')
+  // const [ownerEmail, setOwnerEmail] = useState('');      can elminate? TODO
   const [userPets, setUserPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState('');
+  const [selectedRoomId, setSelectedRoomId] = useState('');
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
   const [bookingId, setBookingId] = useState('');
   const [searchFirst, setSearchFirst] = useState('');
   const [searchLast, setSearchLast] = useState('');
   const [bookings, setBookings] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
   
   // -------- effects --------
   // reset modal data when it closes
   useEffect(() => {
     if (!modalVisible) {
       setUpdateMode(false);
+      setCheckInMode(false);
       setOwnerId('')
+      setownerName('')
+      setSelectedRoomId('')
       setSelectedPetId('');
       setStartDate(today);
       setEndDate(tomorrow);
@@ -73,7 +81,7 @@ function Bookings() {
     }
     
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
-        "`Owners`.`email` as `ownerEmail`, " +
+        "`Owners`.`email` as `ownerEmail`, `Pets`.`petId` as `petId`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
         "`Owners`.`ownerId` as ownerId,  `Pets`.`name` as `petName`, " +
         "`Bookings`.`startDate` as `startDate`, `Bookings`.`endDate` as " +
@@ -104,13 +112,14 @@ function Bookings() {
   
   // Not working as of 7/15 because I need owner selector / search  TODO
   async function makeReservation() {
-    const url = serverURL + `/api/reservations`;
+    let url = serverURL + `/api/bookings`;
     let response;
     const data = {
       startDate: startDate,
       endDate: endDate,
       ownerId: ownerId,
-      petId: selectedPetId
+      petId: selectedPetId,
+      roomId: selectedRoomId
     };
     if (updateMode) {
       data.bookingId = bookingId;
@@ -122,6 +131,7 @@ function Bookings() {
         body: JSON.stringify(data)
       });
     } else {
+      url = serverURL + `/api/reservations`;
       response = await postState(url, data);
     }
     let body = await response.json();
@@ -135,19 +145,26 @@ function Bookings() {
     
     fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
         .then(res => res.json()).then(res => {
-      for (let i = 0; i < res.length; i++) {
-        if (res[i].name === row.petName) {
-          setSelectedPetId(res[i].petid)
-        }
-      }
-      setSelectedPetId((res && res.length) ? res[0].petId : '');
+      setSelectedPetId(row.petId || '');
       return setUserPets(res);
     });
   }
   
+  // Get an rooms available for check-in
+  async function getAvailableRooms() {
+    let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
+        "(select roomId from Bookings natural join `Rooms`)"
+    console.log("In getAvailableRooms", simpleQuery)
+    
+    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setAvailableRooms, setError)
+    // .then(res => res.json()).then(res => {
+    console.log("AVAILABLE ROOMS = ", availableRooms)
+    // });
+  }
+  
   // Delete a Booking
   async function deleteReservation(row) {
-
+    
     let result = await fetch(`${serverURL}/api/reservations/${bookingId}`, {
       method: 'DELETE',
       headers: {
@@ -160,20 +177,59 @@ function Bookings() {
   
   // Not working as of 7/15 TODO
   // Check in or check out a guest
-  async function checkIn(row) {
+  async function makeCheckInModal(row) {
+    await getAvailableRooms();
+    setCheckInMode(true);
+    setModalVisible(true);
+    setBookingId(row.bookingId);
+    setSelectedRoomId(row.roomId);
+    setSelectedPetId(row.petId);
+    setOwnerId(row.ownerId);
+    setownerName(row.ownerName);
+    setStartDate(row.startDate);
+    setEndDate(row.endDate);
+  }
+  
+  async function checkIn() {
+    const url = serverURL + `/api/bookings`;
+    let response;
+    console.log("here again: ", selectedPetId, typeof selectedPetId, selectedRoomId, typeof selectedRoomId)
+    let roomId = parseInt(selectedRoomId);
+    const data = {
+      startDate: startDate,
+      endDate: endDate,
+      ownerId: ownerId,
+      petId: selectedPetId,
+      bookingId: bookingId,
+      roomId: roomId
+    };
+    
+    
+    response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    let body = await response.json();
+    console.log('checked in. Got response', body);
+    setFilterBy("all");
     await refreshBookings(filterBy);
   }
   
   // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row) {
-
-    getPets(row)
+    console.log("update row = ", row);
+    getPets(row);
     setUpdateMode(true);
     setBookingId(row.bookingId);
     setOwnerId(row.ownerId);
-    setOwnerEmail(row.email);
-    setSelectedPetId(row.petId);
+    setownerName(row.ownerName);
+    setSelectedRoomId(row.roomId);
+    // setOwnerEmail(row.email);   can eliminate? TODO
     setStartDate(row.startDate);
     setEndDate(row.endDate);
     setModalVisible(true);
@@ -211,6 +267,7 @@ function Bookings() {
           }}>
             Add New Reservation
           </Button>
+          
           <span className={"lead font-weight-bold mb-3 mr-2"}>Filter List: </span>
           <FilterRadioButton setFilterBy={setFilterBy}
                              refresh={refreshBookings}
@@ -247,39 +304,65 @@ function Bookings() {
             </Form>
           </div>
           
-          <GenericModal
-              title={(updateMode) ? 'Update a Reservation' : 'Make a Reservation'}
+          <GenericModal       // Add - Update Modal
+              title={(checkInMode) ? 'Check in Reservation' :
+                  ((updateMode) ? 'Update a Reservation' : 'Make a Reservation')}
               visible={modalVisible}
               setVisible={setModalVisible}
-              action={makeReservation}
+              action={checkInMode ? checkIn : makeReservation}
           >
-            <Select
-                id="select-a-pet"
-                label="Select a pet"
-                name="pet"
-                value={selectedPetId}
-                setValue={setSelectedPetId}
-                optionsList={userPets}
-                optionKey="petId"
-                optionValue="name"
-            />
-            <Date
-                id="start-date"
-                label="Checkin Date"
-                name="start-date"
-                value={startDate} // todo: couple this with data that actually gets sent
-                setValue={setStartDate}
-            />
-            <Date
-                id="end-date"
-                label="Checkout Date"
-                name="end-date"
-                value={endDate} // todo: couple this with data that actually gets sent
-                setValue={setEndDate}
-            />
+            <p className={"bookings-modal"}>
+              {(updateMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
+            </p>
+            <p className={"bookings-modal"}>
+              {(checkInMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
+            </p>
+            
+            {checkInMode ?
+                <Select
+                    id="select-a-room"
+                    label="Select room for check in"
+                    name="room"
+                    value={selectedRoomId}
+                    setValue={setSelectedRoomId}
+                    optionsList={availableRooms}
+                    optionKey="roomId"
+                    optionValue="roomId"
+                /> : ''
+            }
+            
+            {checkInMode ? '' :
+                <Select
+                    id="select-a-pet"
+                    label="Select a pet"
+                    name="pet"
+                    value={selectedPetId}
+                    setValue={setSelectedPetId}
+                    optionsList={userPets}
+                    optionKey="petId"
+                    optionValue="name"
+                />}
+            
+            {checkInMode ? '' :
+                <Date
+                    id="start-date"
+                    label="Checkin Date"
+                    name="start-date"
+                    value={startDate} // todo: couple this with data that actually gets sent
+                    setValue={setStartDate}
+                />}
+            
+            {checkInMode ? '' :
+                <Date
+                    id="end-date"
+                    label="Checkout Date"
+                    name="end-date"
+                    value={endDate} // todo: couple this with data that actually gets sent
+                    setValue={setEndDate}
+                />}
           </GenericModal>
           
-          <GenericModal
+          <GenericModal     // Delete Modal
               title={`Are you sure you want to delete booking ${bookingId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
@@ -288,7 +371,7 @@ function Bookings() {
         
         </Container>
         
-        <Container>
+        <Container> // Bookings list display
           
           <h4 className={"mt-5"}>Bookings:</h4>
           <ShowReport title="Bookings"
@@ -297,7 +380,7 @@ function Bookings() {
                       report_rows={bookings}
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}
-                      onCheckIn={checkIn}/>
+                      onCheckIn={makeCheckInModal}/>
         
         </Container>
       
