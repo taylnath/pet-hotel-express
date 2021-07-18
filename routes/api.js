@@ -92,7 +92,7 @@ router.put('/bookings', async (req, res) => {
   try {
     let result = await queryAsync(
         'update Bookings set `startDate`=?, `endDate`=?, `ownerId`=?, `petId`=?, `roomId`=? where `bookingId`=?',
-        [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId, req.body.roomId, req.body.bookingId]
+        [req.body.startDate, req.body.endDate, req.body.ownerId, req.body.petId, req.body.roomId, req.body.bookingId]
     );
     res.json({"success": true, "operation": "update"});
   } catch (e) {

@@ -12,6 +12,7 @@ function dynamicSelect(tables, where, groupBy){
 
   }
   // todo: add multiple where, groupby
+  // todo: allow join type ('left'), and operator ('=', 'is', 'not is')?
   console.log("dynamicSelect = ", sql)
   return sql;
 }

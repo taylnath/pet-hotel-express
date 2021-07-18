@@ -31,10 +31,12 @@ function Bookings() {
   
   // user, data states
   
+  const [modalProps, setModalProps] = useState({type: ''});
   const [filterBy, setFilterBy] = useState('all');
   const [owners, setOwners] = useState([]);
+  const [selectedOwnerId, setSelectedOwnerId] = useState('');   // can eliminate? TODO
   const [ownerId, setOwnerId] = useState('');
-  const [ownerName, setownerName] = useState('')
+  const [ownerName, setOwnerName] = useState('')
   // const [ownerEmail, setOwnerEmail] = useState('');      can elminate? TODO
   const [userPets, setUserPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState('');
@@ -54,10 +56,12 @@ function Bookings() {
   useEffect(() => {
     if (!modalVisible) {
       setUpdateMode(false);
+      setModalProps({type: ''})
       setCheckInMode(false);
-      setOwnerId('')
-      setownerName('')
-      setSelectedRoomId('')
+      setSelectedOwnerId('');
+      setOwnerId('');
+      setOwnerName('');
+      setSelectedRoomId('');
       setSelectedPetId('');
       setStartDate(today);
       setEndDate(tomorrow);
@@ -113,6 +117,17 @@ function Bookings() {
     
     
     await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
+  }
+  
+  // Get Owners for select Owner
+  async function getOwners() {
+    
+    fetch(`${serverURL}/api/getReport?tables=Owners`)
+        .then(res => res.json()).then(res => {
+      res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
+      setSelectedOwnerId(res[0].ownerId || '');
+      return setOwners(res);
+    });
   }
   
   // Get an Owner's Pets
@@ -220,12 +235,45 @@ function Bookings() {
     setUpdateMode(true);
     setBookingId(row.bookingId);
     setOwnerId(row.ownerId);
-    setownerName(row.ownerName);
+    setOwnerName(row.ownerName);
     setSelectedRoomId(row.roomId);
     // setOwnerEmail(row.email);   can eliminate? TODO
     setStartDate(row.startDate);
     setEndDate(row.endDate);
     setModalVisible(true);
+  }
+  
+  // initialize check in modal after clicking row's checkin button
+  // async function makeCheckInModal(row) {
+  //   await getAvailableRooms();
+  //   setCheckInMode(true);
+  //   setModalVisible(true);
+  //   setBookingId(row.bookingId);
+  //   setSelectedRoomId(row.roomId);
+  //   setSelectedPetId(row.petId);
+  //   setOwnerId(row.ownerId);
+  //   setOwnerName(row.ownerName);
+  //   setStartDate(row.startDate);
+  //   setEndDate(row.endDate);
+  // }
+  
+  // initialize the new Select Owner modal after clicking 'New Reservation' button
+  function makeSelectOwnerModal() {
+    getOwners();
+    setModalProps({type: 'select-owner'})
+    setModalVisible(true);
+  }
+  
+  // initialize the new Reservation modal after clicking 'New Reservation' button
+  function makeNewReservationModal() {
+    setModalVisible(true);
+    setModalProps({type: 'new-reservation'});
+    let selected_owner = owners.filter((owner) => owner.ownerId === parseInt(ownerId))
+    console.log("Tucker says: ", selected_owner, selected_owner.email)
+    selected_owner.ownerEmail = selected_owner["email"];
+    console.log("selected_owner = ", selected_owner)
+    setOwnerName(selected_owner.name);
+    getPets(selected_owner);
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
@@ -245,7 +293,7 @@ function Bookings() {
     setSelectedRoomId(row.roomId);
     setSelectedPetId(row.petId);
     setOwnerId(row.ownerId);
-    setownerName(row.ownerName);
+    setOwnerName(row.ownerName);
     setStartDate(row.startDate);
     setEndDate(row.endDate);
   }
@@ -275,7 +323,7 @@ function Bookings() {
           <Button
               className={"mb-3 mt-1 mr-5 shadow"}
               variant="success"
-              onClick={() => {setModalVisible(true);}}
+              onClick={() => {makeSelectOwnerModal();}}
           >
             Add New Reservation
           </Button>
@@ -326,13 +374,19 @@ function Bookings() {
             </Form>
           </div>
           
-          {/*           Modal           */}
+          {/* ---------- Modal ---------- */}
           <GenericModal
               title={(checkInMode) ? 'Check in Reservation' :
                   ((updateMode) ? 'Update a Reservation' : 'Make a Reservation')}
               visible={modalVisible}
               setVisible={setModalVisible}
-              action={checkInMode ? checkIn : makeReservation}
+              action={ () => {
+                if (checkInMode) {
+                  checkIn()
+                }
+                else if (modalProps.type === 'new-reservation') {makeReservation(ownerId)}
+                else if (modalProps.type === 'select-owner') {makeNewReservationModal()}
+              }}
           >
             <p className={"bookings-modal"}>
               {(updateMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
@@ -340,8 +394,26 @@ function Bookings() {
             <p className={"bookings-modal"}>
               {(checkInMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
             </p>
-            
-            {checkInMode ?
+            <p className={"bookings-modal"}>
+              {(modalProps.type === 'new-reservation') ?
+                  'For ' + ownerName + ' (owner ID # ' + ownerId + ')'
+              : ''
+              }
+            </p>
+
+              {modalProps.type === 'select-owner' &&
+                <Select
+                id="select-an-owner"
+                label="Select an Owner"
+                name="owner"
+                value={ownerId}
+                setValue={setOwnerId}
+                optionsList={owners}
+                optionKey="ownerId"
+                optionValue="name"
+                />}
+
+              {checkInMode ?
                 <Select
                     id="select-a-room"
                     label="Select room for check in"
@@ -354,7 +426,7 @@ function Bookings() {
                 /> : ''
             }
             
-            {checkInMode ? '' :
+            {checkInMode || modalProps.type === 'select-owner' ? '' :
                 <Select
                     id="select-a-pet"
                     label="Select a pet"
@@ -366,7 +438,7 @@ function Bookings() {
                     optionValue="name"
                 />}
             
-            {checkInMode ? '' :
+            {checkInMode || modalProps.type === 'select-owner' ? '' :
                 <Date
                     id="start-date"
                     label="Checkin Date"
@@ -375,7 +447,7 @@ function Bookings() {
                     setValue={setStartDate}
                 />}
             
-            {checkInMode ? '' :
+            {checkInMode || modalProps.type === 'select-owner' ? '' :
                 <Date
                     id="end-date"
                     label="Checkout Date"
