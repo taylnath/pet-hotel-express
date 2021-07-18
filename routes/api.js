@@ -187,7 +187,7 @@ router.post('/rooms', async (req, res) => {
 });
 
 router.put('/rooms', async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     let result = await queryAsync(
         'update Rooms set `description`=? where `roomId`=?',
@@ -248,7 +248,7 @@ router.delete('/dynamicDelete/:table/:identifier/:id', async (req, res) => {
   res.json({"success": true});
 })
 
-// generic "just send this query"
+// very uncool generic "just send this query"
 // Allows construction of query statement by front end, during development or
 // for particularly complex queries
 router.get('/simpleQuery', async (req, res) => {
