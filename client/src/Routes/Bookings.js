@@ -47,7 +47,9 @@ function Bookings() {
   const [bookings, setBookings] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
   
-  // -------- effects --------
+  
+  // -------- Effects ----------------------------------------------------------
+  
   // reset modal data when it closes
   useEffect(() => {
     if (!modalVisible) {
@@ -62,7 +64,15 @@ function Bookings() {
       setBookingId('');
     }
   }, [modalVisible])
+ 
+  useEffect(() => refreshBookings(filterBy), []);
   
+  
+  // -------- Actions ----------------------------------------------------------
+  
+  // ----- Helper Functions -----
+  
+  // Refresh ShowReport
   async function refreshBookings(filter) {
     
     // Set 'where' conditions, or set to 1 (so subsequent wheres start with 'and')
@@ -105,12 +115,30 @@ function Bookings() {
     await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
   }
   
-  useEffect(() => refreshBookings(filterBy), []);
+  // Get an Owner's Pets
+  async function getPets(row) {
+    console.log("getting pets");
+    
+    fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
+        .then(res => res.json()).then(res => {
+      setSelectedPetId(row.petId || '');
+      return setUserPets(res);
+    });
+  }
   
-  // -------- actions --------
-  // add / update booking
+  // Get an rooms available for check-in
+  async function getAvailableRooms() {
+    let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
+        "(select roomId from Bookings natural join `Rooms`)"
+    console.log("In getAvailableRooms", simpleQuery)
+    
+    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setAvailableRooms, setError)
+    // .then(res => res.json()).then(res => {
+    console.log("AVAILABLE ROOMS = ", availableRooms)
+    // });
+  }
   
-  // Not working as of 7/15 because I need owner selector / search  TODO
+  // add / update booking    TODO: need an owner selector
   async function makeReservation() {
     let url = serverURL + `/api/bookings`;
     let response;
@@ -138,30 +166,7 @@ function Bookings() {
     console.log('made booking. Got response', body);
     await refreshBookings(filterBy);
   }
-  
-  // Get an Owner's Pets
-  async function getPets(row) {
-    console.log("getting pets");
-    
-    fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
-        .then(res => res.json()).then(res => {
-      setSelectedPetId(row.petId || '');
-      return setUserPets(res);
-    });
-  }
-  
-  // Get an rooms available for check-in
-  async function getAvailableRooms() {
-    let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
-        "(select roomId from Bookings natural join `Rooms`)"
-    console.log("In getAvailableRooms", simpleQuery)
-    
-    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setAvailableRooms, setError)
-    // .then(res => res.json()).then(res => {
-    console.log("AVAILABLE ROOMS = ", availableRooms)
-    // });
-  }
-  
+
   // Delete a Booking
   async function deleteReservation(row) {
     
@@ -174,22 +179,8 @@ function Bookings() {
     
     await refreshBookings(filterBy);
   }
-  
-  // Not working as of 7/15 TODO
-  // Check in or check out a guest
-  async function makeCheckInModal(row) {
-    await getAvailableRooms();
-    setCheckInMode(true);
-    setModalVisible(true);
-    setBookingId(row.bookingId);
-    setSelectedRoomId(row.roomId);
-    setSelectedPetId(row.petId);
-    setOwnerId(row.ownerId);
-    setownerName(row.ownerName);
-    setStartDate(row.startDate);
-    setEndDate(row.endDate);
-  }
-  
+ 
+  // Check in guest   TODO: need check out
   async function checkIn() {
     const url = serverURL + `/api/bookings`;
     let response;
@@ -219,7 +210,9 @@ function Bookings() {
     await refreshBookings(filterBy);
   }
   
-  // -------- ShowReport Interactions --------
+  
+  // --------- Set modal properties and other ----------------------------------
+  
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row) {
     console.log("update row = ", row);
@@ -243,7 +236,21 @@ function Bookings() {
     console.log('deleting row:', row);
   }
   
-  // report headers
+  // initialize check in modal after clicking row's checkin button
+  async function makeCheckInModal(row) {
+    await getAvailableRooms();
+    setCheckInMode(true);
+    setModalVisible(true);
+    setBookingId(row.bookingId);
+    setSelectedRoomId(row.roomId);
+    setSelectedPetId(row.petId);
+    setOwnerId(row.ownerId);
+    setownerName(row.ownerName);
+    setStartDate(row.startDate);
+    setEndDate(row.endDate);
+  }
+  
+  // Set ShowReport headers and attributes
   const headers = {
     bookingId: "Booking Id",
     ownerName: "Owner",
@@ -254,32 +261,44 @@ function Bookings() {
   };
   const attributes = Object.keys(headers);
   
+  
+  // -------- Render page ------------------------------------------------------
+  
   return (
       <div>
         <Container>
           <h1 className={"mt-4 mb-3"}>Manage Bookings</h1>
         </Container>
         
+        {/*        Header Selections        */}
         <Container>
-          
-          <Button className={"mb-3 mt-1 mr-5 shadow"} variant="success" onClick={() => {
-            setModalVisible(true);
-          }}>
+          <Button
+              className={"mb-3 mt-1 mr-5 shadow"}
+              variant="success"
+              onClick={() => {setModalVisible(true);}}
+          >
             Add New Reservation
           </Button>
           
-          <span className={"lead font-weight-bold mb-3 mr-2"}>Filter List: </span>
+          {/*  Filter by today or tomorrow */}
+          <span className={"lead font-weight-bold mb-3 mr-2"}>
+            Filter List:
+          </span>
           <FilterRadioButton setFilterBy={setFilterBy}
                              refresh={refreshBookings}
                              filterBy={filterBy}
           />
+  
+          {/*        Filter by owner       */}
           <div>
             <Form className={"border rounded p-3"}
                   onSubmit={e => {
                     e.preventDefault();
                     return refreshBookings(filterBy, searchFirst, searchLast);
                   }}>
-              <label>Search for bookings by owner</label>
+              <label>
+                Search for bookings by owner
+              </label>
               <Row>
                 <Col>
                   <Form.Control type="text"
@@ -299,12 +318,16 @@ function Bookings() {
               <Button variant="info" type="submit">
                 Search Bookings
               </Button>
-              <Button variant="secondary" className={"ml-5"} onClick={() => refreshBookings(filterBy)}>
-                Clear Search - Show All</Button>
+              <Button variant="secondary"
+                      className={"ml-5"}
+                      onClick={() => refreshBookings(filterBy)}>
+                Clear Search - Show All
+              </Button>
             </Form>
           </div>
           
-          <GenericModal       // Add - Update Modal
+          {/*           Modal           */}
+          <GenericModal
               title={(checkInMode) ? 'Check in Reservation' :
                   ((updateMode) ? 'Update a Reservation' : 'Make a Reservation')}
               visible={modalVisible}
@@ -362,7 +385,7 @@ function Bookings() {
                 />}
           </GenericModal>
           
-          <GenericModal     // Delete Modal
+          <GenericModal
               title={`Are you sure you want to delete booking ${bookingId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
