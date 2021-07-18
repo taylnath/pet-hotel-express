@@ -28,10 +28,11 @@ function Bookings() {
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [checkInMode, setCheckInMode] = useState(false);
+  const [checkOutMode, setCheckOutMode] = useState(false);
   
   // user, data states
   
-  const [modalProps, setModalProps] = useState({type: ''});
+  const [modalProps, setModalProps] = useState({type: '', title: ''});
   const [filterBy, setFilterBy] = useState('all');
   const [owners, setOwners] = useState([]);
   const [selectedOwnerId, setSelectedOwnerId] = useState('');   // can eliminate? TODO
@@ -40,6 +41,7 @@ function Bookings() {
   // const [ownerEmail, setOwnerEmail] = useState('');      can elminate? TODO
   const [userPets, setUserPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState('');
+  const [petName, setPetName] = useState('')
   const [selectedRoomId, setSelectedRoomId] = useState('');
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
@@ -56,13 +58,15 @@ function Bookings() {
   useEffect(() => {
     if (!modalVisible) {
       setUpdateMode(false);
-      setModalProps({type: ''})
+      setModalProps({type: '', title: ''})
       setCheckInMode(false);
+      setCheckOutMode(false);
       setSelectedOwnerId('');
       setOwnerId('');
       setOwnerName('');
       setSelectedRoomId('');
       setSelectedPetId('');
+      setPetName('');
       setStartDate(today);
       setEndDate(tomorrow);
       setBookingId('');
@@ -104,7 +108,6 @@ function Bookings() {
         "left join `Pets` on `Pets`.`petId` = `Bookings`.`petId` left join " +
         "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` " + where + ";"
     
-    console.log(simpleQuery)
     
     // Clear search criteria so they don't interfere with future refreshes
     setSearchFirst('');
@@ -125,18 +128,18 @@ function Bookings() {
     fetch(`${serverURL}/api/getReport?tables=Owners`)
         .then(res => res.json()).then(res => {
       res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
-      setSelectedOwnerId(res[0].ownerId || '');
+      setOwnerId(res[0].ownerId || '');
       return setOwners(res);
     });
   }
   
   // Get an Owner's Pets
   async function getPets(row) {
-    console.log("getting pets");
     
     fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
         .then(res => res.json()).then(res => {
-      setSelectedPetId(row.petId || '');
+      setSelectedPetId(res.length ? row.petId || res[0].petId : '');
+
       return setUserPets(res);
     });
   }
@@ -145,12 +148,13 @@ function Bookings() {
   async function getAvailableRooms() {
     let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
         "(select roomId from Bookings natural join `Rooms`)"
-    console.log("In getAvailableRooms", simpleQuery)
     
-    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setAvailableRooms, setError)
-    // .then(res => res.json()).then(res => {
-    console.log("AVAILABLE ROOMS = ", availableRooms)
-    // });
+    fetch(`${serverURL}/api/simpleQuery?query=` + simpleQuery)
+     .then(res => res.json()).then(res => {
+    setSelectedRoomId(res[0] ? res[0].roomId : '');
+
+    return setAvailableRooms(res)
+    });
   }
   
   // add / update booking    TODO: need an owner selector
@@ -178,7 +182,6 @@ function Bookings() {
       response = await postState(url, data);
     }
     let body = await response.json();
-    console.log('made booking. Got response', body);
     await refreshBookings(filterBy);
   }
 
@@ -195,21 +198,21 @@ function Bookings() {
     await refreshBookings(filterBy);
   }
  
-  // Check in guest   TODO: need check out
-  async function checkIn() {
+  // Check in guest
+  async function checkIn(co_room) {
     const url = serverURL + `/api/bookings`;
     let response;
-    console.log("here again: ", selectedPetId, typeof selectedPetId, selectedRoomId, typeof selectedRoomId)
-    let roomId = parseInt(selectedRoomId);
+    let room_id;
+    checkOutMode ? room_id = null : room_id = selectedRoomId;
+    
     const data = {
       startDate: startDate,
       endDate: endDate,
       ownerId: ownerId,
       petId: selectedPetId,
       bookingId: bookingId,
-      roomId: roomId
+      roomId: room_id
     };
-    
     
     response = await fetch(url, {
       method: 'PUT',
@@ -220,7 +223,6 @@ function Bookings() {
     });
     
     let body = await response.json();
-    console.log('checked in. Got response', body);
     setFilterBy("all");
     await refreshBookings(filterBy);
   }
@@ -230,7 +232,7 @@ function Bookings() {
   
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row) {
-    console.log("update row = ", row);
+    modalProps.title = "Update Reservation"
     getPets(row);
     setUpdateMode(true);
     setBookingId(row.bookingId);
@@ -260,37 +262,44 @@ function Bookings() {
   // initialize the new Select Owner modal after clicking 'New Reservation' button
   function makeSelectOwnerModal() {
     getOwners();
-    setModalProps({type: 'select-owner'})
+    modalProps.type = 'select-owner';
+    modalProps.title = 'New Reservation'
     setModalVisible(true);
   }
   
   // initialize the new Reservation modal after clicking 'New Reservation' button
   function makeNewReservationModal() {
     setModalVisible(true);
-    setModalProps({type: 'new-reservation'});
+    modalProps.type = 'new-reservation';
     let selected_owner = owners.filter((owner) => owner.ownerId === parseInt(ownerId))
-    console.log("Tucker says: ", selected_owner, selected_owner.email)
-    selected_owner.ownerEmail = selected_owner["email"];
-    console.log("selected_owner = ", selected_owner)
-    setOwnerName(selected_owner.name);
-    getPets(selected_owner);
+    selected_owner[0].ownerEmail = selected_owner[0].email;
+    setOwnerName(selected_owner[0].name);
+    getPets(selected_owner[0]);
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
   function confirmDelete(row) {
-    console.log("row = ", row)
     setBookingId(row.bookingId);
     setConfirmDeleteVisible(true);
-    console.log('deleting row:', row);
   }
   
   // initialize check in modal after clicking row's checkin button
   async function makeCheckInModal(row) {
-    await getAvailableRooms();
-    setCheckInMode(true);
+    if (row.roomId) {
+      modalProps.title = ""
+      setCheckOutMode(true);
+      setCheckInMode(false);
+      setSelectedRoomId(row.roomId);
+    } else {
+      modalProps.title = ""
+      setCheckInMode(true);
+      setCheckOutMode(false);
+      await getAvailableRooms();
+    }
     setModalVisible(true);
     setBookingId(row.bookingId);
-    setSelectedRoomId(row.roomId);
+    // setSelectedRoomId(row.roomId);
+    setPetName(row.petName);
     setSelectedPetId(row.petId);
     setOwnerId(row.ownerId);
     setOwnerName(row.ownerName);
@@ -376,15 +385,16 @@ function Bookings() {
           
           {/* ---------- Modal ---------- */}
           <GenericModal
-              title={(checkInMode) ? 'Check in Reservation' :
-                  ((updateMode) ? 'Update a Reservation' : 'Make a Reservation')}
+              title={modalProps.title}
               visible={modalVisible}
               setVisible={setModalVisible}
               action={ () => {
-                if (checkInMode) {
-                  checkIn()
+                if (checkInMode || checkOutMode) {
+                  checkOutMode ? checkIn(null) : checkIn()
                 }
-                else if (modalProps.type === 'new-reservation') {makeReservation(ownerId)}
+                else if (modalProps.type === 'new-reservation' || updateMode) {
+                  makeReservation(ownerId)
+                }
                 else if (modalProps.type === 'select-owner') {makeNewReservationModal()}
               }}
           >
@@ -392,12 +402,24 @@ function Bookings() {
               {(updateMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
             </p>
             <p className={"bookings-modal"}>
-              {(checkInMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
+              {(checkInMode) ?
+                  'Check in ' + petName + ' for ' + ownerName + ' (Booking ID '
+                  + bookingId + ')' : ''}
+            </p>
+            <p className={"bookings-modal"}>
+              {(checkOutMode) ?
+                  'Check out ' + petName + ' from Room ' + selectedRoomId : ''}
             </p>
             <p className={"bookings-modal"}>
               {(modalProps.type === 'new-reservation') ?
                   'For ' + ownerName + ' (owner ID # ' + ownerId + ')'
               : ''
+              }
+            </p>
+            <p className={"bookings-modal"}>
+              {(modalProps.type === 'select-owner') ?
+                  'Select an owner for this reservation'
+                  : ''
               }
             </p>
 
@@ -426,7 +448,7 @@ function Bookings() {
                 /> : ''
             }
             
-            {checkInMode || modalProps.type === 'select-owner' ? '' :
+            {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
                 <Select
                     id="select-a-pet"
                     label="Select a pet"
@@ -438,7 +460,7 @@ function Bookings() {
                     optionValue="name"
                 />}
             
-            {checkInMode || modalProps.type === 'select-owner' ? '' :
+            {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
                 <Date
                     id="start-date"
                     label="Checkin Date"
@@ -447,7 +469,7 @@ function Bookings() {
                     setValue={setStartDate}
                 />}
             
-            {checkInMode || modalProps.type === 'select-owner' ? '' :
+            {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
                 <Date
                     id="end-date"
                     label="Checkout Date"
@@ -475,7 +497,8 @@ function Bookings() {
                       report_rows={bookings}
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}
-                      onCheckIn={makeCheckInModal}/>
+                      onCheckIn={makeCheckInModal}
+          />
         
         </Container>
       

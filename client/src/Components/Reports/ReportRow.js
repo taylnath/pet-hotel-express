@@ -55,11 +55,12 @@ const ReportRow = (props) => {
                                          // setLoading(!isLoading);
                                          props.onCheckIn(props.row);
                                        }}
-                                                variant={props.checkedIn ?
+                                                variant={props.row.roomId ?
                                                     "warning" : "info"}
                                                 size={"sm"}
                                                 disabled={isLoading}>
-                                         {isLoading? "Processing ..." : "Check In"}
+                                         {isLoading? "Processing ..." :
+                                             (props.row.roomId ? "Check Out" : "Check In")}
                                        </Button>)}
           />}
           
