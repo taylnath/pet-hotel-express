@@ -15,4 +15,5 @@ function sqlDate(stringDate){
   return result;
 }
 
+// todo: fix bug - sqlDate currently takes '2021-08-01' and outputs '2021-07-32'
 module.exports = sqlDate;
