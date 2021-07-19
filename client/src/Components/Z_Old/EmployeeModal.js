@@ -53,7 +53,6 @@ function EmployeeModal(props){
 export default EmployeeModal;
 
 // import { useState, useEffect } from 'react';
-// import settings from '../appSettings';
 // import fetchState from '../DataAccess/fetchState';
 // import postState from '../DataAccess/postState';
 // import {
@@ -61,8 +60,6 @@ export default EmployeeModal;
 //   Form
 // } from 'react-bootstrap';
 // import { propTypes } from 'react-bootstrap/esm/Image';
-// const serverURL = settings.serverURL;
-// console.log(serverURL);
 //
 // // adapted from https://reactjs.org/docs/faq-ajax.html
 // function EmployeeModal(props) {
@@ -76,7 +73,7 @@ export default EmployeeModal;
 //     e.preventDefault();
 //     props.setShowModal(false);
 //
-//     const url = serverURL + `/api/addEmployee`;
+//     const url = `/api/addEmployee`;
 //     console.log("Loaded?", loaded);
 //     console.log("Error?", error);
 //     console.log("new employee", firstName, lastName);

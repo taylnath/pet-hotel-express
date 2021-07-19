@@ -1,5 +1,4 @@
 import {Container, Button, Form, Row, Col} from "react-bootstrap";
-import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import postState from "../DataAccess/postState";
@@ -10,8 +9,6 @@ import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
-
-const serverURL = settings.serverURL;
 
 // Bookings
 //page for managers to manage Bookings
@@ -119,13 +116,13 @@ function Bookings() {
     );
     
     
-    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
+    await fetchState(`/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
   }
   
   // Get Owners for select Owner
   async function getOwners() {
     
-    fetch(`${serverURL}/api/getReport?tables=Owners`)
+    fetch(`/api/getReport?tables=Owners`)
         .then(res => res.json()).then(res => {
       res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
       setOwnerId(res[0].ownerId || '');
@@ -136,7 +133,7 @@ function Bookings() {
   // Get an Owner's Pets
   async function getPets(row) {
     
-    fetch(`${serverURL}/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
+    fetch(`/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
         .then(res => res.json()).then(res => {
       setSelectedPetId(res.length ? row.petId || res[0].petId : '');
 
@@ -149,7 +146,7 @@ function Bookings() {
     let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
         "(select roomId from Bookings natural join `Rooms`)"
     
-    fetch(`${serverURL}/api/simpleQuery?query=` + simpleQuery)
+    fetch(`/api/simpleQuery?query=` + simpleQuery)
      .then(res => res.json()).then(res => {
     setSelectedRoomId(res[0] ? res[0].roomId : '');
 
@@ -159,7 +156,7 @@ function Bookings() {
   
   // add / update booking    TODO: need an owner selector
   async function makeReservation() {
-    let url = serverURL + `/api/bookings`;
+    let url = `/api/bookings`;
     let response;
     const data = {
       startDate: startDate,
@@ -178,7 +175,7 @@ function Bookings() {
         body: JSON.stringify(data)
       });
     } else {
-      url = serverURL + `/api/reservations`;
+      url = `/api/reservations`;
       response = await postState(url, data);
     }
     let body = await response.json();
@@ -188,7 +185,7 @@ function Bookings() {
   // Delete a Booking
   async function deleteReservation(row) {
     
-    let result = await fetch(`${serverURL}/api/reservations/${bookingId}`, {
+    let result = await fetch(`/api/reservations/${bookingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -200,7 +197,7 @@ function Bookings() {
  
   // Check in guest
   async function checkIn(co_room) {
-    const url = serverURL + `/api/bookings`;
+    const url = `/api/bookings`;
     let response;
     let room_id;
     checkOutMode ? room_id = null : room_id = selectedRoomId;

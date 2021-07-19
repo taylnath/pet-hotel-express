@@ -1,12 +1,10 @@
 import {Container, Button} from "react-bootstrap";
-import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import postState from "../DataAccess/postState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
-const serverURL = settings.serverURL;
 
 // Employees
 //page for managers to manage Employees
@@ -43,14 +41,14 @@ function Employees() {
   }, [modalVisible, confirmDeleteVisible])
   
   async function refreshEmployees() {
-    fetchState(`${serverURL}/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
+    fetchState(`/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
   }
   
   // --- actions ---
   // add / update employee
 
   async function updateEmployee() {
-    const url = serverURL + '/api/employees';
+    const url = '/api/employees';
     let response;
     const data = {
       firstName: firstName,
@@ -73,7 +71,7 @@ function Employees() {
   }
   
   async function deleteEmployee(){
-    let result = await fetch(`${serverURL}/api/employees/${employeeId}`, {
+    let result = await fetch(`/api/employees/${employeeId}`, {
       method: 'DELETE',
       headers: {'Content-type': 'application/json'}
         }).then(res => res.json());

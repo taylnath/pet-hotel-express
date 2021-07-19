@@ -1,5 +1,4 @@
 import {Container, Button} from "react-bootstrap";
-import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import postState from "../DataAccess/postState";
@@ -7,7 +6,6 @@ import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
-const serverURL = settings.serverURL;
 
 // Pets
 //page for managers to manage Pets
@@ -45,7 +43,7 @@ function Pets() {
   }, [modalVisible])
 
   useEffect(async () => {
-    await fetchState(`${serverURL}/api/getReport?tables=Pets`, setIsLoaded, setPets, setError);
+    await fetchState(`/api/getReport?tables=Pets`, setIsLoaded, setPets, setError);
   }, [])
   
   

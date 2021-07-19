@@ -1,12 +1,10 @@
 import {Container, Button} from "react-bootstrap";
-import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import postState from "../DataAccess/postState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
-const serverURL = settings.serverURL;
 
 // Rooms
 //page for managers to manage Rooms
@@ -42,13 +40,13 @@ function Rooms() {
   
   async function refreshRooms() {
     console.log("in Refresh rooms");     // TODO
-    let url = serverURL + '/api/simpleQuery'
+    let url = '/api/simpleQuery'
     let simpleQuery = "select `Rooms`.`roomId` as roomId, `Rooms`.`description` " +
         "as description, `Pets`.`name` as petName from `Rooms` left join" +
         " `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
         "`Pets` on `Pets`.`petId` = `Bookings`.`petId`;"
   
-    await fetchState(`${serverURL}/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setRooms, setError);
+    await fetchState(`/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setRooms, setError);
 
     // let response;
     // const data = {simpleQuery: simpleQuery};
@@ -56,14 +54,14 @@ function Rooms() {
     // let body = await response.json()
     // console.log('Rooms Refreshed.  Got response', body)
     
-    // await fetchState(`${serverURL}/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
+    // await fetchState(`/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
   }
   
   // -------- actions --------
   // add / update room
   
   async function updateRoom() {
-    const url = serverURL + '/api/rooms';
+    const url = '/api/rooms';
     let response;
     const data = {
       description: description
@@ -84,7 +82,7 @@ function Rooms() {
   }
   
   async function deleteRoom(){
-    let result = await fetch(`${serverURL}/api/rooms/${roomId}`, {
+    let result = await fetch(`/api/rooms/${roomId}`, {
       method: 'DELETE',
       headers: {'Content-type': 'application/json'}
     }).then(res => res.json());

@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import settings from '../appSettings';
 import {Button, Container} from 'react-bootstrap';
 import fetchState from '../DataAccess/fetchState';
 import ShowReport from '../Components/Reports/ShowReport';
@@ -8,7 +7,6 @@ import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
-const serverURL = settings.serverURL;
 
 // Reservations
 // Page for owners to make reservations
@@ -49,7 +47,7 @@ function Reservations(props) {
     console.log("getting pets");
     if (props.user && props.user.ownerId && props.user.ownerId != null) {
       console.log("found pets for user");
-      fetch(`${serverURL}/api/ownerPets/${props.user.email}`) // todo: change this to id
+      fetch(`/api/ownerPets/${props.user.email}`) // todo: change this to id
         .then(res => res.json()).then(res => {
           setSelectedPetId((res && res.length)? res[0].petId : '');
           return setUserPets(res);
@@ -63,7 +61,7 @@ function Reservations(props) {
 
   // refresh reservations on owner change and visible modal change
   async function refreshReservations(){
-    fetchState(`${serverURL}/api/getReport?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
+    fetchState(`/api/getReport?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
     console.log('updated reservations');
   };
   useEffect(() => refreshReservations(), [props.user.ownerId, modalVisible]);
@@ -71,7 +69,7 @@ function Reservations(props) {
   // --- actions ---
   // make a new reservation or update one, depending on mode
   async function makeReservation() {
-    const url = serverURL + `/api/reservations`;
+    const url = `/api/reservations`;
     let response;
     const data = {
       startDate: startDate,
@@ -99,7 +97,7 @@ function Reservations(props) {
   async function deleteReservation(row){
     console.log(row);
     // TODO: get confirmation first
-    let result = await fetch(`${serverURL}/api/reservations/${row.bookingId}`, {
+    let result = await fetch(`/api/reservations/${row.bookingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

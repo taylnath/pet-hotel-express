@@ -1,12 +1,10 @@
 import {Container, Button} from "react-bootstrap";
-import settings from "../appSettings";
 import {useEffect, useState} from "react";
 import fetchState from "../DataAccess/fetchState";
 import postState from "../DataAccess/postState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
-const serverURL = settings.serverURL;
 
 // Owners
 //page for managers to manage Owners
@@ -43,7 +41,7 @@ function Owners() {
   }, [modalVisible])
 
   useEffect(async () => {
-    await fetchState(`${serverURL}/api/getReport?tables=Owners`, setIsLoaded, setOwners, setError);
+    await fetchState(`/api/getReport?tables=Owners`, setIsLoaded, setOwners, setError);
   }, [])
   
   

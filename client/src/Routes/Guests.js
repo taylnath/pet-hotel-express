@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import settings from '../appSettings';
 import {Button, Container, Accordion, Card} from 'react-bootstrap';
 import fetchState from '../DataAccess/fetchState';
 import ShowReport from '../Components/Reports/ShowReport';
@@ -8,7 +7,6 @@ import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
-const serverURL = settings.serverURL;
 
 // Guests
 // Page for employees to add/delete owners' pets to change their pets
@@ -30,7 +28,7 @@ function Guests(props) {
   }, [modalVisible]);
 
   useEffect(async () => {
-    let pets = await fetch(`${serverURL}/api/pets`).then(res => res.json());
+    let pets = await fetch(`/api/pets`).then(res => res.json());
     console.log("got all pets:", pets);
     setAllPets(pets);
     setSelectedPetId((pets.length > 0) ? pets[0].id : '');
@@ -38,12 +36,12 @@ function Guests(props) {
 
   async function refreshOwnerPets(){
     let ownerPetsList = [];
-    let owners = await fetch(`${serverURL}/api/owners`)
+    let owners = await fetch(`/api/owners`)
       .then(res => (res.ok)? res.json() : Promise.reject())
       .catch(err => console.log(err));
     console.log(owners);
     for (let owner of owners){
-      let pets = await fetch(`${serverURL}/api/ownerPets/${owner.email}`) // todo: change this to owner.ownerId
+      let pets = await fetch(`/api/ownerPets/${owner.email}`) // todo: change this to owner.ownerId
         .then(res => (res.ok)? res.json() : Promise.reject())
         .catch(err => console.log(err));
       ownerPetsList.push({

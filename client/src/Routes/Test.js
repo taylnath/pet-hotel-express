@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
-import settings from '../appSettings';
 import fetchState from '../DataAccess/fetchState';
 import GenericModal from '../Components/GenericModal';
-const serverURL = settings.serverURL;
-console.log(serverURL);
 
 // adapted from https://reactjs.org/docs/faq-ajax.html
 function Test() {
@@ -13,7 +10,7 @@ function Test() {
   const [testResult, setTestResult] = useState(''); // state for reading text
   const [dataResult, setDataResult] = useState({}); // state for reading json from database
   useEffect(() => {
-    fetch(`${serverURL}/api/testText`)
+    fetch(`/api/testText`)
       .then(res => res.text())
       .then(
         (result) => {
@@ -25,7 +22,7 @@ function Test() {
           setError(error);
         }
       );
-    fetchState(`${serverURL}/api/testData`, setIsDataLoaded, setDataResult, setError);
+    fetchState(`/api/testData`, setIsDataLoaded, setDataResult, setError);
   }, []);
 
   const [modalVisible, setModalVisible] = useState(false);
