@@ -43,7 +43,7 @@ function Pets() {
   }, [modalVisible])
 
   useEffect(async () => {
-    await fetchState(`/api/getReport?tables=Pets`, setIsLoaded, setPets, setError);
+    await fetchState(`/api/dynamic?tables=Pets`, setIsLoaded, setPets, setError);
   }, [])
   
   

@@ -41,7 +41,7 @@ function Employees() {
   }, [modalVisible, confirmDeleteVisible])
   
   async function refreshEmployees() {
-    fetchState(`/api/getReport?tables=Employees`, setIsLoaded, setEmployees, setError);
+    fetchState(`/api/dynamic?tables=Employees`, setIsLoaded, setEmployees, setError);
   }
   
   // --- actions ---

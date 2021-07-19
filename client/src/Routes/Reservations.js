@@ -61,7 +61,7 @@ function Reservations(props) {
 
   // refresh reservations on owner change and visible modal change
   async function refreshReservations(){
-    fetchState(`/api/getReport?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
+    fetchState(`/api/dynamic?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
     console.log('updated reservations');
   };
   useEffect(() => refreshReservations(), [props.user.ownerId, modalVisible]);

@@ -122,7 +122,7 @@ function Bookings() {
   // Get Owners for select Owner
   async function getOwners() {
     
-    fetch(`/api/getReport?tables=Owners`)
+    fetch(`/api/dynamic?tables=Owners`)
         .then(res => res.json()).then(res => {
       res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
       setOwnerId(res[0].ownerId || '');

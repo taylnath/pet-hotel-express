@@ -28,7 +28,7 @@ function Guests(props) {
   }, [modalVisible]);
 
   useEffect(async () => {
-    let pets = await fetch(`/api/pets`).then(res => res.json());
+    let pets = await fetch(`/api/dynamic?tables=Pets`).then(res => res.json());
     console.log("got all pets:", pets);
     setAllPets(pets);
     setSelectedPetId((pets.length > 0) ? pets[0].id : '');
@@ -36,7 +36,7 @@ function Guests(props) {
 
   async function refreshOwnerPets(){
     let ownerPetsList = [];
-    let owners = await fetch(`/api/owners`)
+    let owners = await fetch(`/api/dynamic?tables=Owners`)
       .then(res => (res.ok)? res.json() : Promise.reject())
       .catch(err => console.log(err));
     console.log(owners);

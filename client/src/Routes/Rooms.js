@@ -54,7 +54,7 @@ function Rooms() {
     // let body = await response.json()
     // console.log('Rooms Refreshed.  Got response', body)
     
-    // await fetchState(`/api/getReport?tables=Rooms`, setIsLoaded, setRooms, setError);
+    // await fetchState(`/api/dynamic?tables=Rooms`, setIsLoaded, setRooms, setError);
   }
   
   // -------- actions --------

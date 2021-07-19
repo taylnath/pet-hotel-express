@@ -13,11 +13,11 @@ function dynamicSelect(tables, where, groupBy){
   }
   // todo: add multiple where, groupby
   // todo: allow join type ('left'), and operator ('=', 'is', 'not is')?
-  console.log("dynamicSelect = ", sql)
+  // console.log("dynamicSelect = ", sql)
   return sql;
 }
 
-function dynamicPost(table, fieldValueObject){
+function dynamicInsert(table, fieldValueObject){
   let fieldDescHelper = Object.entries(fieldValueObject).slice(1).map(x => '??, ').join('') + '??';
   let fieldValueHelper = Object.entries(fieldValueObject).slice(1).map(x => '?, ').join('') + '?';
   let sql = 'insert into ??  (' + fieldDescHelper + ') values (' + fieldValueHelper + ')';
@@ -25,7 +25,7 @@ function dynamicPost(table, fieldValueObject){
   let fieldValues = [];
   Object.keys(fieldValueObject).forEach(x => fieldValues = [...fieldValues, x]);
   Object.values(fieldValueObject).forEach(x => fieldValues = [...fieldValues, x]);
-  console.log(fieldValues);
+  // console.log(fieldValues);
   sql = mysql.format(sql, [table, ...fieldKeys, ...fieldValues]);
 
   return sql;
@@ -43,13 +43,13 @@ function dynamicUpdate(table, fieldValueObject, identifierName, id){
 
 // console.log(dynamicUpdate('Pets', {name: "Art", preferences: "Something here", type: "dog"}, "petId", "2"));
 // console.log(dynamicUpdate('Pets', {name: "Art"}, "petId", "2"));
-console.log(dynamicPost('Pets', {name: "Art", preferences: "Something here", type: "dog"}));
-console.log(dynamicPost('Pets', {name: "Art"}));
+// console.log(dynamicInsert('Pets', {name: "Art", preferences: "Something here", type: "dog"}));
+// console.log(dynamicInsert('Pets', {name: "Art"}));
 // console.log(dynamicSelect('Bookings,Pets,Groups'));
 // console.log(dynamicSelect('Bookings', 'petId,1'));
 
 module.exports = {
   dynamicSelect: dynamicSelect,
   dynamicUpdate: dynamicUpdate,
-  dynamicPost: dynamicPost
+  dynamicInsert: dynamicInsert
 }

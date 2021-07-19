@@ -41,7 +41,7 @@ function Owners() {
   }, [modalVisible])
 
   useEffect(async () => {
-    await fetchState(`/api/getReport?tables=Owners`, setIsLoaded, setOwners, setError);
+    await fetchState(`/api/dynamic?tables=Owners`, setIsLoaded, setOwners, setError);
   }, [])
   
   
