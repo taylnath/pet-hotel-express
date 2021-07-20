@@ -6,10 +6,8 @@ import { useState, useEffect } from 'react';
 import { ReactComponent as Logo } from './images/fabicon.svg';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
-import settings from "../appSettings";
 import Login  from './Login'
 import superUser from '../Models/superUser';
-const serverURL = settings.serverURL;
 
 function CustomNavbar(props) {
   

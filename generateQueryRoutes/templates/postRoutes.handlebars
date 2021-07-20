@@ -1,0 +1,13 @@
+router.post('/', async (req, res) => {
+  try {
+    await queryAsync(
+      "{{{ query }}}",
+      {{{ params }}}
+    );
+    res.json({"success": true, "operation": "insert"});
+  } catch (e) {
+    console.error(e);
+    res.json({"success": false});
+  }
+});
+

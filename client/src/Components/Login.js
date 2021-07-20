@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import settings from '../appSettings';
 import fetchState from '../DataAccess/fetchState';
 import {
   Button, Modal, Container, Row, Col
 } from 'react-bootstrap';
 import superUser from '../Models/superUser';
-const serverURL = settings.serverURL;
-console.log(serverURL);
 
 // adapted from https://reactjs.org/docs/faq-ajax.html
 function Login(props) {
@@ -15,7 +12,7 @@ function Login(props) {
     props.setLoginVisible(false);
     
     // Could use fetchState if we want a "loading" screen later
-    const fetchURL = serverURL + `/api/logIn?type=${props.user.type}&id=${
+    const fetchURL = `/api/logIn?type=${props.user.type}&id=${
       (props.user.type == "owner") ? 
       props.user.email :
       props.user.employeeId

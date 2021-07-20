@@ -3,9 +3,15 @@ const path = require('path');
 const queryAsync = require('./database/dbcon')
 const fs = require('fs');
 const { query } = require('express');
-const apiRoutes = require('./routes/api');
+const apiRoutes = require('./routes/api/api');
+const dynamicRoutes = require('./routes/api/dynamic');
 const testRoutes = require('./routes/testing');
 const coffeeRoutes = require('./routes/coffee');
+const bookingsRoutes = require('./routes/api/bookings');
+const employeesRoutes = require('./routes/api/employees');
+const reservationsRoutes = require('./routes/api/reservations');
+const roomsRoutes = require('./routes/api/rooms');
+
 const cors = require('cors'); // maybe we can take this out later
 
 const app = express();
@@ -35,7 +41,12 @@ testDB();
 // use routes
 app.use('/api', apiRoutes);
 app.use('/api', testRoutes);
+app.use('/api/dynamic', dynamicRoutes);
 app.use('/coffee', coffeeRoutes);
+app.use('/api/bookings', bookingsRoutes);
+app.use('/api/employees', employeesRoutes);
+app.use('/api/reservations', reservationsRoutes);
+app.use('/api/rooms', roomsRoutes);
 
 // server static assets if in production
 console.log("running in", process.env.NODE_ENV);

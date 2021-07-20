@@ -1,0 +1,9 @@
+router.delete('/:id', async (req, res) => {
+  try {
+    await queryAsync("{{{ query }}}", {{{ params }}});
+    res.json({"success": true});
+  } catch (e) {
+    console.log(e);
+    res.json({"success": false});
+  }
+});

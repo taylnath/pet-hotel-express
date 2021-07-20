@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import settings from '../appSettings';
 import {Button, Container} from 'react-bootstrap';
 import fetchState from '../DataAccess/fetchState';
 import ShowReport from '../Components/Reports/ShowReport';
@@ -8,7 +7,6 @@ import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
-const serverURL = settings.serverURL;
 
 // OwnerProfile
 // Page for owners to change their pets
@@ -58,7 +56,7 @@ function OwnerProfile(props) {
     console.log("getting pets");
     if (props.user && props.user.ownerId && props.user.ownerId != null) {
       console.log("found pets for user");
-      await fetchState(`${serverURL}/api/ownerPets/${props.user.email}`, setIsLoaded, setUserPets, setError); // todo: change this to id
+      await fetchState(`/api/ownerPets/${props.user.email}`, setIsLoaded, setUserPets, setError); // todo: change this to id
     } else {
       console.log("no logged in user to find pets for");
       setUserPets([]);
@@ -73,7 +71,7 @@ function OwnerProfile(props) {
   // --- actions ---
   // add or update a pet, depending on mode
   async function makeReservation() {
-    const url = serverURL + `/api/pets`;
+    const url = `/api/pets`;
     let response;
     const data = {
       startDate: startDate,
@@ -100,7 +98,7 @@ function OwnerProfile(props) {
   async function deleteReservation(row){
     console.log(row);
     // TODO: get confirmation first
-    let result = await fetch(`${serverURL}/api/reservations/${row.bookingId}`, {
+    let result = await fetch(`/api/reservations/${row.bookingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

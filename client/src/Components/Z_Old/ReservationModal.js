@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import settings from '../../appSettings';
 import fetchState from '../../DataAccess/fetchState';
 import postState from '../../DataAccess/postState';
 import {
@@ -8,8 +7,6 @@ import {
 } from 'react-bootstrap';
 import { propTypes } from 'react-bootstrap/esm/Image';
 import {today, tomorrow} from '../../Helpers/dateHelpers';
-const serverURL = settings.serverURL;
-console.log(serverURL);
 
 // adapted from https://reactjs.org/docs/faq-ajax.html
 function ReservationModal(props) {
@@ -23,7 +20,7 @@ function ReservationModal(props) {
     e.preventDefault();
     props.setLoginVisible(false);
     
-    const url = serverURL + `/api/reservations`;
+    const url = `/api/reservations`;
     console.log("Loaded?", loaded);
     console.log("Error?", error);
     console.log("selected pet", props.selectedPetId);
