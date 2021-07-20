@@ -1,11 +1,11 @@
-import {Container, Button} from "react-bootstrap";
+import {Container, Button, Spinner} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import fetchState from "../DataAccess/fetchState";
-import postState from "../DataAccess/postState";
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
+import LoadingStatus from '../Components/LoadingStatus';
 
 // Pets
 //page for managers to manage Pets
@@ -13,9 +13,11 @@ import Select from '../Components/Forms/Select';
 
 function Pets() {
   // -------- state --------
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
   
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
@@ -28,23 +30,25 @@ function Pets() {
   const [petId, setPetId] = useState('');
   const [name, setName] = useState('');
   const [preferences, setPreferences] = useState('');
-  const [type, setType] = useState('');
+  const [type, setType] = useState('cat');
   
   // -------- effects --------
   // reset modal data when it closes
-  useEffect(() => {
-    if (!modalVisible) {
+  useEffect(async () => {
+    if (!modalVisible && !confirmDeleteVisible) {
       setUpdateMode(false);
       setName('');
       setPreferences('');
       setPetId('');
-      setType('');
+      setType('cat');
     }
-  }, [modalVisible])
+  }, [modalVisible, confirmDeleteVisible])
 
-  useEffect(async () => {
-    await fetchState(`/api/dynamic?tables=Pets`, setIsLoaded, setPets, setError);
-  }, [])
+  useEffect(async () => await refreshPets(), [])
+
+  async function refreshPets() {
+      await getState(`/api/dynamic?tables=Pets`, setPets, setLoadingStatus);
+  }
   
   
   // -------- ShowReport Interactions --------
@@ -69,10 +73,38 @@ function Pets() {
     console.log('deleting row:', row);
   }
 
-  const refreshPets = () => {};
-  const updatePet = () => {};
-  const deletePet = () => {};
-  
+  // todo: this should be called addOrUpdatePet
+  async function updatePet() {
+    const url = '/api/dynamic';
+    let response;
+    const data = {
+      table: 'Pets',
+      fieldValues: {
+        name: name,
+        preferences: preferences,
+        type: type
+      }
+    };
+    if (updateMode) {
+      // todo: combine identifier and id into an object
+      data.identifier = 'petId';
+      data.id = petId;
+      response = await putState(url, data, setLoadingStatus);
+    } else {
+      response = await postState(url, data, setLoadingStatus);
+    }
+    let body = await response.json();
+    console.log('Pet updated. Got response', body);
+    await refreshPets();
+  }
+
+  async function deletePet(){
+    let result = await deleteState(`/api/dynamic/Pets/petId/${petId}`, setLoadingStatus)
+      .then(res => res.json());
+    console.log(result);
+    setPetId('');
+    await refreshPets();
+  }
   // report headers
   const headers = {
     petId: "Id",
@@ -93,6 +125,8 @@ function Pets() {
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Pet
           </Button>
+
+          <LoadingStatus status={loadingStatus}/>
           
           <GenericModal
               title={(updateMode)? 'Update Pet' : 'Add a Pet'}
