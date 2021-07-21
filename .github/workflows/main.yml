@@ -32,6 +32,10 @@ jobs:
         run: ls
       - name: copy files
         run: |
-          cp -r {server.js, routes, database} ~/cs340-project
+          cp -r ./{server.js, routes, database} ~/cs340-project
           cp -r ./client/build ~/cs340-project/client
+          cd ~/cs340-project
+          forever stopall
+          forever start server.js
+          
 
