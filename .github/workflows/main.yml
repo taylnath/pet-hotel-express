@@ -22,10 +22,10 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v2
-      - name: setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.3.0'
+      #- name: setup node
+      #  uses: actions/setup-node@v2
+      #  with:
+      #    node-version: '16.3.0'
       - name: install dependencies
         run: npm install
       - name: generate build
@@ -34,51 +34,8 @@ jobs:
           CI: false
       - name: look around
         run: ls
-      - name: share artifact (?)
-        uses: actions/upload-artifact@v2
-        with:
-          name: the-build
-          path: .
-    
-  deploy:
-    runs-on: self-hosted
-    needs: build
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: get artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: the-build
-      - name: look around 
-        run: ls
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: copy files
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
-      - name: Connect to flip
-        run: |
-          mkdir -p ~/.ssh
-          echo "$FLIP_KEY" > ../private.key
-          sudo chmod 600 ../private.key
-          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          echo "I am:"
-          whoami
-          echo "I am using:"
-          echo $0
-          ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
-          ls
-        shell: bash
-        env:
-          FLIP_KEY: ${{secrets.FLIP_KEY}}
-          KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
-          KEY_PATH: ${{ github.workspace }}/../private.key
+          cp -r {server.js, routes, database} ~/cs340-project
+          cp -r ./client/build ~/cs340-project/client
 
