@@ -30,6 +30,8 @@ jobs:
         run: npm install
       - name: generate build
         run: npm run build --prefix client
+        env:
+          CI: false
       - name: look around
         run: ls
       - name: share artifact (?)
