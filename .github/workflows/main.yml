@@ -32,7 +32,7 @@ jobs:
         run: ls
       - name: copy files
         run: |
-          cp -r ./{server.js, routes, database} ~/cs340-project
+          for f in server.js routes database; do cp -r $f ~/cs340-project; done;
           cp -r ./client/build ~/cs340-project/client
           cd ~/cs340-project
           forever stopall
