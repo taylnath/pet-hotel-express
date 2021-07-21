@@ -42,12 +42,14 @@ jobs:
           mkdir -p ~/.ssh
           echo "$FLIP_KEY" > ../private.key
           sudo chmod 600 ../private.key
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           echo "TEST is:"
           echo $TEST
           ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
         shell: bash
         env:
           FLIP_KEY: ${{secrets.FLIP_KEY}}
+          KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
           KEY_PATH: ${{ github.workspace }}/../private.key
           TEST: "this is a test"
 
