@@ -37,18 +37,17 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           
-      - name: Make key
+      - name: Connect to flip
         run: |
           mkdir -p ~/.ssh
           echo "$FLIP_KEY" > ../private.key
           sudo chmod 600 ../private.key
+          echo "TEST is:"
+          echo $TEST
+          ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
         shell: bash
         env:
           FLIP_KEY: ${{secrets.FLIP_KEY}}
           KEY_PATH: ${{ github.workspace }}/../private.key
           TEST: "this is a test"
-      - name: Connect to flip
-        run: |
-          echo "TEST is:"
-          echo $TEST
-          ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
+
