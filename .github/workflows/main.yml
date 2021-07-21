@@ -34,9 +34,9 @@ jobs:
         run: echo $(ls)
       - name: share artifact (?)
         uses: actions/upload-artifact@v2
-          with:
-            name: the-build
-            path: build
+        with:
+          name: the-build
+          path: build
     
   deploy:
     runs-on: ubuntu-latest
