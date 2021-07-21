@@ -46,5 +46,9 @@ jobs:
         env:
           FLIP_KEY: ${{secrets.FLIP_KEY}}
           KEY_PATH: ${{ github.workspace }}/../private.key
+          TEST: "this is a test"
       - name: Connect to flip
-        run: ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
+        run: |
+          echo "TEST is:"
+          echo $TEST
+          ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
