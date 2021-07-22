@@ -30,7 +30,7 @@ jobs:
           whoami
           echo "I am using:"
           echo $0
-          ssh -t -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
+          ssh -tt -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
           cd ~/340cs-project
           git pull
           npm install
