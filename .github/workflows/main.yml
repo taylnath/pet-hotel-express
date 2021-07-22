@@ -32,6 +32,7 @@ jobs:
           echo $0
           ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
           cd ~/340cs-project
+          git pull
           npm install
           npm run build --prefix client
           forever stopall
