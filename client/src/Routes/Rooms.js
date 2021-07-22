@@ -26,6 +26,7 @@ function Rooms() {
   const [description, setDescription] = useState('');
   const [roomId, setRoomId] = useState('');
   const [petName, setPetName] = useState('');
+  const [modalProps, setModalProps] = useState({})
   
   // -------- effects --------
   // reset modal data when it closes
@@ -35,6 +36,7 @@ function Rooms() {
       setPetName('');
       setDescription('');
       setRoomId('');
+      setModalProps({})
     }
   }, [modalVisible])
   
@@ -96,6 +98,7 @@ function Rooms() {
   function makeUpdateModal(row){
     console.log("row = ", row)
     setUpdateMode(true);
+    setModalProps({subtitle: `Update room ${row.roomId}`})
     setRoomId(row.roomId);
     setDescription(row.description);
     setModalVisible(true);
@@ -137,6 +140,9 @@ function Rooms() {
               setVisible={setModalVisible}
               action={updateRoom}
           >
+            <p className={"modal-subtitle"}>
+              {modalProps.subtitle}
+            </p>
             <Input
                 id="description"
                 label="Description"
