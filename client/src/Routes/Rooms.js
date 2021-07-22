@@ -140,7 +140,7 @@ function Rooms() {
               setVisible={setModalVisible}
               action={updateRoom}
           >
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {modalProps.subtitle}
             </p>
             <Input

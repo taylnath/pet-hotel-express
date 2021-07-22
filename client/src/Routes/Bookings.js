@@ -384,25 +384,25 @@ function Bookings() {
                 }
               }}
           >
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {(updateMode) ? 'Reservation ID# ' + bookingId + ' for ' + ownerName : ''}
             </p>
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {(checkInMode) ?
                   'Check in ' + petName + ' for ' + ownerName + ' (Booking ID '
                   + bookingId + ')' : ''}
             </p>
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {(checkOutMode) ?
                   'Check out ' + petName + ' from Room ' + selectedRoomId : ''}
             </p>
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {(modalProps.type === 'new-reservation') ?
                   'For ' + ownerName + ' (owner ID # ' + ownerId + ')'
               : ''
               }
             </p>
-            <p className={"bookings-modal"}>
+            <p className={"modal-subtitle"}>
               {(modalProps.type === 'select-owner') ?
                   'Select an owner for this reservation'
                   : ''
