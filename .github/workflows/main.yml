@@ -25,8 +25,17 @@ jobs:
         with:
           command: |
             ls -a
-            cd 340cs_project
+            cd 340cs-project
             ls -a
+          host: ${{ secrets.FLIP_HOST }}
+          username: taylnath
+          privateKey: ${{ secrets.FLIP_KEY}}
+      - name: ls -a via ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: |
+            echo "again"
+            ls
           host: ${{ secrets.FLIP_HOST }}
           username: taylnath
           privateKey: ${{ secrets.FLIP_KEY}}
