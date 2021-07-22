@@ -23,7 +23,10 @@ jobs:
       - name: ls -a via ssh
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: ls -a
+          command: |
+            ls -a
+            cd 340cs_project
+            ls -a
           host: ${{ secrets.FLIP_HOST }}
           username: taylnath
           privateKey: ${{ secrets.FLIP_KEY}}
