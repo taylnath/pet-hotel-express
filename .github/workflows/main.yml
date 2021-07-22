@@ -20,29 +20,14 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     steps:
-      - name: Connect to flip
-        run: |
-          mkdir -p ~/.ssh
-          echo "$FLIP_KEY" > ../private.key
-          sudo chmod 600 ../private.key
-          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          echo "I am:"
-          whoami
-          echo "I am using:"
-          echo $0
-          ssh -tt -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
-          cd ~/340cs-project
-          git pull
-          npm install
-          npm run build --prefix client
-          forever stopall
-          forever start server.js
-        shell: bash
-        env:
-          CI: false
-          FLIP_KEY: ${{secrets.FLIP_KEY}}
-          KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
-          KEY_PATH: ${{ github.workspace }}/../private.key
+      - name: ls -a via ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: ls -a
+          host: ${{ secrets.FLIP_HOST }}
+          username: taylnath
+          privateKey: ${{ secrets.FLIP_KEY}}
+
 
           
 
