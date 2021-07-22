@@ -242,20 +242,6 @@ function Bookings() {
     setModalVisible(true);
   }
   
-  // initialize check in modal after clicking row's checkin button
-  // async function makeCheckInModal(row) {
-  //   await getAvailableRooms();
-  //   setCheckInMode(true);
-  //   setModalVisible(true);
-  //   setBookingId(row.bookingId);
-  //   setSelectedRoomId(row.roomId);
-  //   setSelectedPetId(row.petId);
-  //   setOwnerId(row.ownerId);
-  //   setOwnerName(row.ownerName);
-  //   setStartDate(row.startDate);
-  //   setEndDate(row.endDate);
-  // }
-  
   // initialize the new Select Owner modal after clicking 'New Reservation' button
   function makeSelectOwnerModal() {
     getOwners();
@@ -360,7 +346,8 @@ function Bookings() {
                                 placeholder="First Name"
                                 onChange={e => setSearchFirst(e.target.value)}/>
                   <Form.Text className="text-muted">
-                    Search by first or last name, or both, using full name or starting letters
+                    Search by first or last name, or both, using full name or
+                    starting letters
                   </Form.Text>
                 </Col>
                 <Col>
@@ -392,7 +379,9 @@ function Bookings() {
                 else if (modalProps.type === 'new-reservation' || updateMode) {
                   makeReservation(ownerId)
                 }
-                else if (modalProps.type === 'select-owner') {makeNewReservationModal()}
+                else if (modalProps.type === 'select-owner') {
+                  makeNewReservationModal()
+                }
               }}
           >
             <p className={"bookings-modal"}>
