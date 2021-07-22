@@ -26,19 +26,15 @@ jobs:
           command: |
             ls -a
             cd 340cs-project
-            ls -a
+            git pull
+            npm install
+            npm run build --prefix client
+            forever stopall
+            forever start server.js
           host: ${{ secrets.FLIP_HOST }}
           username: taylnath
           privateKey: ${{ secrets.FLIP_KEY}}
-      - name: ls -a via ssh
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          command: |
-            echo "again"
-            ls
-          host: ${{ secrets.FLIP_HOST }}
-          username: taylnath
-          privateKey: ${{ secrets.FLIP_KEY}}
+
 
 
           
