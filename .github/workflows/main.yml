@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ test-ci ]
+    branches: [ main ]
   pull_request:
-    branches: [ test-ci ]
+    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,23 +16,32 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  deploy:
     # The type of runner that the job will run on
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Clone repo
-        uses: actions/checkout@v2
-      - name: install dependencies
-        run: npm install
-      - name: generate build
-        run: npm run build --prefix client
-        env:
-          CI: false
-      - name: look around
-        run: ls
-      - name: run
+      - name: Connect to flip
         run: |
+          mkdir -p ~/.ssh
+          echo "$FLIP_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "I am:"
+          whoami
+          echo "I am using:"
+          echo $0
+          ssh -i $KEY_PATH taylnath@flip2.engr.oregonstate.edu
+          cd ~/340cs-project
+          npm install
+          npm run build --prefix client
           forever stopall
           forever start server.js
+        shell: bash
+        env:
+          CI: false
+          FLIP_KEY: ${{secrets.FLIP_KEY}}
+          KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
+          KEY_PATH: ${{ github.workspace }}/../private.key
+
           
 
