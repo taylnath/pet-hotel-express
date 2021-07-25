@@ -7,6 +7,7 @@ import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
+import {BsChevronCompactDown} from 'react-icons/bs';
 
 // Guests
 // Page for employees to add/delete owners' pets to change their pets
@@ -85,8 +86,8 @@ function Guests(props) {
         {ownerPets.map(x => {
           return (
             <Card key={"outercard" + String(x.owner.ownerId)}>
-              <Accordion.Toggle  as={Card.Header} eventKey={x.owner.ownerId} key={"toggle" + String(x.owner.ownerId)}>
-                {x.owner.firstName} {x.owner.lastName}'s Pets:
+              <Accordion.Toggle  as={Card.Header} eventKey={x.owner.ownerId} key={"toggle" + String(x.owner.ownerId)} className="w-100">
+                {x.owner.firstName} {x.owner.lastName}'s Pets: <BsChevronCompactDown className="mr-3 h3" style={{position:"absolute", right:0}}/>
               </Accordion.Toggle>
               <Accordion.Collapse  eventKey={x.owner.ownerId} key={"collapse" + String(x.owner.ownerId)}>
                 <Card.Body key={"cardbody" + String(x.owner.ownerId)}>
