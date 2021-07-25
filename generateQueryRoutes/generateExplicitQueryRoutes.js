@@ -92,7 +92,7 @@ const sqlDate = require('../../database/sqlDate');
 
   // generate queries
   const queryFile = './output/queries/queries.sql';
-  fs.writeFile(queryFile, '-- Queries \n \n-- SELECT Queries:\n', errHandler);
+  fs.writeFile(queryFile, '-- Queries\n-- \':variable\' is used to denote a variable.\n\n-- SELECT Queries:\n', errHandler);
   fs.appendFile(
     queryFile,
     allTables

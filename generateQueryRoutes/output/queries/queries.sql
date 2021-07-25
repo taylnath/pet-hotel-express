@@ -1,5 +1,6 @@
--- Queries 
- 
+-- Queries
+-- ':variable' is used to denote a variable.
+
 -- SELECT Queries:
 select * from `Owners`;
 select * from `Employees`;
