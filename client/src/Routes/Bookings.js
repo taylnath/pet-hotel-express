@@ -474,7 +474,7 @@ function Bookings() {
         
         </Container>
         
-        <Container> // Bookings list display
+        <Container>
           
           <h4 className={"mt-5"}>Bookings:</h4>
           <ShowReport title="Bookings"

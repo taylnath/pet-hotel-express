@@ -92,3 +92,18 @@ html {
   font-weight: 500;
   font-size: large;
 }
+
+.photo-attribution {
+  background: rgba(217, 217, 217, 0.5);
+  border-radius: 5px;
+}
+
+.attribution-text {
+  color: black;
+  opacity: 1.0;
+  margin: .1em;
+}
+
+.attribution-link {
+  color: rgb(0, 0, 255);
+}
