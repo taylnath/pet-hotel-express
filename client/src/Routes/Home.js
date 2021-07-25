@@ -1,4 +1,4 @@
-import {Container, Row, Col, Card, Image} from "react-bootstrap";
+import {Container, Row, Col, Card, Image, Button} from "react-bootstrap";
 import SereneCat from '../Components/images/serene_cat.jpeg';
 import BlackCat from '../Components/images/black_cat.jpeg';
 import HappyDog from '../Components/images/happy_dog.jpeg';
@@ -31,11 +31,12 @@ function Home() {
               <div id={"home-showcase"} className={"mb-1"}>
                 <h1 id={"home-h1"}>Pet Hotel</h1>
                 <div className={"photo-attribution"}
-                     style={{position: "absolute", bottom: 20, right: 25}}>
-                  Photo by <a
+                     style={{position: "absolute", bottom: 5, right: 10}}>
+                  <p className={"attribution-text"}>Photo by <a className={"attribution-link"}
                     href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
-                  Gumustekin</a> on <a
+                  Gumustekin</a> on <a className={"attribution-link"}
                     href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                  </p>
                 </div>
                 <a href="#pet-hotel-info">
                   <BsChevronCompactDown 
@@ -61,20 +62,22 @@ function Home() {
                 We are open 365 days a year, and our highly trained staff looks
                 forward to your pet's next visit.
               </p>
-              
               <div className={"text-center"}>
-                <a href={"./Reservations"} className={"text-decoration-none"}>Reserve Now</a>
+              <Button variant={"success"} size={"lg"} href={"/reservations"}>
+                Reserve Now
+              </Button>
               </div>
-            
             </Col>
             <Col className={"p-3"}>
               <Image src={SereneCat} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
-                  style={{position: "absolute", bottom: 15, right: 25}}>
-                Photo by <a
+                  style={{position: "absolute", bottom: 15, right: 20}}>
+                <p className={"attribution-text"}>
+                Photo by <a className={"attribution-link"}
                   href="https://unsplash.com/@calicodesign?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Patrizia
-                Berta</a> on <a
+                Berta</a> on <a className={"attribution-link"}
                   href="https://unsplash.com/s/photos/cat?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                </p>
               </div>
             </Col>
           </Row>
@@ -83,11 +86,14 @@ function Home() {
             <Col>
               <Image src={HappyDog} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
-                  style={{position: "absolute", bottom: 0}}>
-                Photo by <a
+                  style={{position: "absolute", bottom: 0, left: 20}}>
+  
+                <p className={"attribution-text"}>
+                Photo by <a className={"attribution-link"}
                   href="https://unsplash.com/@berkaygumustekin?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Berkay
-                Gumustekin</a> on <a
+                Gumustekin</a> on <a className={"attribution-link"}
                   href="https://unsplash.com/s/photos/dog?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                   </p>
               </div>
             </Col>
             <Col className={"p-3"}>
@@ -146,10 +152,12 @@ function Home() {
               <Image src={BlackCat} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 5, right: 25}}>
-                Photo by <a
+                <p className={"attribution-text"}>
+                Photo by <a className={"attribution-link"}
                   href="https://unsplash.com/@cthemaker?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
-                Chris Nemeth</a> on <a
+                Chris Nemeth</a> on <a className={"attribution-link"}
                   href="https://unsplash.com/s/photos/black-cat?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                </p>
               </div>
             </Col>
           </Row>
