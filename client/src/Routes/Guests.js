@@ -1,9 +1,8 @@
 import {useState, useEffect} from 'react';
 import {Button, Container, Accordion, Card} from 'react-bootstrap';
-import fetchState from '../DataAccess/fetchState';
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from '../Components/Reports/ShowReport';
 import {today, tomorrow} from '../Helpers/dateHelpers';
-import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
@@ -13,6 +12,12 @@ import Date from '../Components/Forms/Date';
 // Props: user
 
 function Guests(props) {
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
+
   const [allPets, setAllPets] = useState([]);
   const [ownerPets, setOwnerPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState([]);
@@ -27,13 +32,16 @@ function Guests(props) {
     } 
   }, [modalVisible]);
 
-  useEffect(async () => {
-    let pets = await fetch(`/api/dynamic?tables=Pets`).then(res => res.json());
-    console.log("got all pets:", pets);
-    setAllPets(pets);
-    setSelectedPetId((pets.length > 0) ? pets[0].id : '');
+  useEffect(() => {
+    getState(`/api/dynamic?tables=Pets`, setAllPets, setLoadingStatus)
+      .then(pets => {
+        setSelectedPetId((pets.length > 0) ? pets[0].id : '');
+        console.log("got all pets:", pets);
+      });
   }, []);
 
+  // todo: this data should be read from all pets array or something
+  // todo: use fetchState style
   async function refreshOwnerPets(){
     let ownerPetsList = [];
     let owners = await fetch(`/api/dynamic?tables=Owners`)

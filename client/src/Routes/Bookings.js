@@ -1,7 +1,6 @@
 import {Container, Button, Form, Row, Col} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import fetchState from "../DataAccess/fetchState";
-import postState from "../DataAccess/postState";
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import {today, tomorrow} from '../Helpers/dateHelpers';
 import Input from "../Components/Forms/Input";
@@ -16,9 +15,11 @@ import Date from '../Components/Forms/Date';
 
 function Bookings() {
   // -------- state --------
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
   
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
@@ -116,29 +117,40 @@ function Bookings() {
     );
     
     
-    await fetchState(`/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setBookings, setError);
+    await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
   }
   
   // Get Owners for select Owner
   async function getOwners() {
-    
-    fetch(`/api/dynamic?tables=Owners`)
-        .then(res => res.json()).then(res => {
-      res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
-      setOwnerId(res[0].ownerId || '');
-      return setOwners(res);
+    // TODO: was this refactored correctly?
+    getState(`/api/dynamic?tables=Owners`, () => {}, setLoadingStatus)
+      .then(res => {
+        res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
+        setOwnerId(res[0].ownerId || '');
+        return setOwners(res);
     });
+    // fetch(`/api/dynamic?tables=Owners`)
+    //     .then(res => res.json())
+    //     .then(res => {
+    //       res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
+    //       setOwnerId(res[0].ownerId || '');
+    //       return setOwners(res);
+    // });
   }
   
   // Get an Owner's Pets
   async function getPets(row) {
-    
-    fetch(`/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
-        .then(res => res.json()).then(res => {
-      setSelectedPetId(res.length ? row.petId || res[0].petId : '');
-
-      return setUserPets(res);
+    // todo: was this refactored correctly?
+    getState(`/api/ownerPets/${row.ownerEmail}`, setUserPets, setLoadingStatus) // todo: change this to id
+      .then(res => {
+        setSelectedPetId(res.length ? row.petId || res[0].petId : '');
     });
+    // fetch(`/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
+    //     .then(res => res.json()).then(res => {
+    //   setSelectedPetId(res.length ? row.petId || res[0].petId : '');
+
+    //   return setUserPets(res);
+    // });
   }
   
   // Get an rooms available for check-in
@@ -146,12 +158,16 @@ function Bookings() {
     let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
         "(select roomId from Bookings natural join `Rooms`)"
     
-    fetch(`/api/simpleQuery?query=` + simpleQuery)
-     .then(res => res.json()).then(res => {
-    setSelectedRoomId(res[0] ? res[0].roomId : '');
+    // todo: was this refactored correctly?
+    getState(`/api/simpleQuery?query=` + simpleQuery, setAvailableRooms, setLoadingStatus)
+      .then(res => setSelectedRoomId(res[0] ? res[0].roomId : ''));
+    // fetch(`/api/simpleQuery?query=` + simpleQuery)
+    //  .then(res => res.json())
+      // .then(res => {
+    // setSelectedRoomId(res[0] ? res[0].roomId : '');
 
-    return setAvailableRooms(res)
-    });
+    // return setAvailableRooms(res)
+    // });
   }
   
   // add / update booking    TODO: need an owner selector
@@ -167,16 +183,11 @@ function Bookings() {
     };
     if (updateMode) {
       data.bookingId = bookingId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
+      // TODO: combine /api/reservations and /api/bookings
       url = `/api/reservations`;
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
     let body = await response.json();
     await refreshBookings(filterBy);
@@ -184,14 +195,7 @@ function Bookings() {
 
   // Delete a Booking
   async function deleteReservation(row) {
-    
-    let result = await fetch(`/api/reservations/${bookingId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json());
-    
+    await deleteState(`/api/reservations/${bookingId}`, setLoadingStatus);
     await refreshBookings(filterBy);
   }
  
@@ -211,13 +215,7 @@ function Bookings() {
       roomId: room_id
     };
     
-    response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+    response = await putState(url, data, setLoadingStatus);
     
     let body = await response.json();
     setFilterBy("all");

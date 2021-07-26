@@ -1,9 +1,8 @@
 import {useState, useEffect} from 'react';
 import {Button, Container} from 'react-bootstrap';
-import fetchState from '../DataAccess/fetchState';
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from '../Components/Reports/ShowReport';
 import {today, tomorrow} from '../Helpers/dateHelpers';
-import postState from '../DataAccess/postState';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
@@ -14,9 +13,11 @@ import Date from '../Components/Forms/Date';
 
 function Reservations(props) {
   // --- state ---
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
 
   // modal state
   const [updateMode, setUpdateMode] = useState(false); // this seems a little awkward, but works for switching between update and insert
@@ -46,12 +47,17 @@ function Reservations(props) {
   useEffect(() => {
     console.log("getting pets");
     if (props.user && props.user.ownerId && props.user.ownerId != null) {
-      console.log("found pets for user");
-      fetch(`/api/ownerPets/${props.user.email}`) // todo: change this to id
-        .then(res => res.json()).then(res => {
+      getState(`/api/ownerPets/${props.user.email}`, setUserPets, setLoadingStatus)
+        .then(res => {
+          console.log("found pets for user:", res);
           setSelectedPetId((res && res.length)? res[0].petId : '');
-          return setUserPets(res);
         });
+      // fetch(`/api/ownerPets/${props.user.email}`) // todo: change this to id
+      //   .then(res => res.json())
+      //   .then(res => {
+      //     setSelectedPetId((res && res.length)? res[0].petId : '');
+      //     return setUserPets(res);
+      //   });
     } else {
       console.log("no logged in user to find pets for");
       setSelectedPetId('');
@@ -61,7 +67,7 @@ function Reservations(props) {
 
   // refresh reservations on owner change and visible modal change
   async function refreshReservations(){
-    fetchState(`/api/dynamic?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setIsLoaded, setUserReservations, setError);
+    getState(`/api/dynamic?tables=Bookings,Pets&where=ownerId,${props.user.ownerId}`, setUserReservations, setLoadingStatus);
     console.log('updated reservations');
   };
   useEffect(() => refreshReservations(), [props.user.ownerId, modalVisible]);
@@ -79,30 +85,17 @@ function Reservations(props) {
     };
     if (updateMode){
       data.bookingId = bookingId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
-    console.log('made reservation. Got response', body);
+    console.log('made reservation. Got response', response);
     await refreshReservations();
   }
 
   async function deleteReservation(row){
     console.log(row);
-    // TODO: get confirmation first
-    let result = await fetch(`/api/reservations/${row.bookingId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json());
+    let result = await deleteState(`/api/reservations/${row.bookingId}`, setLoadingStatus);
     console.log(result);
     await refreshReservations();
   }
@@ -172,7 +165,7 @@ function Reservations(props) {
           />
         </GenericModal>
 
-        <div>{userPets.length > 0 && "Your pets:"}
+        <div>{userPets.length > 0 ? "Your pets:" : userPets.keys()}
           <ul>
             {userPets.map(pet => <li key={pet.name}>{pet.name}</li>)}
           </ul>

@@ -58,13 +58,9 @@ function Employees() {
     };
     if (updateMode) {
       data.employeeId = employeeId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {'Content-type': 'application/json'},
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
     let body = await response.json();
     console.log('Employee updated. Got response', body);
@@ -72,10 +68,7 @@ function Employees() {
   }
   
   async function deleteEmployee(){
-    let result = await fetch(`/api/employees/${employeeId}`, {
-      method: 'DELETE',
-      headers: {'Content-type': 'application/json'}
-        }).then(res => res.json());
+    let result = deleteState(`/api/employees/${employeeId}`, setLoadingStatus);
     // setEmployeeId(''); // I don't think these are necessary, but I don't think they hurt either
     // setFirstName('');
     // setLastName('');

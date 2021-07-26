@@ -1,7 +1,6 @@
 import {Container, Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import fetchState from "../DataAccess/fetchState";
-import postState from "../DataAccess/postState";
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
@@ -12,9 +11,11 @@ import GenericModal from "../Components/GenericModal";
 
 function Rooms() {
   // -------- state --------
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
   
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
@@ -46,7 +47,7 @@ function Rooms() {
         " `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
         "`Pets` on `Pets`.`petId` = `Bookings`.`petId`;"
   
-    await fetchState(`/api/simpleQuery?query=` + simpleQuery, setIsLoaded, setRooms, setError);
+    await getState(`/api/simpleQuery?query=` + simpleQuery, setRooms, setLoadingStatus);
 
     // let response;
     // const data = {simpleQuery: simpleQuery};
@@ -68,13 +69,9 @@ function Rooms() {
     };
     if (updateMode) {
       data.roomId = roomId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {'Content-type': 'application/json'},
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
     let body = await response.json();
     console.log('Room updated. Got response', body);
@@ -82,10 +79,7 @@ function Rooms() {
   }
   
   async function deleteRoom(){
-    let result = await fetch(`/api/rooms/${roomId}`, {
-      method: 'DELETE',
-      headers: {'Content-type': 'application/json'}
-    }).then(res => res.json());
+    let result = await deleteState(`/api/rooms/${roomId}`, setLoadingStatus);
     console.log(result);
     setRoomId('');
     await refreshRooms()

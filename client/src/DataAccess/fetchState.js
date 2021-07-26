@@ -8,10 +8,16 @@ const onError = (setState) => (error) => {
 const onSuccess = (setState, setResult) => (res) => {
   setState({loading: false, error: false}); // error will get set later if error
   if (!res.ok){
-    console.log("Request did not return success.");
+    console.log("Request did not return success:", res);
     return Promise.reject();
   } else if (setResult){
-    setResult(res);
+    console.log(res);
+    return res.json()
+      .then(res => {
+        console.log("json here:", res);
+        setResult(res);
+        return res;
+    });
   }
   return res;
 }
@@ -31,8 +37,8 @@ const settings = (method, body) => {
 
 const getState = (url, setResult, setState) => 
   fetch(url)
-    .then(res => res.json())
-    .then(onSuccess(setResult, setState), onError(setState));
+    // param order flip here is important
+    .then(onSuccess(setState, setResult), onError(setState));
 
 const postState = (url, body, setState) => 
   fetch(url, settings('POST', body))

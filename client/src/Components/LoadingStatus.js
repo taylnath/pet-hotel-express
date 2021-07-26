@@ -10,7 +10,7 @@ import {Spinner} from 'react-bootstrap';
 function LoadingStatus(props){
   return (
     <div className="d-flex justify-content-center w-100">
-    <Spinner animation="border" variant="primary" hidden={props.status.loading} className="ml-5 mr-1">Loading...</Spinner>
+    <Spinner animation="border" variant="primary" hidden={!props.status.loading} className="ml-5 mr-1"/>
     {props.status.error && <div>There was a problem fetching data...</div>}
     </div>
   )

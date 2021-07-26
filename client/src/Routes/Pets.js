@@ -15,7 +15,7 @@ function Pets() {
   // -------- state --------
   // loading status
   const [loadingStatus, setLoadingStatus] = useState({
-    loading: false,
+    loading: true,
     error: false
   });
   
@@ -33,6 +33,10 @@ function Pets() {
   const [type, setType] = useState('cat');
   
   // -------- effects --------
+  useEffect(() => {
+    console.log("loading status changed to", loadingStatus.loading);
+  }, [loadingStatus]);
+
   // reset modal data when it closes
   useEffect(async () => {
     if (!modalVisible && !confirmDeleteVisible) {
@@ -41,6 +45,7 @@ function Pets() {
       setPreferences('');
       setPetId('');
       setType('cat');
+      setLoadingStatus({loading: true, error: false});
     }
   }, [modalVisible, confirmDeleteVisible])
 

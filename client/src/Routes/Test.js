@@ -1,43 +1,37 @@
 import { useState, useEffect } from 'react';
-import fetchState from '../DataAccess/fetchState';
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import GenericModal from '../Components/GenericModal';
+import LoadingStatus from '../Components/LoadingStatus';
 
 // adapted from https://reactjs.org/docs/faq-ajax.html
 function Test() {
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: true,
+    error: false
+  });
   const [testResult, setTestResult] = useState(''); // state for reading text
   const [dataResult, setDataResult] = useState({}); // state for reading json from database
   useEffect(() => {
-    fetch(`/api/testText`)
-      .then(res => res.text())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setTestResult(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-    fetchState(`/api/testData`, setIsDataLoaded, setDataResult, setError);
+    getState(`/api/testText`, setTestResult, setLoadingStatus);
+    getState(`/api/testData`, setDataResult, setLoadingStatus);
   }, []);
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  if (error) return <div>Error: {error.message}</div>;
-  else if (!isLoaded) return <div>Loading...</div>;
+  if (loadingStatus.error) return <div>Error: {loadingStatus.error.message}</div>;
+  else if (loadingStatus.loading) return <div>Loading...</div>;
   else return (
     <div>
       <h1>Test</h1>
+          <LoadingStatus status={loadingStatus}/>
       <p>
         The server says: {testResult}.
       </p>
       <p>
         Here is the data: {JSON.stringify(dataResult)}.
       </p>
+      <button onClick={() => getState(`/api/testText`, setTestResult, setLoadingStatus)}>Get data again</button>
       <button onClick={() => setModalVisible(true)}>Turn on modal</button>
       <GenericModal
         title="this is a modal"
