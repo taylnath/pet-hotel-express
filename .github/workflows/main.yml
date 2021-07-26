@@ -44,9 +44,7 @@ jobs:
             npm run build --prefix client
             forever stopall
             forever start server.js
-            numForevers=$(forever list | wc -l)
-            echo "found $numForever forever lines"
-            if [[ $numForever = 3 ]]; then echo "process complete"; else echo "not deployed"; exit 1; fi;
+            forever list
           host: ${{ secrets.FLIP_HOST }}
           username: taylnath
           privateKey: ${{ secrets.FLIP_KEY}}
