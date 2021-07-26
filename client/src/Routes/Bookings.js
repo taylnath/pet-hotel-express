@@ -97,6 +97,7 @@ function Bookings() {
     }
     
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
+        "concat(`Employees`.`firstName`, ' ', `Employees`.`lastName`) as empName, " +
         "`Owners`.`email` as `ownerEmail`, `Pets`.`petId` as `petId`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
         "`Owners`.`ownerId` as ownerId,  `Pets`.`name` as `petName`, " +
@@ -104,7 +105,9 @@ function Bookings() {
         "`endDate`, `Rooms`.`roomId` as roomId  from `Bookings` left join " +
         "`Owners` on `Owners`.`ownerId` = `Bookings`.`ownerId` " +
         "left join `Pets` on `Pets`.`petId` = `Bookings`.`petId` left join " +
-        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` " + where + ";"
+        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
+        "`Employees` on `Employees`.`employeeId` = `Bookings`.`employeeId` " +
+        where + ";"
     
     
     // Clear search criteria so they don't interfere with future refreshes
@@ -118,6 +121,7 @@ function Bookings() {
     
     
     await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
+    console.log("bookings = ", bookings);
   }
   
   // Get Owners for select Owner
@@ -290,11 +294,12 @@ function Bookings() {
   
   // Set ShowReport headers and attributes
   const headers = {
-    bookingId: "Booking Id",
+    bookingId: "ID",
     ownerName: "Owner",
     petName: "Pet",
     startDate: "Start Date",
     endDate: "End Date",
+    empName: "Employee",
     roomId: "Room",
   };
   const attributes = Object.keys(headers);
