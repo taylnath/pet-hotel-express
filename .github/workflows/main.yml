@@ -38,7 +38,6 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: |
-            ls -a
             cd 340cs-project
             git pull
             npm install
