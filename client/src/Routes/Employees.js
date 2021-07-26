@@ -1,7 +1,6 @@
 import {Container, Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import fetchState from "../DataAccess/fetchState";
-import postState from "../DataAccess/postState";
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
@@ -13,8 +12,10 @@ import GenericModal from "../Components/GenericModal";
 function Employees() {
   // --- state ---
   // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
   
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
@@ -41,7 +42,7 @@ function Employees() {
   }, [modalVisible, confirmDeleteVisible])
   
   async function refreshEmployees() {
-    fetchState(`/api/dynamic?tables=Employees`, setIsLoaded, setEmployees, setError);
+    getState(`/api/dynamic?tables=Employees`, setEmployees, setLoadingStatus);
   }
   
   // --- actions ---
@@ -57,13 +58,9 @@ function Employees() {
     };
     if (updateMode) {
       data.employeeId = employeeId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {'Content-type': 'application/json'},
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
     let body = await response.json();
     console.log('Employee updated. Got response', body);
@@ -71,10 +68,7 @@ function Employees() {
   }
   
   async function deleteEmployee(){
-    let result = await fetch(`/api/employees/${employeeId}`, {
-      method: 'DELETE',
-      headers: {'Content-type': 'application/json'}
-        }).then(res => res.json());
+    let result = deleteState(`/api/employees/${employeeId}`, setLoadingStatus);
     // setEmployeeId(''); // I don't think these are necessary, but I don't think they hurt either
     // setFirstName('');
     // setLastName('');

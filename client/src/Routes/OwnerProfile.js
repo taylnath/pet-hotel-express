@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import {Button, Container} from 'react-bootstrap';
-import fetchState from '../DataAccess/fetchState';
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from '../Components/Reports/ShowReport';
 import {today, tomorrow} from '../Helpers/dateHelpers';
 import postState from '../DataAccess/postState';
@@ -14,9 +14,11 @@ import Date from '../Components/Forms/Date';
 
 function OwnerProfile(props) {
   // --- state ---
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
 
   // modal state
   const [updateMode, setUpdateMode] = useState(false); // this seems a little awkward, but works for switching between update and insert
@@ -56,7 +58,7 @@ function OwnerProfile(props) {
     console.log("getting pets");
     if (props.user && props.user.ownerId && props.user.ownerId != null) {
       console.log("found pets for user");
-      await fetchState(`/api/ownerPets/${props.user.email}`, setIsLoaded, setUserPets, setError); // todo: change this to id
+      await getState(`/api/ownerPets/${props.user.email}`, setUserPets, setLoadingStatus); // todo: change this to id
     } else {
       console.log("no logged in user to find pets for");
       setUserPets([]);
@@ -81,29 +83,16 @@ function OwnerProfile(props) {
     };
     if (updateMode){
       data.bookingId = bookingId;
-      response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      response = await putState(url, data, setLoadingStatus);
     } else {
-      response = await postState(url, data);
+      response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
-    console.log('made reservation. Got response', body);
+    console.log('made reservation. Got response', response);
   };
 
   async function deleteReservation(row){
     console.log(row);
-    // TODO: get confirmation first
-    let result = await fetch(`/api/reservations/${row.bookingId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json());
+    let result = await deleteState(`/api/reservations/${row.bookingId}`, setLoadingStatus);
     console.log(result);
     await refreshReservations();
   }

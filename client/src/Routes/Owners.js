@@ -1,7 +1,6 @@
 import {Container, Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import fetchState from "../DataAccess/fetchState";
-import postState from "../DataAccess/postState";
+import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
@@ -12,9 +11,11 @@ import GenericModal from "../Components/GenericModal";
 
 function Owners() {
   // -------- state --------
-  // loading state
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  // loading status
+  const [loadingStatus, setLoadingStatus] = useState({
+    loading: false,
+    error: false
+  });
   
   // modal state
   const [updateMode, setUpdateMode] = useState(false);
@@ -41,7 +42,7 @@ function Owners() {
   }, [modalVisible])
 
   useEffect(async () => {
-    await fetchState(`/api/dynamic?tables=Owners`, setIsLoaded, setOwners, setError);
+    await getState(`/api/dynamic?tables=Owners`, setOwners, setLoadingStatus);
   }, [])
   
   

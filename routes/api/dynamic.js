@@ -29,7 +29,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   await queryAsync(
-      dynamicInsert(req.body.table, req.body.fieldValueObject))
+      dynamicInsert(req.body.table, req.body.fieldValues)
+    )
     .then(result => {
       console.log("dynamicInsert: found", result)
       return res.json(result);
