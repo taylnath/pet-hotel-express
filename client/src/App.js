@@ -68,7 +68,7 @@ function App() {
         <Rooms />
       </Route>
       <Route path="/Bookings">
-        <Bookings />
+        <Bookings user={user} setUser={setUser} />
       </Route>
       <Route path="/Test">
         <Test/>
