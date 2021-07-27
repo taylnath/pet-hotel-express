@@ -8,6 +8,7 @@ import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
+import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
 
 // Bookings
 //page for managers to manage Bookings
@@ -29,14 +30,12 @@ function Bookings(props) {
   const [checkOutMode, setCheckOutMode] = useState(false);
   
   // user, data states
-  
   const [modalProps, setModalProps] = useState({type: '', title: ''});
   const [filterBy, setFilterBy] = useState('all');
   const [owners, setOwners] = useState([]);
   const [selectedOwnerId, setSelectedOwnerId] = useState('');   // can eliminate? TODO
   const [ownerId, setOwnerId] = useState('');
   const [ownerName, setOwnerName] = useState('')
-  // const [ownerEmail, setOwnerEmail] = useState('');      can elminate? TODO
   const [userPets, setUserPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState('');
   const [petName, setPetName] = useState('')
@@ -83,14 +82,15 @@ function Bookings(props) {
   // Refresh ShowReport
   async function refreshBookings(filter) {
     
-    // Set 'where' conditions, or set to 1 (so subsequent wheres start with 'and')
+    // Set * filter * 'where' conditions, or set to 1
+    //    (so subsequent wheres start with 'and')
     let where = " where 1 ";
     if (!(filter === 'all')) {
       filter === 'today' ?
           where = " where `Bookings`.`startDate` = " + `'${today}' ` :
           where = " where `Bookings`.`startDate` = " + `'${tomorrow}' `
     }
-    
+    // Set * search * 'where' conditions, if any
     if (searchFirst) {
       where += " and `Owners`.`firstName` like '" + `${searchFirst}` + escape('%') + "' "
     }
@@ -98,30 +98,14 @@ function Bookings(props) {
       where += " and `Owners`.`lastName` like '" + `${searchLast}` + escape('%') + "' "
     }
     
-    let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
-        "concat(`Employees`.`firstName`, ' ', `Employees`.`lastName`) as empName, " +
-        "`Employees`.`employeeId` as `employeeId`, " +
-        "`Owners`.`email` as `ownerEmail`, `Pets`.`petId` as `petId`, " +
-        "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
-        "`Owners`.`ownerId` as `ownerId`,  `Pets`.`name` as `petName`, " +
-        "`Bookings`.`startDate` as `startDate`, `Bookings`.`endDate` as " +
-        "`endDate`, `Rooms`.`roomId` as roomId  from `Bookings` left join " +
-        "`Owners` on `Owners`.`ownerId` = `Bookings`.`ownerId` " +
-        "left join `Pets` on `Pets`.`petId` = `Bookings`.`petId` left join " +
-        "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
-        "`Employees` on `Employees`.`employeeId` = `Bookings`.`employeeId` " +
-        where + ";"
+    let simpleQuery = getBookings + where + ";"
     
-    
-    // Clear search criteria so they don't interfere with future refreshes
+    // Clear search & input fields so not to interfere with future refreshes
     setSearchFirst('');
     setSearchLast('');
-    
-    // Clear search input fields for same reason
     Array.from(document.querySelectorAll("input")).forEach(
         input => (input.value = "")
     );
-    
     
     await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
     console.log("bookings = ", bookings);
@@ -129,20 +113,12 @@ function Bookings(props) {
   
   // Get Owners for select Owner
   async function getOwners() {
-    // TODO: was this refactored correctly?
     getState(`/api/dynamic?tables=Owners`, () => {}, setLoadingStatus)
       .then(res => {
         res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
         setOwnerId(res[0].ownerId || '');
         return setOwners(res);
     });
-    // fetch(`/api/dynamic?tables=Owners`)
-    //     .then(res => res.json())
-    //     .then(res => {
-    //       res.map((owner) => {owner.name = owner.firstName + " " + owner.lastName});
-    //       setOwnerId(res[0].ownerId || '');
-    //       return setOwners(res);
-    // });
   }
   
   // Get an Owner's Pets
@@ -152,29 +128,14 @@ function Bookings(props) {
       .then(res => {
         setSelectedPetId(res.length ? row.petId || res[0].petId : '');
     });
-    // fetch(`/api/ownerPets/${row.ownerEmail}`) // todo: change this to id
-    //     .then(res => res.json()).then(res => {
-    //   setSelectedPetId(res.length ? row.petId || res[0].petId : '');
-
-    //   return setUserPets(res);
-    // });
   }
   
   // Get an rooms available for check-in
   async function getAvailableRooms() {
-    let simpleQuery = "select `roomId` from `Rooms` where `roomId` not in  " +
-        "(select roomId from Bookings natural join `Rooms`)"
-    
-    // todo: was this refactored correctly?
-    getState(`/api/simpleQuery?query=` + simpleQuery, setAvailableRooms, setLoadingStatus)
+    let url = "/api/simpleQuery?query="
+   
+    getState(url + queryAvailableRooms, setAvailableRooms, setLoadingStatus)
       .then(res => setSelectedRoomId(res[0] ? res[0].roomId : ''));
-    // fetch(`/api/simpleQuery?query=` + simpleQuery)
-    //  .then(res => res.json())
-      // .then(res => {
-    // setSelectedRoomId(res[0] ? res[0].roomId : '');
-
-    // return setAvailableRooms(res)
-    // });
   }
   
   // add / update booking    TODO: need an owner selector
@@ -208,7 +169,7 @@ function Bookings(props) {
   }
  
   // Check in guest
-  async function checkIn(co_room) {
+  async function checkIn() {
     const url = `/api/bookings`;
     let response;
     let room_id;
@@ -227,7 +188,7 @@ function Bookings(props) {
     response = await putState(url, data, setLoadingStatus);
     
     let body = await response.json();
-    setFilterBy("all");
+    // setFilterBy("all");
     await refreshBookings(filterBy);
   }
   
@@ -385,12 +346,10 @@ function Bookings(props) {
               setVisible={setModalVisible}
               action={ () => {
                 if (checkInMode || checkOutMode) {
-                  checkOutMode ? checkIn(null) : checkIn()
-                }
-                else if (modalProps.type === 'new-reservation' || updateMode) {
+                  checkIn()
+                } else if (modalProps.type === 'new-reservation' || updateMode) {
                   makeReservation(ownerId)
-                }
-                else if (modalProps.type === 'select-owner') {
+                } else if (modalProps.type === 'select-owner') {
                   makeNewReservationModal()
                 }
               }}

@@ -4,6 +4,7 @@ import {getState, postState, putState, deleteState} from "../DataAccess/fetchSta
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
+import {getPetsRooms} from "../Helpers/simpleQueries";
 
 // Rooms
 //page for managers to manage Rooms
@@ -41,23 +42,12 @@ function Rooms() {
     }
   }, [modalVisible])
   
-  async function refreshRooms() {
-    console.log("in Refresh rooms");     // TODO
-    let url = '/api/simpleQuery'
-    let simpleQuery = "select `Rooms`.`roomId` as roomId, `Rooms`.`description` " +
-        "as description, `Pets`.`name` as petName from `Rooms` left join" +
-        " `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
-        "`Pets` on `Pets`.`petId` = `Bookings`.`petId`;"
   
-    await getState(`/api/simpleQuery?query=` + simpleQuery, setRooms, setLoadingStatus);
-
-    // let response;
-    // const data = {simpleQuery: simpleQuery};
-    // response = await postState(url, data);
-    // let body = await response.json()
-    // console.log('Rooms Refreshed.  Got response', body)
-    
-    // await fetchState(`/api/dynamic?tables=Rooms`, setIsLoaded, setRooms, setError);
+  useEffect(() => refreshRooms().then(console.log("done!")), []);
+  
+  async function refreshRooms() {
+    let url = '/api/simpleQuery'
+    await getState(url + `?query=` + getPetsRooms, setRooms, setLoadingStatus);
   }
   
   // -------- actions --------
@@ -82,7 +72,6 @@ function Rooms() {
   
   async function deleteRoom(){
     let result = await deleteState(`/api/rooms/${roomId}`, setLoadingStatus);
-    console.log(result);
     setRoomId('');
     await refreshRooms()
   }
@@ -90,21 +79,17 @@ function Rooms() {
   // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row){
-    console.log("row = ", row)
     setUpdateMode(true);
     setModalProps({subtitle: `Update room ${row.roomId}`})
     setRoomId(row.roomId);
     setDescription(row.description);
     setModalVisible(true);
-    console.log('updating row:', row);
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
   function confirmDelete(row){
-    console.log("row = ", row)
     setRoomId(row.roomId);
     setConfirmDeleteVisible(true);
-    console.log('deleting row:', row);
   }
   
   // report headers
@@ -114,8 +99,6 @@ function Rooms() {
     petName: "Pet Guest"
   }
   const attributes = ["roomId", "description", "petName"]
-  
-  useEffect(() => refreshRooms().then(console.log("done!")), []);
 
   return (
       <div>
@@ -124,7 +107,9 @@ function Rooms() {
         </Container>
         
         <Container>
-          <Button variant="success" onClick={() => {setModalVisible(true);}}>
+          
+          <Button variant="success"
+                  onClick={() => {setModalVisible(true);}}>
             Add New Room
           </Button>
           
@@ -134,9 +119,8 @@ function Rooms() {
               setVisible={setModalVisible}
               action={updateRoom}
           >
-            <p className={"modal-subtitle"}>
-              {modalProps.subtitle}
-            </p>
+            <p className={"modal-subtitle"}> {modalProps.subtitle} </p>
+            
             <Input
                 id="description"
                 label="Description"
@@ -156,7 +140,6 @@ function Rooms() {
         </Container>
         
         <Container>
-          
           <h4 className={"mt-5"}>Room List:</h4>
           <ShowReport title="Room List"
                       headers={headers}
@@ -164,7 +147,6 @@ function Rooms() {
                       report_rows={rooms}
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}/>
-        
         </Container>
       
       </div>
