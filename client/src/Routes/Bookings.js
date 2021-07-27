@@ -13,7 +13,7 @@ import Date from '../Components/Forms/Date';
 //page for managers to manage Bookings
 
 
-function Bookings() {
+function Bookings(props) {
   // -------- state --------
   // loading status
   const [loadingStatus, setLoadingStatus] = useState({
@@ -48,6 +48,7 @@ function Bookings() {
   const [searchLast, setSearchLast] = useState('');
   const [bookings, setBookings] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
+  const [employeeId, setEmployeeId] = useState([]);
   
   
   // -------- Effects ----------------------------------------------------------
@@ -68,6 +69,7 @@ function Bookings() {
       setStartDate(today);
       setEndDate(tomorrow);
       setBookingId('');
+      setEmployeeId('');
     }
   }, [modalVisible])
  
@@ -98,9 +100,10 @@ function Bookings() {
     
     let simpleQuery = "select `Bookings`.`bookingId`as `bookingId`, " +
         "concat(`Employees`.`firstName`, ' ', `Employees`.`lastName`) as empName, " +
+        "`Employees`.`employeeId` as `employeeId`, " +
         "`Owners`.`email` as `ownerEmail`, `Pets`.`petId` as `petId`, " +
         "concat(`Owners`.`firstName`, ' ', `Owners`.`lastName`) as ownerName, " +
-        "`Owners`.`ownerId` as ownerId,  `Pets`.`name` as `petName`, " +
+        "`Owners`.`ownerId` as `ownerId`,  `Pets`.`name` as `petName`, " +
         "`Bookings`.`startDate` as `startDate`, `Bookings`.`endDate` as " +
         "`endDate`, `Rooms`.`roomId` as roomId  from `Bookings` left join " +
         "`Owners` on `Owners`.`ownerId` = `Bookings`.`ownerId` " +
@@ -187,6 +190,7 @@ function Bookings() {
     };
     if (updateMode) {
       data.bookingId = bookingId;
+      data.employeeId = employeeId;
       response = await putState(url, data, setLoadingStatus);
     } else {
       // TODO: combine /api/reservations and /api/bookings
@@ -216,7 +220,8 @@ function Bookings() {
       ownerId: ownerId,
       petId: selectedPetId,
       bookingId: bookingId,
-      roomId: room_id
+      roomId: room_id,
+      employeeId: employeeId
     };
     
     response = await putState(url, data, setLoadingStatus);
@@ -241,6 +246,7 @@ function Bookings() {
     // setOwnerEmail(row.email);   can eliminate? TODO
     setStartDate(row.startDate);
     setEndDate(row.endDate);
+    setEmployeeId(row.employeeId);
     setModalVisible(true);
   }
   
@@ -275,10 +281,12 @@ function Bookings() {
       setCheckOutMode(true);
       setCheckInMode(false);
       setSelectedRoomId(row.roomId);
+      setEmployeeId(row.employeeId)
     } else {
       modalProps.title = ""
       setCheckInMode(true);
       setCheckOutMode(false);
+      setEmployeeId(props.user.id);
       await getAvailableRooms();
     }
     setModalVisible(true);
