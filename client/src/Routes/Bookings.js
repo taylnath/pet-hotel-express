@@ -6,6 +6,7 @@ import {today, tomorrow} from '../Helpers/dateHelpers';
 import Input from "../Components/Forms/Input";
 import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
+import ConfirmDelete from "../Components/Modals/ConfirmDelete";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
@@ -435,13 +436,14 @@ function Bookings(props) {
                 />}
           </GenericModal>
           
-          <GenericModal
-              title={`Are you sure you want to delete booking ${bookingId}?`}
+          <ConfirmDelete
+              title={'Delete Booking'}
+              deleteText={`booking ${bookingId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteReservation}
           />
-        
+
         </Container>
         
         <Container>
@@ -454,6 +456,7 @@ function Bookings(props) {
                       onUpdate={makeUpdateModal}
                       onDelete={confirmDelete}
                       onCheckIn={makeCheckInModal}
+                      isLoading={loadingStatus}
           />
         
         </Container>

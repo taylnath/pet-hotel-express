@@ -7,6 +7,7 @@ import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import {BsChevronCompactDown} from 'react-icons/bs';
+import ConfirmDelete from "../Components/Modals/ConfirmDelete";
 
 // Guests
 // Page for employees to add/delete owners' pets to change their pets
@@ -21,17 +22,26 @@ function Guests(props) {
 
   const [allPets, setAllPets] = useState([]);
   const [ownerPets, setOwnerPets] = useState([]);
-  const [selectedPetId, setSelectedPetId] = useState([]);
+  const [selectedPetId, setSelectedPetId] = useState('');
+  const [selectedPetName, setSelectedPetName] = useState('');
   const [selectedOwner, setSelectedOwner] = useState([]);
+  const [selectedOwnerPets, setSelectedOwnerPets] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [availablePets, setAvailablePets] = useState([]);
+  const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+  const [guestId, setGuestId] = useState('');
 
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible){
+    if (!modalVisible && !confirmDeleteVisible){
       setSelectedPetId((allPets && allPets.length)? allPets[0].petId : '');
-      setSelectedOwner('');
+      setSelectedOwner([]);
+      setSelectedOwnerPets([]);
+      setAvailablePets([]);
+      setSelectedPetName('');
+      setGuestId('');
     } 
-  }, [modalVisible]);
+  }, [modalVisible, confirmDeleteVisible]);
 
   useEffect(() => {
     getState(`/api/dynamic?tables=Pets`, setAllPets, setLoadingStatus)
@@ -58,18 +68,60 @@ function Guests(props) {
         pets: pets
       });
     }
-    console.log(ownerPetsList);
+    console.log("ownerPetsList = ", ownerPetsList);
     setOwnerPets(ownerPetsList);
   }
 
   useEffect(() => refreshOwnerPets(), []);
 
-  function addPet() {
+  async function addPet() {
     // todo...
     console.log("adding a pet...");
-  };
-
-  // todo: add delete, confirmation
+    const url = '/api/dynamic';
+    let response;
+    const data = {
+      table: 'Guests',
+      fieldValues: {
+        ownerId: selectedOwner.ownerId,
+        petId: selectedPetId
+      }
+    }
+      response = await postState(url, data, setLoadingStatus);
+      let body = await response.json();
+      console.log('Pet updated. Got response', body);
+      await refreshOwnerPets();
+  }
+  
+  function makeAddPetModal(selectedOwnerPetData) {
+    setModalVisible(true);
+    
+    // construct an array of all Pets not already belonging to selected Owner
+    let allPetIds = allPets.map((x) => x.petId);
+    let selectedOwnerPetIds = selectedOwnerPetData.map((x) => x.petId);
+    let availablePetIds = allPetIds.filter((x) => !selectedOwnerPetIds.includes(x));
+    setAvailablePets(allPets.filter((x) => availablePetIds.includes(x.petId)));
+  
+    setSelectedPetId((availablePets && availablePets.length)? availablePets[0].petId : '');
+  }
+  
+  // initialize the confirm delete modal after clicking on a row's delete button
+  function confirmDelete(row){
+    console.log("row = ", row)
+    setSelectedPetId(row.petId);
+    setSelectedPetName(row.name);
+    setGuestId(row.guestId);
+    setConfirmDeleteVisible(true);
+    console.log('deleting row:', row);
+  }
+  
+  async function deleteOwnerPet(){
+    
+    let result = await deleteState(`/api/dynamic/Guests/guestId/${guestId}`, setLoadingStatus)
+        .then(res => res.json());
+    console.log(result);
+    setGuestId('');
+    await refreshOwnerPets();
+  }
 
   return (
     <Container className="m-5">
@@ -85,11 +137,20 @@ function Guests(props) {
           name="pet"
           value={selectedPetId}
           setValue={setSelectedPetId}
-          optionsList={allPets}
+          optionsList={availablePets}
           optionKey="petId"
           optionValue="name" // todo: what if name is not unique
         />
       </GenericModal>
+      
+      <ConfirmDelete
+          title={'Remove Pet from Owner'}
+          deleteText={`${selectedPetName} (pet ID ${selectedPetId})`}
+          visible={confirmDeleteVisible}
+          setVisible={setConfirmDeleteVisible}
+          action={deleteOwnerPet}
+      />
+      
       <Accordion defaultActiveKey="0">
         {ownerPets.map(x => {
           return (
@@ -109,6 +170,8 @@ function Guests(props) {
                         onClick={e => {
                           e.preventDefault();
                           setSelectedOwner(x.owner);
+                          setSelectedOwnerPets(x.pets);
+                          makeAddPetModal(x.pets);
                           setModalVisible(true);
                         }}
                       >
@@ -119,10 +182,10 @@ function Guests(props) {
                   <ShowReport
                     key={"report" + String(x.owner.ownerId)}
                     title={`${x.owner.firstName}'s Pets`}
-                    headers={{name: "Pet", type: "Dog/Cat", preferences: "Preferences"}}
-                    attributes={['name', 'type', 'preferences']}
+                    headers={{petId: "ID", name: "Pet", type: "Dog/Cat", preferences: "Preferences"}}
+                    attributes={['petId', 'name', 'type', 'preferences']}
                     report_rows={x.pets}
-                    onDelete={() => console.log("deleting pet...")}
+                    onDelete={confirmDelete}
                   />
                 </Card.Body>
               </Accordion.Collapse>

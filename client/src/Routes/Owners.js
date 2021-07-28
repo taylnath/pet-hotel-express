@@ -4,6 +4,7 @@ import {getState, postState, putState, deleteState} from "../DataAccess/fetchSta
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
+import ConfirmDelete from "../Components/Modals/ConfirmDelete";
 
 // Owners
 //page for managers to manage Owners
@@ -40,11 +41,12 @@ function Owners() {
       setOwnerId('');
     }
   }, [modalVisible])
-
-  useEffect(async () => {
-    await getState(`/api/dynamic?tables=Owners`, setOwners, setLoadingStatus);
-  }, [])
   
+  useEffect(async () => await refreshOwners(), [])
+  
+  async function refreshOwners() {
+    await getState(`/api/dynamic?tables=Owners`, setOwners, setLoadingStatus);
+  }
   
   // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
@@ -63,14 +65,45 @@ function Owners() {
   function confirmDelete(row){
     console.log("row = ", row)
     setOwnerId(row.ownerId);
+    setFirstName(row.firstName);
+    setLastName(row.lastName);
     setConfirmDeleteVisible(true);
     console.log('deleting row:', row);
   }
-
-  const refreshOwners = () => {};
-  const updateOwner = () => {};
-  const deleteOwner = () => {};
   
+  async function addOrUpdateOwner() {
+    const url = '/api/dynamic';
+    let response;
+    const data = {
+      table: 'Owners',
+      fieldValues: {
+        firstName: firstName,
+        lastName: lastName,
+        email: email
+      }
+    };
+    if (updateMode) {
+      // todo: combine identifier and id into an object
+      data.identifier = 'ownerId';
+      data.id = ownerId;
+      response = await putState(url, data, setLoadingStatus);
+    } else {
+      response = await postState(url, data, setLoadingStatus);
+    }
+    let body = await response.json();
+    console.log('Owner updated. Got response', body);
+    await refreshOwners();
+  }
+  
+  async function deleteOwner(){
+    let result = await deleteState(`/api/dynamic/Owners/OwnerId/${ownerId}`, setLoadingStatus)
+        .then(res => res.json());
+    console.log(result);
+    setOwnerId('');
+    await refreshOwners();
+  }
+  
+ 
   // report headers
   const headers = {
     ownerId: "Id",
@@ -96,7 +129,7 @@ function Owners() {
               title={(updateMode)? 'Update Owner' : 'Add a Owner'}
               visible={modalVisible}
               setVisible={setModalVisible}
-              action={updateOwner}
+              action={addOrUpdateOwner}
           >
             <Input
                 id="firstName"
@@ -121,8 +154,16 @@ function Owners() {
             />
           </GenericModal>
   
-          <GenericModal
-              title={`Are you sure you want to delete owner ${ownerId}?`}
+          {/*<GenericModal*/}
+          {/*    title={`Are you sure you want to delete owner ${ownerId}?`}*/}
+          {/*    visible={confirmDeleteVisible}*/}
+          {/*    setVisible={setConfirmDeleteVisible}*/}
+          {/*    action={deleteOwner}*/}
+          {/*/>*/}
+  
+          <ConfirmDelete
+              title={'Delete Owner'}
+              deleteText={`${firstName} ${lastName}`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteOwner}
