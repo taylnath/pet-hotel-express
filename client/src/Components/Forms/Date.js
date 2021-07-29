@@ -21,6 +21,7 @@ function Date(props){
         type="date"
         value={props.value}
         onChange={e=> props.setValue(e.target.value)}
+        min={props.min}
       />
     </>
   )

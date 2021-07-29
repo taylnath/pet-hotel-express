@@ -6,6 +6,7 @@ import {today, tomorrow} from '../Helpers/dateHelpers';
 import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
+import formEndDateHelper from "../Helpers/formEndDateHelper";
 
 // Reservations
 // Page for owners to make reservations
@@ -92,6 +93,13 @@ function Reservations(props) {
     console.log('made reservation. Got response', response);
     await refreshReservations();
   }
+  
+  function setEndDateMin (formStartDate) {
+    setStartDate(formStartDate);
+    let endDateMin = formEndDateHelper(formStartDate);
+    document.getElementById("end-date").setAttribute("min", endDateMin);
+    setEndDate(endDateMin);
+  }
 
   async function deleteReservation(row){
     console.log(row);
@@ -154,7 +162,7 @@ function Reservations(props) {
             label="Checkin Date"
             name="start-date"
             value={startDate} // todo: couple this with data that actually gets sent
-            setValue={setStartDate}
+            setValue={setEndDateMin}
           />
           <Date
             id="end-date"

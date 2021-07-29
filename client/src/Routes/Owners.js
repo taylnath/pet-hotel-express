@@ -92,6 +92,7 @@ function Owners() {
     }
     let body = await response.json();
     console.log('Owner updated. Got response', body);
+    // Todo:  clear Add Owner modal
     await refreshOwners();
   }
   
