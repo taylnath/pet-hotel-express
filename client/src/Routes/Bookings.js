@@ -10,6 +10,7 @@ import ConfirmDelete from "../Components/Modals/ConfirmDelete";
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
+import formEndDateHelper from "../Helpers/formEndDateHelper";
 
 // Bookings
 //page for managers to manage Bookings
@@ -236,6 +237,13 @@ function Bookings(props) {
     setConfirmDeleteVisible(true);
   }
   
+  function setEndDateMin (formStartDate) {
+    setStartDate(formStartDate);
+    let endDateMin = formEndDateHelper(formStartDate);
+    document.getElementById("end-date").setAttribute("min", endDateMin);
+    setEndDate(endDateMin);
+  }
+  
   // initialize check in modal after clicking row's checkin button
   async function makeCheckInModal(row) {
     if (row.roomId) {
@@ -423,7 +431,7 @@ function Bookings(props) {
                     label="Checkin Date"
                     name="start-date"
                     value={startDate} // todo: couple this with data that actually gets sent
-                    setValue={setStartDate}
+                    setValue={setEndDateMin}
                 />}
             
             {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
