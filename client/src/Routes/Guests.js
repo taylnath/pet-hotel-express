@@ -93,15 +93,14 @@ function Guests(props) {
   }
   
   function makeAddPetModal(selectedOwnerPetData) {
-    setModalVisible(true);
-    
     // construct an array of all Pets not already belonging to selected Owner
     let allPetIds = allPets.map((x) => x.petId);
     let selectedOwnerPetIds = selectedOwnerPetData.map((x) => x.petId);
     let availablePetIds = allPetIds.filter((x) => !selectedOwnerPetIds.includes(x));
-    setAvailablePets(allPets.filter((x) => availablePetIds.includes(x.petId)));
+    let petsAvailable = allPets.filter((x) => availablePetIds.includes(x.petId))
+    setAvailablePets(petsAvailable);
   
-    setSelectedPetId((availablePets && availablePets.length)? availablePets[0].petId : '');
+    setSelectedPetId((petsAvailable && petsAvailable.length)? petsAvailable[0].petId : '');
   }
   
   // initialize the confirm delete modal after clicking on a row's delete button
@@ -126,7 +125,7 @@ function Guests(props) {
   return (
     <Container className="m-5">
       <GenericModal
-        title={`Link an existing pet with ${selectedOwner.firstName}`}
+        title={`Link an existing pet ${selectedPetId} with ${selectedOwner.firstName}`}
         visible={modalVisible}
         setVisible={setModalVisible}
         action={addPet}
