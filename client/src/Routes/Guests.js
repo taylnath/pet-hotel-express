@@ -142,14 +142,17 @@ function Guests(props) {
           optionValue="name" // todo: what if name is not unique
         />
       </GenericModal>
-      
-      <ConfirmDelete
-          title={'Remove Pet from Owner'}
-          deleteText={`${selectedPetName} (pet ID ${selectedPetId})`}
-          visible={confirmDeleteVisible}
-          setVisible={setConfirmDeleteVisible}
-          action={deleteOwnerPet}
-      />
+  
+      {confirmDeleteVisible ?
+          <ConfirmDelete
+              title={'Remove Pet from Owner'}
+              deleteText={`${selectedPetName} (pet ID ${selectedPetId})`}
+              visible={confirmDeleteVisible}
+              setVisible={setConfirmDeleteVisible}
+              action={deleteOwnerPet}
+          />
+          : ''
+      }
       
       <Accordion defaultActiveKey="0">
         {ownerPets.map(x => {

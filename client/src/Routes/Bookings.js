@@ -100,7 +100,10 @@ function Bookings(props) {
       where += " and `Owners`.`lastName` like '" + `${searchLast}` + escape('%') + "' "
     }
     
-    let simpleQuery = getBookings + where + ";"
+    // Order by startDate, ownerId
+    let orderBy = " order by `Bookings`.`startDate`, `Owners`.`ownerId` "
+    
+    let simpleQuery = getBookings + where + orderBy + ";"
     
     // Clear search & input fields so not to interfere with future refreshes
     setSearchFirst('');
@@ -125,7 +128,6 @@ function Bookings(props) {
   
   // Get an Owner's Pets
   async function getPets(row) {
-    // todo: was this refactored correctly?
     getState(`/api/ownerPets/${row.ownerEmail}`, setUserPets, setLoadingStatus) // todo: change this to id
       .then(res => {
         setSelectedPetId(res.length ? row.petId || res[0].petId : '');
@@ -135,12 +137,11 @@ function Bookings(props) {
   // Get an rooms available for check-in
   async function getAvailableRooms() {
     let url = "/api/simpleQuery?query="
-   
     getState(url + queryAvailableRooms, setAvailableRooms, setLoadingStatus)
       .then(res => setSelectedRoomId(res[0] ? res[0].roomId : ''));
   }
   
-  // add / update booking    TODO: need an owner selector
+  // add / update booking
   async function makeReservation() {
     let url = `/api/bookings`;
     let response;
@@ -199,6 +200,7 @@ function Bookings(props) {
   
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row) {
+    setModalVisible(true);
     modalProps.title = "Update Reservation"
     getPets(row);
     setUpdateMode(true);
@@ -206,11 +208,9 @@ function Bookings(props) {
     setOwnerId(row.ownerId);
     setOwnerName(row.ownerName);
     setSelectedRoomId(row.roomId);
-    // setOwnerEmail(row.email);   can eliminate? TODO
     setStartDate(row.startDate);
     setEndDate(row.endDate);
     setEmployeeId(row.employeeId);
-    setModalVisible(true);
   }
   
   // initialize the new Select Owner modal after clicking 'New Reservation' button
@@ -238,10 +238,16 @@ function Bookings(props) {
   }
   
   function setEndDateMin (formStartDate) {
+    // set new startDate State from form
     setStartDate(formStartDate);
-    let endDateMin = formEndDateHelper(formStartDate);
-    document.getElementById("end-date").setAttribute("min", endDateMin);
-    setEndDate(endDateMin);
+  
+    // If form startDate is now > endDate, make endDate 'value' & 'min' = startDate + 1 day
+    // Otherwise, leave form endDate as it is
+    let endDateMin = formEndDateHelper(formStartDate, endDate);
+    if (endDateMin) {
+      document.getElementById("end-date").setAttribute("min", endDateMin);
+      setEndDate(endDateMin);
+    }
   }
   
   // initialize check in modal after clicking row's checkin button
@@ -432,6 +438,7 @@ function Bookings(props) {
                     name="start-date"
                     value={startDate} // todo: couple this with data that actually gets sent
                     setValue={setEndDateMin}
+                    min={today}
                 />}
             
             {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
@@ -441,16 +448,20 @@ function Bookings(props) {
                     name="end-date"
                     value={endDate} // todo: couple this with data that actually gets sent
                     setValue={setEndDate}
+                    min={tomorrow}
                 />}
           </GenericModal>
           
-          <ConfirmDelete
+          {confirmDeleteVisible ?
+            <ConfirmDelete
               title={'Delete Booking'}
-              deleteText={`booking ${bookingId}?`}
+              deleteText={`booking ${bookingId}`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               action={deleteReservation}
           />
+          : ''
+          }
 
         </Container>
         

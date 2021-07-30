@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
   try {
     let result = await queryAsync(
       'insert into Bookings (`startDate`, `endDate`, `ownerId`, `petId`) values (?,?,?,?)',
-      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId]
+      [req.body.startDate, req.body.endDate, req.body.ownerId, req.body.petId]
     );
     res.json({"success": true, "operation": "insert"});
   } catch (e) {
@@ -30,7 +30,7 @@ router.put('/', async (req, res) => {
   try {
     let result = await queryAsync(
       'update Bookings set `startDate`=?, `endDate`=?, `ownerId`=?, `petId`=? where `bookingId`=?',
-      [sqlDate(req.body.startDate), sqlDate(req.body.endDate), req.body.ownerId, req.body.petId, req.body.bookingId]
+      [req.body.startDate, req.body.endDate, req.body.ownerId, req.body.petId, req.body.bookingId]
     );
     res.json({"success": true, "operation": "update"});
   } catch (e) {
