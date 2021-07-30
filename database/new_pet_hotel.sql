@@ -33,7 +33,8 @@ create table  `Pets` (
   `name` varchar(255) not null,
   `preferences` varchar(255),
   `type` varchar(255) not null check(`type` = 'dog' or `type` = 'cat'),
-  unique key `petId`(`petId`)
+  unique key `petId`(`petId`),
+  unique `name`(`name`)
 ) ENGINE=InnoDB;
 
 create table  `Rooms` (
@@ -84,38 +85,43 @@ insert into `Employees` values (5, 'Greg', 'Martin', 'Manager');
 insert into `Pets` values (1, 'Fluffy', 'Only likes dogs', 'cat');
 insert into `Pets` values (2, 'Scruffy', 'Only likes cats', 'dog');
 insert into `Pets` values (3, 'Gruffy', 'Likes neither cats nor dogs', 'cat');
-insert into `Pets` values (4, 'Chico', 'wimpy, afraid of Black Cats', 'dog');
+insert into `Pets` values (4, 'Chico', 'Wimpy. Afraid of Black Cats', 'dog');
 
 insert into `Rooms` values (1, 'Our first, and best room');
 insert into `Rooms` values (2, 'Our second room is even better.');
 insert into `Rooms` values (3, 'Our third room is really the best.');
+insert into `Rooms` values (4, 'Spa Room');
+insert into `Rooms` values (5, 'Presidential Suite');
+insert into `Rooms` values (6, 'The Loft');
+insert into `Rooms` values (7, 'The Doghouse');
 
-insert into `Bookings` values (1, '2021-07-25', '2021-07-28', 4, 3, null, 2);
-insert into `Bookings` values (2, '2021-07-27', '2021-07-29', 1, 1, 1, 3);
-insert into `Bookings` values (3, '2021-07-28', '2021-07-29', 1, 2, 2, 1);
-insert into `Bookings` values (4, '2021-07-26', '2021-07-28', 4, 3, null, 2);
-insert into `Bookings` values (5, '2021-07-29', '2021-07-30', 1, 4, 3, NULL);
-insert into `Bookings` values (6, '2021-07-29', '2021-07-30', 1, 2, NULL, NULL);
-insert into `Bookings` values (7, '2021-07-30', '2021-08-01', 1, 1, NULL, NULL);
-insert into `Bookings` values (8, '2021-07-30', '2021-08-01', 1, 4, NULL, NULL);
-insert into `Bookings` values (9, '2021-07-31', '2021-08-02', 1, 2, NULL, NULL);
-insert into `Bookings` values (10, '2021-07-18', '2021-07-19', 1, 1, NULL, NULL);
-insert into `Bookings` values (11, '2021-07-19', '2021-07-20', 1, 4, NULL, NULL);
-insert into `Bookings` values (12, '2021-07-19', '2021-07-20', 1, 2, NULL, NULL);
-insert into `Bookings` values (13, '2021-08-01', '2021-08-05', 1, 1, NULL, NULL);
-insert into `Bookings` values (14, '2021-08-02', '2021-08-03', 1, 4, NULL, NULL);
-insert into `Bookings` values (15, '2021-08-01', '2021-08-03', 1, 2, NULL, NULL);
-insert into `Bookings` values (16, '2021-07-31', '2021-08-01', 1, 1, NULL, NULL);
-insert into `Bookings` values (17, '2021-07-27', '2021-07-30', 1, 4, NULL, NULL);
-insert into `Bookings` values (18, '2021-07-27', '2021-07-29', 1, 2, NULL, NULL);
-insert into `Bookings` values (19, '2021-07-27', '2021-07-28', 1, 1, NULL, NULL);
-insert into `Bookings` values (20, '2021-07-25', '2021-07-27', 1, 4, NULL, NULL);
-insert into `Bookings` values (21, '2021-07-26', '2021-07-28', 1, 2, NULL, NULL);
-insert into `Bookings` values (22, '2021-07-25', '2021-07-27', 1, 1, NULL, NULL);
-insert into `Bookings` values (23, '2021-07-25', '2021-07-26', 1, 4, NULL, NULL);
+insert into `Bookings` values (1, '2021-07-30', '2021-07-31', 4, 3, null, 2);
+insert into `Bookings` values (2, '2021-07-30', '2021-08-01', 1, 1, 1, 3);
+insert into `Bookings` values (3, '2021-07-31', '2021-08-02', 1, 2, 2, 1);
+insert into `Bookings` values (4, '2021-07-31', '2021-08-01', 4, 4, null, 2);
+insert into `Bookings` values (5, '2021-08-01', '2021-08-03', 3, 3, 3, NULL);
+insert into `Bookings` values (6, '2021-08-01', '2021-08-02', 1, 1, NULL, NULL);
+insert into `Bookings` values (7, '2021-08-02', '2021-08-04', 1, 2, NULL, NULL);
+insert into `Bookings` values (8, '2021-08-02', '2021-08-03', 1, 4, NULL, NULL);
+insert into `Bookings` values (9, '2021-08-03', '2021-08-05', 4, 3, NULL, NULL);
+insert into `Bookings` values (10, '2021-08-03', '2021-08-04', 1, 1, NULL, NULL);
+insert into `Bookings` values (11, '2021-08-04', '2021-08-06', 1, 2, NULL, NULL);
+insert into `Bookings` values (12, '2021-08-04', '2021-08-05', 4, 4, NULL, NULL);
+insert into `Bookings` values (13, '2021-08-05', '2021-08-07', 3, 3, NULL, NULL);
+insert into `Bookings` values (14, '2021-08-05', '2021-08-06', 1, 1, NULL, NULL);
+insert into `Bookings` values (15, '2021-08-06', '2021-08-08', 1, 2, NULL, NULL);
+insert into `Bookings` values (16, '2021-08-06', '2021-08-07', 1, 4, NULL, NULL);
+insert into `Bookings` values (17, '2021-08-07', '2021-08-09', 3, 3, NULL, NULL);
+insert into `Bookings` values (18, '2021-08-07', '2021-08-08', 1, 1, NULL, NULL);
+insert into `Bookings` values (19, '2021-08-08', '2021-08-10', 1, 2, NULL, NULL);
+insert into `Bookings` values (20, '2021-08-08', '2021-08-09', 1, 4, NULL, NULL);
+insert into `Bookings` values (21, '2021-08-09', '2021-08-11', 4, 3, NULL, NULL);
+insert into `Bookings` values (22, '2021-08-09', '2021-08-10', 1, 1, NULL, NULL);
+insert into `Bookings` values (23, '2021-08-10', '2021-08-12', 1, 2, NULL, NULL);
 
 insert into `Guests` values (1, 1, 1);
 insert into `Guests` values (2, 1, 2);
 insert into `Guests` values (3, 3, 3);
 insert into `Guests` values (4, 1, 4);
 insert into `Guests` values (5, 4, 3);
+insert into `Guests` values (6, 4, 4);

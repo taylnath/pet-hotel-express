@@ -43,7 +43,8 @@ function CustomNavbar(props) {
             title="Reservations page for owners--create, read, update and delete reservations for one specific Owner."
           >Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports"
-            title="Make reports, of course!"
+                    title="Make reports, of course!"
+                    className={"d-none"}
           >Reports</Nav.Link>
           {/* <NavDropdown hidden={props.user.type === "owner"}
                        id={"admin-nav-dropdown"}
@@ -70,9 +71,10 @@ function CustomNavbar(props) {
           <Nav.Link as={Link} to="/Guests"
             title="Create, read, update, and delete relationships (i.e. the Guests table) between Pets and Owners (without affecting the Pets or Owners tables)."
           >Guests</Nav.Link>
-
+  
           <Nav.Link as={Link} to="/Test"
-            title="This page is for testing new features. Nothing to see here..."
+                    title="This page is for testing new features. Nothing to see here..."
+                    className={"d-none"}
           >Test</Nav.Link>
         </Nav>
 

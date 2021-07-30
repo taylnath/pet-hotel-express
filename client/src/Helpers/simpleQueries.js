@@ -1,3 +1,5 @@
+// This helper module gives constants for the more complex queries
+
 const getPetsRooms = "select `Rooms`.`roomId` as roomId, `Rooms`.`description` " +
     "as description, `Pets`.`name` as petName from `Rooms` left join" +
     " `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +

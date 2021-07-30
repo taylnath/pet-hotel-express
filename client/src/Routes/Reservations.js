@@ -7,6 +7,7 @@ import GenericModal from '../Components/GenericModal';
 import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import formEndDateHelper from "../Helpers/formEndDateHelper";
+import ConfirmDelete from "../Components/Modals/ConfirmDelete";
 
 // Reservations
 // Page for owners to make reservations
@@ -23,6 +24,7 @@ function Reservations(props) {
   // modal state
   const [updateMode, setUpdateMode] = useState(false); // this seems a little awkward, but works for switching between update and insert
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
 
   // user state
   const [userPets, setUserPets] = useState([]);
@@ -94,16 +96,28 @@ function Reservations(props) {
     await refreshReservations();
   }
   
+  // initialize the confirm delete modal after clicking on a row's delete button
+  function confirmDelete(row) {
+    setBookingId(row.bookingId);
+    setConfirmDeleteVisible(true);
+  }
+  
   function setEndDateMin (formStartDate) {
+    // set new startDate State from form
     setStartDate(formStartDate);
-    let endDateMin = formEndDateHelper(formStartDate);
-    document.getElementById("end-date").setAttribute("min", endDateMin);
-    setEndDate(endDateMin);
+    
+    // If form startDate is now > endDate, make endDate 'value' & 'min' = startDate + 1 day
+    // Otherwise, leave form endDate as it is
+    let endDateMin = formEndDateHelper(formStartDate, endDate);
+    if(endDateMin) {
+      document.getElementById("end-date").setAttribute("min", endDateMin);
+      setEndDate(endDateMin);
+    }
   }
 
   async function deleteReservation(row){
     console.log(row);
-    let result = await deleteState(`/api/reservations/${row.bookingId}`, setLoadingStatus);
+    let result = await deleteState(`/api/reservations/${bookingId}`, setLoadingStatus);
     console.log(result);
     await refreshReservations();
   }
@@ -172,6 +186,17 @@ function Reservations(props) {
             setValue={setEndDate}
           />
         </GenericModal>
+  
+        {confirmDeleteVisible ?
+            <ConfirmDelete
+                title={'Delete Reservation'}
+                deleteText={`reservation ${bookingId}`}
+                visible={confirmDeleteVisible}
+                setVisible={setConfirmDeleteVisible}
+                action={deleteReservation}
+            />
+            : ''
+        }
 
         <div>{userPets.length > 0 ? "Your pets:" : userPets.keys()}
           <ul>
@@ -185,7 +210,7 @@ function Reservations(props) {
           attributes={attributes}
           report_rows={userReservations}
           onUpdate={makeUpdateModal}
-          onDelete={deleteReservation}
+          onDelete={confirmDelete}
         />
       </Container>
     </div>
