@@ -65,7 +65,7 @@ function dynamicUpdate(table, fieldValueObject, identifierName, id, noValues=fal
 // console.log(dynamicUpdate('Pets', {name: "Art"}, "petId", "2"));
 // console.log(dynamicInsert('Pets', {name: "Art", preferences: "Something here", type: "dog"}));
 // console.log(dynamicInsert('Pets', {name: "Art"}));
-// console.log(dynamicSelect('Bookings,Pets,Groups'));
+// console.log(dynamicSelect('Bookings,Pets', 'ownerId,1'));
 // console.log(dynamicSelect('Bookings', 'petId,1'));
 
 module.exports = {

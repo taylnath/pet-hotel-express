@@ -35,6 +35,14 @@ delete from `Guests` where `guestId`=':guestId';
 
 -- SELECT Queries on multiple tables:
 
+-- Get basic data for a given owner's bookings
+select * from `Bookings` natural join `Pets` where `ownerId` = ':ownerId';
+
+-- Get a given owner's pets using their email (this query will be changed at least and probably taken out entirely).
+select * from `Pets` p join `Guests` g on g.petId = p.petId join `Owners` o on o.ownerId = g.ownerId where o.ownerId=(select `ownerId` from `Owners` where `email`=':email');
+-- (Not implemented) Possible new version of above query (the front end will select the row corresponding to a given owner):
+select * from `Pets` natural join `Guests` natural join `Owners`;
+
 -- Show rooms.  Guest pets are shown if a pet is checked in, otherwise NULL
 select `Rooms`.`roomId` as roomId, `Rooms`.`description` as description, `Pets`.`name` as `petName` 
     from `Rooms` left join `Bookings` on `Rooms`.`roomId` = `Bookings`.`roomId` 
