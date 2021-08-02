@@ -45,7 +45,9 @@ function Pets() {
       setPreferences('');
       setPetId('');
       setType('cat');
-      setLoadingStatus({loading: true, error: false});
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     }
   }, [modalVisible, confirmDeleteVisible])
 
@@ -74,6 +76,7 @@ function Pets() {
   function confirmDelete(row){
     console.log("row = ", row)
     setPetId(row.petId);
+    setName(row.name);
     setConfirmDeleteVisible(true);
     console.log('deleting row:', row);
   }
@@ -137,6 +140,7 @@ function Pets() {
               title={(updateMode)? 'Update Pet' : 'Add a Pet'}
               visible={modalVisible}
               setVisible={setModalVisible}
+              setLoadingStatus={setLoadingStatus}
               action={updatePet}
           >
             <Input
@@ -166,9 +170,10 @@ function Pets() {
           </GenericModal>
   
           <GenericModal
-              title={`Are you sure you want to delete pet ${petId}?`}
+              title={`Are you sure you want to delete ${name}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
+              setLoadingStatus={setLoadingStatus}
               action={deletePet}
           />
           

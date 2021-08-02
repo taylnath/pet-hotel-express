@@ -5,6 +5,7 @@ import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import ConfirmDelete from "../Components/Modals/ConfirmDelete";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Owners
 //page for managers to manage Owners
@@ -33,14 +34,17 @@ function Owners() {
   // -------- effects --------
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible) {
+    if (!modalVisible && !confirmDeleteVisible) {
       setUpdateMode(false);
       setFirstName('');
       setLastName('');
       setEmail('');
       setOwnerId('');
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     }
-  }, [modalVisible])
+  }, [modalVisible, confirmDeleteVisible])
   
   useEffect(async () => await refreshOwners(), [])
   
@@ -125,11 +129,14 @@ function Owners() {
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Owner
           </Button>
+  
+          <LoadingStatus status={loadingStatus}/>
           
           <GenericModal
               title={(updateMode)? 'Update Owner' : 'Add a Owner'}
               visible={modalVisible}
               setVisible={setModalVisible}
+              setLoadingStatus={setLoadingStatus}
               action={addOrUpdateOwner}
           >
             <Input
@@ -162,13 +169,17 @@ function Owners() {
           {/*    action={deleteOwner}*/}
           {/*/>*/}
   
-          <ConfirmDelete
-              title={'Delete Owner'}
-              deleteText={`${firstName} ${lastName}`}
-              visible={confirmDeleteVisible}
-              setVisible={setConfirmDeleteVisible}
-              action={deleteOwner}
-          />
+          {confirmDeleteVisible ?
+              <ConfirmDelete
+                  title={'Delete Owner'}
+                  deleteText={`${firstName} ${lastName}`}
+                  visible={confirmDeleteVisible}
+                  setVisible={setConfirmDeleteVisible}
+                  setLoadingStatus={setLoadingStatus}
+                  action={deleteOwner}
+              />
+              : ''
+          }
           
         </Container>
         

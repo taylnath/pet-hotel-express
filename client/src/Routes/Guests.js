@@ -8,6 +8,7 @@ import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import {BsChevronCompactDown} from 'react-icons/bs';
 import ConfirmDelete from "../Components/Modals/ConfirmDelete";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Guests
 // Page for employees to add/delete owners' pets to change their pets
@@ -40,6 +41,9 @@ function Guests(props) {
       setAvailablePets([]);
       setSelectedPetName('');
       setGuestId('');
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     } 
   }, [modalVisible, confirmDeleteVisible]);
 
@@ -48,21 +52,22 @@ function Guests(props) {
       .then(pets => {
         setSelectedPetId((pets.length > 0) ? pets[0].id : '');
         console.log("got all pets:", pets);
-      });
+      }).then(() =>{setLoadingStatus({loading: true, error:false})});
   }, []);
 
   // todo: this data should be read from all pets array or something
   // todo: use fetchState style
-  async function refreshOwnerPets(){
+  async function refreshOwnerPets() {
     let ownerPetsList = [];
     let owners = await fetch(`/api/dynamic?tables=Owners`)
-      .then(res => (res.ok)? res.json() : Promise.reject())
-      .catch(err => console.log(err));
-    console.log(owners);
-    for (let owner of owners){
-      let pets = await fetch(`/api/ownerPets/${owner.email}`) // todo: change this to owner.ownerId
-        .then(res => (res.ok)? res.json() : Promise.reject())
+        .then(res => (res.ok) ? res.json() : Promise.reject())
         .catch(err => console.log(err));
+    console.log(owners);
+    for (let owner of owners) {
+      let pets = await fetch(`/api/ownerPets/${owner.email}`) // todo: change this to owner.ownerId
+          .then(res => (res.ok) ? res.json() : Promise.reject())
+          .catch(err => console.log(err));
+      
       ownerPetsList.push({
         owner: owner,
         pets: pets
@@ -70,6 +75,7 @@ function Guests(props) {
     }
     console.log("ownerPetsList = ", ownerPetsList);
     setOwnerPets(ownerPetsList);
+    setLoadingStatus({loading: false, error: false})
   }
 
   useEffect(() => refreshOwnerPets(), []);
@@ -124,10 +130,16 @@ function Guests(props) {
 
   return (
     <Container className="m-5">
+      
+      <p className={"mt-2"}> </p>
+      <LoadingStatus status={loadingStatus}/>
+      <p className={"mb-3"}> </p>
+      
       <GenericModal
         title={`Link an existing pet ${selectedPetId} with ${selectedOwner.firstName}`}
         visible={modalVisible}
         setVisible={setModalVisible}
+        setLoadingStatus={setLoadingStatus}
         action={addPet}
       >
         <Select
@@ -148,6 +160,7 @@ function Guests(props) {
               deleteText={`${selectedPetName} (pet ID ${selectedPetId})`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
+              setLoadingStatus={setLoadingStatus}
               action={deleteOwnerPet}
           />
           : ''
