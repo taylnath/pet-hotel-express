@@ -8,6 +8,7 @@ import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import formEndDateHelper from "../Helpers/formEndDateHelper";
 import ConfirmDelete from "../Components/Modals/ConfirmDelete";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Reservations
 // Page for owners to make reservations
@@ -37,14 +38,17 @@ function Reservations(props) {
   // --- effects ---
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible){
+    if (!modalVisible && !confirmDeleteVisible){
       setUpdateMode(false);
       setSelectedPetId((userPets && userPets.length)? userPets[0].petId : '');
       setStartDate(today);
       setEndDate(tomorrow);
       setBookingId('');
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     } 
-  }, [modalVisible]);
+  }, [modalVisible, confirmDeleteVisible]);
 
   // get/refresh user pets
   useEffect(() => {
@@ -154,11 +158,14 @@ function Reservations(props) {
         >
           Make a reservation
         </Button>
+  
+        <LoadingStatus status={loadingStatus}/>
 
         <GenericModal 
           title={(updateMode)? 'Update a Reservation' : 'Make a Reservation'}
           visible={modalVisible}
           setVisible={setModalVisible}
+          setLoadingStatus={setLoadingStatus}
           action={makeReservation}
         >
           <Select 
@@ -193,6 +200,7 @@ function Reservations(props) {
                 deleteText={`reservation ${bookingId}`}
                 visible={confirmDeleteVisible}
                 setVisible={setConfirmDeleteVisible}
+                setLoadingStatus={setLoadingStatus}
                 action={deleteReservation}
             />
             : ''

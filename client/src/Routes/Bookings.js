@@ -87,6 +87,7 @@ function Bookings(props) {
   
   // Refresh ShowReport
   async function refreshBookings(filter) {
+    setLoadingStatus({loading: true, error: false});
     
     // Set * filter * 'where' conditions, or set to 1
     //    (so subsequent wheres start with 'and')

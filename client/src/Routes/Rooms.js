@@ -39,7 +39,7 @@ function Rooms() {
       setPetName('');
       setDescription('');
       setRoomId('');
-      setModalProps({})
+      setModalProps({});
       loadingStatus.cancelled ?
           setLoadingStatus({loading: false, error: false}) :
           setLoadingStatus({loading: true, error: false});
