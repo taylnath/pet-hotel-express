@@ -33,14 +33,25 @@ function GenericModal(props){
           <Container className={"p-3"}>
             <Row>
               <Col>
-              <Button variant="primary" md={4} type={"submit"}>
-                Ok {/* (or make this a prop?) */}
-              </Button>
+                <Button variant="primary" md={4} type={"submit"}>
+                  Ok {/* (or make this a prop?) */}
+                </Button>
               </Col>
               <Col>
-              <Button variant="secondary" md={4} onClick={() => props.setVisible(false)}>
-                Cancel
-              </Button>
+                <Button variant="secondary" md={4} onClick={() => {
+                  props.setVisible(false);
+                  {
+                    props.setLoadingStatus &&
+                    props.setLoadingStatus({
+                      cancelled: true,
+                      loading: false,
+                      error: false
+                    });
+                    console.log("Loading Status is false!");
+                  }
+                }}>
+                  Cancel
+                </Button>
               </Col>
             </Row>
           </Container>

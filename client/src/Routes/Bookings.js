@@ -11,6 +11,7 @@ import Select from '../Components/Forms/Select';
 import Date from '../Components/Forms/Date';
 import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
 import formEndDateHelper from "../Helpers/formEndDateHelper";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Bookings
 //page for managers to manage Bookings
@@ -56,7 +57,7 @@ function Bookings(props) {
   
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible) {
+    if (!modalVisible && !confirmDeleteVisible) {
       setUpdateMode(false);
       setModalProps({type: '', title: ''})
       setCheckInMode(false);
@@ -71,8 +72,11 @@ function Bookings(props) {
       setEndDate(tomorrow);
       setBookingId('');
       setEmployeeId('');
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     }
-  }, [modalVisible])
+  }, [modalVisible, confirmDeleteVisible])
  
   useEffect(() => refreshBookings(filterBy), []);
   
@@ -312,6 +316,8 @@ function Bookings(props) {
             Filter List:
           </span>
           <FilterRadioButton setFilterBy={setFilterBy}
+                             loadingStatus={loadingStatus}
+                             setLoadingStatus={setLoadingStatus}
                              refresh={refreshBookings}
                              filterBy={filterBy}
           />
@@ -353,12 +359,15 @@ function Bookings(props) {
               </Button>
             </Form>
           </div>
+  
+          <LoadingStatus status={loadingStatus}/>
           
           {/* ---------- Modal ---------- */}
           <GenericModal
               title={modalProps.title}
               visible={modalVisible}
               setVisible={setModalVisible}
+              setLoadingStatus={setLoadingStatus}
               action={ () => {
                 if (checkInMode || checkOutMode) {
                   checkIn()
@@ -458,6 +467,7 @@ function Bookings(props) {
               deleteText={`booking ${bookingId}`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
+              setLoadingStatus={setLoadingStatus}
               action={deleteReservation}
           />
           : ''

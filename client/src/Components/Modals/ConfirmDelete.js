@@ -8,6 +8,7 @@ function ConfirmDelete(props) {
             title={props.title}
             visible={props.visible}
             setVisible={props.setVisible}
+            setLoadingStatus={props.setLoadingStatus}
             action={props.action}
         >
           <p className={"modal-subtitle"}>
