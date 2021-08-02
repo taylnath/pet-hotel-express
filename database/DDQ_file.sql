@@ -51,10 +51,10 @@ create table  `Bookings` (
   `petId` int not null,
   `roomId` int,
   `employeeId` int,
-  constraint `bookings_fk1` foreign key (`ownerId`) references `Owners`(`ownerId`) on delete cascade on update cascade,
-  constraint `bookings_fk2` foreign key (`petId`) references `Pets`(`petId`) on delete cascade on update cascade,
-  constraint `bookings_fk3` foreign key (`roomId`) references `Rooms`(`roomId`) on delete cascade on update cascade,
-  constraint `bookings_fk4` foreign key (`employeeId`) references `Employees`(`employeeId`) on delete cascade on update cascade,
+  constraint `bookings_fk1` foreign key (`ownerId`) references `Owners`(`ownerId`) on delete restrict on update cascade,
+  constraint `bookings_fk2` foreign key (`petId`) references `Pets`(`petId`) on delete restrict on update cascade,
+  constraint `bookings_fk3` foreign key (`roomId`) references `Rooms`(`roomId`) on delete set null on update cascade,
+  constraint `bookings_fk4` foreign key (`employeeId`) references `Employees`(`employeeId`) on delete set null on update cascade,
   unique key `bookingId`(`bookingId`)
 ) ENGINE=InnoDB;
 
