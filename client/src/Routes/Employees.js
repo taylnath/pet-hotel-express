@@ -4,6 +4,7 @@ import {getState, postState, putState, deleteState} from "../DataAccess/fetchSta
 import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Employees
 //page for managers to manage Employees
@@ -38,6 +39,9 @@ function Employees() {
       setLastName('');
       setJobTitle('');
       setEmployeeId('');
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     }
   }, [modalVisible, confirmDeleteVisible])
   
@@ -120,11 +124,14 @@ function Employees() {
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Employee
           </Button>
+  
+          <LoadingStatus status={loadingStatus}/>
           
           <GenericModal
               title={(updateMode)? 'Update Employee' : 'Add an Employee'}
               visible={modalVisible}
               setVisible={setModalVisible}
+              setLoadingStatus={setLoadingStatus}
               action={updateEmployee}
           >
             <Input
@@ -154,6 +161,7 @@ function Employees() {
               title={`Are you sure you want to delete ${firstName} ${lastName}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
+              setLoadingStatus={setLoadingStatus}
               action={deleteEmployee}
           />
           

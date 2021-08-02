@@ -5,6 +5,7 @@ import ShowReport from "../Components/Reports/ShowReport";
 import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import {getPetsRooms} from "../Helpers/simpleQueries";
+import LoadingStatus from "../Components/LoadingStatus";
 
 // Rooms
 //page for managers to manage Rooms
@@ -33,14 +34,17 @@ function Rooms() {
   // -------- effects --------
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible) {
+    if (!modalVisible && !confirmDeleteVisible) {
       setUpdateMode(false);
       setPetName('');
       setDescription('');
       setRoomId('');
       setModalProps({})
+      loadingStatus.cancelled ?
+          setLoadingStatus({loading: false, error: false}) :
+          setLoadingStatus({loading: true, error: false});
     }
-  }, [modalVisible])
+  }, [modalVisible, confirmDeleteVisible])
   
   
   useEffect(() => refreshRooms().then(console.log("done!")), []);
@@ -112,11 +116,14 @@ function Rooms() {
                   onClick={() => {setModalVisible(true);}}>
             Add New Room
           </Button>
+  
+          <LoadingStatus status={loadingStatus}/>
           
           <GenericModal
               title={(updateMode)? 'Update Room' : 'Add a Room'}
               visible={modalVisible}
               setVisible={setModalVisible}
+              setLoadingStatus={setLoadingStatus}
               action={updateRoom}
           >
             <p className={"modal-subtitle"}> {modalProps.subtitle} </p>
@@ -134,6 +141,7 @@ function Rooms() {
               title={`Are you sure you want to delete room ${roomId}?`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
+              setLoadingStatus={setLoadingStatus}
               action={deleteRoom}
           />
           

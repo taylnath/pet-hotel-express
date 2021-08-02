@@ -20,7 +20,9 @@ function FilterRadioButton(props) {
             variant="outline-primary"
             checked={checked}
             value="1"
-            onChange={(e) => setChecked(e.currentTarget.checked)}
+            onChange={(e) => {
+              setChecked(e.currentTarget.checked);
+            }}
         >
           Checked
         </ToggleButton>
