@@ -33,7 +33,9 @@ const ReportRow = (props) => {
                                                 size={"sm"}
                                                 disabled={
                                                   isLoading ||
-                                                  makeDate(props.row.endDate) < makeDate(tomorrow)
+                                                      props.row.endDate ?
+                                                  makeDate(props.row.endDate) < makeDate(tomorrow) :
+                                                      false
                                                 }>
                                          {isLoading ? "Processing ..." : "Update"}
                                        </Button>)}
