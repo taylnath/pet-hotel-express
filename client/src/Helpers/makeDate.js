@@ -7,4 +7,8 @@ function makeDate(textDate) {
   return new Date(textYear, textMonth - 1, textDay);
 }
 
-export default makeDate;
+function dayBefore(textDate) {
+  return new Date(makeDate(textDate).getTime() - 86400000);
+}
+
+export { makeDate, dayBefore };

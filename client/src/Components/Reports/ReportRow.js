@@ -3,8 +3,8 @@
 import {Button, Table} from "react-bootstrap";
 import Cell from './Cell'
 import {useState} from "react";
-import { today } from "../../Helpers/dateHelpers";
-import makeDate from "../../Helpers/makeDate";
+import { today, tomorrow } from "../../Helpers/dateHelpers";
+import { makeDate, dayBefore } from "../../Helpers/makeDate";
 
 const ReportRow = (props) => {
 
@@ -31,7 +31,10 @@ const ReportRow = (props) => {
                                        }}
                                                 variant={"success"}
                                                 size={"sm"}
-                                                disabled={isLoading}>
+                                                disabled={
+                                                  isLoading ||
+                                                  makeDate(props.row.endDate) < makeDate(tomorrow)
+                                                }>
                                          {isLoading ? "Processing ..." : "Update"}
                                        </Button>)}
           />}
@@ -59,7 +62,7 @@ const ReportRow = (props) => {
                                                  size={"sm"}
                                                  disabled={
                                                    isLoading ||
-                                                       makeDate(props.row.endDate) > makeDate(today)
+                                                   ((makeDate(props.row.endDate) < makeDate(tomorrow)) && !props.row.roomId)
                                                  }>
                                           {isLoading ? "Processing ..." :
                                               (props.row.roomId ? "Check Out" : "Check In")}
