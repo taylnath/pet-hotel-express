@@ -417,6 +417,7 @@ function Bookings(props) {
                 />}
 
               {checkInMode ?
+                availableRooms.length ?
                 <Select
                     id="select-a-room"
                     label="Select room for check in"
@@ -426,7 +427,8 @@ function Bookings(props) {
                     optionsList={availableRooms}
                     optionKey="roomId"
                     optionValue="roomId"
-                /> : ''
+                /> : "There are no available rooms!"
+                 : ''
             }
             
             {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
