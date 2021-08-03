@@ -361,7 +361,9 @@ function Bookings(props) {
             </Form>
           </div>
   
-          <LoadingStatus status={loadingStatus}/>
+          <div style={{height: "20px"}}>
+            <LoadingStatus status={loadingStatus}/>
+          </div>
           
           {/* ---------- Modal ---------- */}
           <GenericModal
