@@ -24,7 +24,7 @@ router.get('/testData', async (req, res) => {
   console.log('Done with data.');
   try{
     // not the best way to read in database file -- currently loading directly to mysql is better
-    let testDBSetup = fs.readFileSync('./database/test_db.sql', 'utf8'); // read in file
+    let testDBSetup = fs.readFileSync('./database/old/test_db.sql', 'utf8'); // read in file
     testQueries = testDBSetup.split('\n').join(' ').split(';'); // split into queries
     for (let e of testQueries){
       (e.trim()) && await queryAsync(e); // do each query
