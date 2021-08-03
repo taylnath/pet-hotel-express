@@ -41,6 +41,7 @@ function CustomNavbar(props) {
         <Nav>
           <Nav.Link as={Link} to="/Reservations" 
             title="Reservations page for owners--create, read, update and delete reservations for one specific Owner."
+            className="d-none"
           >Reservations</Nav.Link>
           <Nav.Link as={Link} to="/Reports"
                     title="Make reports, of course!"
