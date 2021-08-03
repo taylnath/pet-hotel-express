@@ -6,6 +6,7 @@ import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import Select from '../Components/Forms/Select';
 import LoadingStatus from '../Components/LoadingStatus';
+import ConfirmDelete from '../Components/Modals/ConfirmDelete';
 
 // Pets
 //page for managers to manage Pets
@@ -169,13 +170,18 @@ function Pets() {
             />
           </GenericModal>
   
-          <GenericModal
-              title={`Are you sure you want to delete ${name}?`}
+          {confirmDeleteVisible ?
+            <ConfirmDelete
+              title={'Delete Pet'}
+              deleteText={`${name}`}
+              extraText={`Warning: This will also delete all of ${name}'s bookings.`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               setLoadingStatus={setLoadingStatus}
               action={deletePet}
           />
+          : ''
+          }
           
         </Container>
         

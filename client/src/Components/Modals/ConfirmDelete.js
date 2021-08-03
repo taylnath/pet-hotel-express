@@ -14,6 +14,9 @@ function ConfirmDelete(props) {
           <p className={"modal-subtitle"}>
             {'Are you sure you want to delete ' + props.deleteText + '?'}
           </p>
+          <p className="modal-subtitle">
+            {props.extraText}
+          </p>
         </GenericModal>
       </>
   
