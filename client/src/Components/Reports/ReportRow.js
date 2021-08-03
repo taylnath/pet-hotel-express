@@ -3,6 +3,8 @@
 import {Button, Table} from "react-bootstrap";
 import Cell from './Cell'
 import {useState} from "react";
+import { today } from "../../Helpers/dateHelpers";
+import makeDate from "../../Helpers/makeDate";
 
 const ReportRow = (props) => {
 
@@ -16,61 +18,61 @@ const ReportRow = (props) => {
       <>
         <tr>
           {cells.map((cell, index) => (
-                  <Cell key = {index}
+                  <Cell key={index}
                         row_index={props.index}
                         is_header={props.is_header}
-                        cell={cell} />
+                        cell={cell}/>
               )
           )}
           {props.onUpdate && <Cell is_header={props.is_header}
                                    cell={props.is_header ? "Update" :
-                                       (<Button onClick={() =>
-                                       {
-                                         props.onUpdate(props.row)}}
+                                       (<Button onClick={() => {
+                                         props.onUpdate(props.row)
+                                       }}
                                                 variant={"success"}
                                                 size={"sm"}
                                                 disabled={isLoading}>
-                                         {isLoading? "Processing ..." : "Update"}
-                                       </Button>)}
-                                   />}
-                                   
-          {props.onDelete && <Cell is_header={props.is_header}
-                                   cell={props.is_header ? "Delete" :
-                                       (<Button onClick={() =>
-                                          {
-                                          // setLoading(!isLoading);
-                                          props.onDelete(props.row);
-                                          }}
-                                          variant={"danger"}
-                                          size={"sm"}
-                                       disabled={isLoading}>
-                                         {isLoading? "Processing ..." : "Delete"}
-                                       </Button>)}
-                                   />}
-  
-          {props.onCheckIn && <Cell is_header={props.is_header}
-                                   cell={props.is_header ? "CheckIn" :
-                                       (<Button onClick={() =>
-                                       {
-                                         // setLoading(!isLoading);
-                                         props.onCheckIn(props.row);
-                                       }}
-                                                variant={props.row.roomId ?
-                                                    "warning" : "info"}
-                                                size={"sm"}
-                                                disabled={isLoading}>
-                                         {isLoading? "Processing ..." :
-                                             (props.row.roomId ? "Check Out" : "Check In")}
+                                         {isLoading ? "Processing ..." : "Update"}
                                        </Button>)}
           />}
-          
+        
+          {props.onDelete && <Cell is_header={props.is_header}
+                                   cell={props.is_header ? "Delete" :
+                                       (<Button onClick={() => {
+                                         // setLoading(!isLoading);
+                                         props.onDelete(props.row);
+                                       }}
+                                                variant={"danger"}
+                                                size={"sm"}
+                                                disabled={isLoading}>
+                                         {isLoading ? "Processing ..." : "Delete"}
+                                       </Button>)}
+          />}
+        
+          {props.onCheckIn && <Cell is_header={props.is_header}
+                                    cell={props.is_header ? "CheckIn" :
+                                        (<Button onClick={() => {
+                                          props.onCheckIn(props.row);
+                                        }}
+                                                 variant={props.row.roomId ?
+                                                     "warning" : "info"}
+                                                 size={"sm"}
+                                                 disabled={
+                                                   isLoading ||
+                                                       makeDate(props.row.endDate) > makeDate(today)
+                                                 }>
+                                          {isLoading ? "Processing ..." :
+                                              (props.row.roomId ? "Check Out" : "Check In")}
+                                        </Button>)}
+          />}
+      
         </tr>
-        
-         {/* <Button variant={"danger"}*/}
-         {/*          onClick={() => onDelete(row.id)}>Delete*/}
-         {/*</Button>*/}
-         
-        
+      
+        {/* <Button variant={"danger"}*/}
+        {/*          onClick={() => onDelete(row.id)}>Delete*/}
+        {/*</Button>*/}
+    
+    
       </>
   )
 }
