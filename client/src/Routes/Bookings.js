@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
 import {today, tomorrow} from '../Helpers/dateHelpers';
-import Input from "../Components/Forms/Input";
 import FilterRadioButton from "../Components/Forms/FilterRadioButton";
 import GenericModal from "../Components/GenericModal";
 import ConfirmDelete from "../Components/Modals/ConfirmDelete";
@@ -50,7 +49,8 @@ function Bookings(props) {
   const [searchLast, setSearchLast] = useState('');
   const [bookings, setBookings] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
-  const [employeeId, setEmployeeId] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [employeeId, setEmployeeId] = useState('');
   
   
   // -------- Effects ----------------------------------------------------------
@@ -71,6 +71,7 @@ function Bookings(props) {
       setStartDate(today);
       setEndDate(tomorrow);
       setBookingId('');
+      setEmployees([]);
       setEmployeeId('');
       loadingStatus.cancelled ?
           setLoadingStatus({loading: false, error: false}) :
@@ -137,6 +138,17 @@ function Bookings(props) {
       .then(res => {
         setSelectedPetId(res.length ? row.petId || res[0].petId : '');
     });
+  }
+  
+  // Get Employees
+  async function getEmployees(row) {
+    console.log("in get Employees", row)    // Todo
+    getState(`/api/dynamic?tables=Employees`, () => {}, setLoadingStatus)
+        .then(res => {
+          res.map((employee) => {employee.name = employee.firstName + " " + employee.lastName});
+          setEmployeeId(res.length ? row.employeeId || res[0].employeeId : '');
+          return setEmployees(res);
+        });
   }
   
   // Get an rooms available for check-in
@@ -208,6 +220,7 @@ function Bookings(props) {
     setModalVisible(true);
     modalProps.title = "Update Reservation"
     getPets(row);
+    getEmployees(row);
     setUpdateMode(true);
     setBookingId(row.bookingId);
     setOwnerId(row.ownerId);
@@ -257,6 +270,8 @@ function Bookings(props) {
   
   // initialize check in modal after clicking row's checkin button
   async function makeCheckInModal(row) {
+    getEmployees(row);
+    
     if (row.roomId) {
       modalProps.title = ""
       setCheckOutMode(true);
@@ -442,6 +457,18 @@ function Bookings(props) {
                     setValue={setSelectedPetId}
                     optionsList={userPets}
                     optionKey="petId"
+                    optionValue="name"
+                />}
+                
+            {checkOutMode || modalProps.type === 'select-owner' ? '' :
+                <Select
+                    id="select-employee"
+                    label="Assign Booking to Employee"
+                    name="employee"
+                    value={employeeId}
+                    setValue={setEmployeeId}
+                    optionsList={employees}
+                    optionKey="employeeId"
                     optionValue="name"
                 />}
             
