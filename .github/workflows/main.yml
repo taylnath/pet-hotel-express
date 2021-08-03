@@ -40,6 +40,7 @@ jobs:
           command: |
             cd 340cs-project
             git pull
+            mysql -h classmysql.engr.oregonstate.edu -u ${{ secrets.MARIAU }} --password=${{ secrets.MARIAP }} cs340_taylnath < dtabase/DDQ_file.sql
             npm install
             npm run build --prefix client
             forever stopall
