@@ -139,13 +139,18 @@ function Owners() {
         </Container>
         
         <Container>
-          {deleteAlertVisible ?
-            <Alert variant="danger" onClose={() => setDeleteAlertVisible(false)} dismissible>
-              <Alert.Heading>Owner not deleted!</Alert.Heading>
-              <p>{deleteAlertMessage}</p>
-            </Alert>
-            : ''
-          }
+          <GenericModal
+            title="Owner not deleted!"
+            visible={deleteAlertVisible}
+            setVisible={setDeleteAlertVisible}
+            setLoadingStatus={() => {}}
+            action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {deleteAlertMessage}
+            </p>
+          </GenericModal>
+
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Owner
           </Button>
