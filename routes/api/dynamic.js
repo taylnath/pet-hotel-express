@@ -21,11 +21,14 @@ const sqlDate = require('../../database/sqlDate');
 router.get('/', async (req, res) => {
   await queryAsync(
     dynamicSelect(req.query.tables, req.query.where))
-  .then(result => {
-    // console.log(result);
-    return res.json(result);
-  })
-  .catch(e => console.error(e));
+      .then(result => {
+        // console.log(result);
+        return res.json(result);
+      })
+      .catch(err => {
+        console.error(err);
+        res.json({"success": false});
+      });
 });
 
 router.post('/', async (req, res) => {
@@ -36,8 +39,16 @@ router.post('/', async (req, res) => {
       console.log("dynamicInsert: found", result)
       return res.json(result);
     })
-    .catch(e => console.error(e));
-})
+    .catch(err => {
+      console.error(err);
+      if (err.sqlMessage){
+        console.log("SQL error detected:", err.sqlMessage);
+        res.json({"success": false, "sqlMessage": err.sqlMessage});
+      } else {
+        res.json({"success": false});
+      }
+    });
+});
 
 router.put('/', async (req, res) => {
   await queryAsync(
@@ -46,7 +57,10 @@ router.put('/', async (req, res) => {
       console.log("dynamicUpdate: found", result)
       return res.json(result);
     })
-    .catch(e => console.error(e));
+    .catch(err => {
+      console.error(err);
+      res.json({"success": false});
+    });
 });
 
 router.delete('/:table/:identifier/:id', async (req, res) => {
@@ -54,7 +68,15 @@ router.delete('/:table/:identifier/:id', async (req, res) => {
     'delete from ?? where ?? = ?', 
     [req.params.table, req.params.identifier, req.params.id]
   ).then(() => res.json({"success": true}))
-    .catch(e => console.error(e));
+    .catch(err => {
+      console.error(err);
+      if (err.sqlMessage){
+        console.log("SQL error detected:", err.sqlMessage);
+        res.json({"success": false, "sqlMessage": err.sqlMessage});
+      } else {
+        res.json({"success": false});
+      }
+    });
 });
 
 

@@ -26,6 +26,8 @@ function Pets() {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
   const [deleteAlertMessage, setDeleteAlertMessage] = useState("This pet could not be deleted.");
+  const [sqlAlertVisible, setSqlAlertVisible] = useState(false);
+  const [sqlAlertMessage, setSqlAlertMessage] = useState("There was an issue performing your request.");
   
   // user, data states
   const [pets, setPets] = useState([]);
@@ -114,9 +116,12 @@ function Pets() {
       response = await putState(url, data, setLoadingStatus);
     } else {
       response = await postState(url, data, setLoadingStatus);
+      if (!response.success && response.sqlMessage){
+        setSqlAlertMessage(response.sqlMessage);
+        setSqlAlertVisible(true);
+      }
     }
-    let body = await response.json();
-    console.log('Pet updated. Got response', body);
+    console.log('Pet updated. Got response', response);
     await refreshPets();
   }
 
@@ -143,6 +148,18 @@ function Pets() {
         </Container>
         
         <Container>
+          <GenericModal
+            title="Database Conflict!"
+            visible={sqlAlertVisible}
+            setVisible={setSqlAlertVisible}
+            setLoadingStatus={() => {}}
+            action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {sqlAlertMessage}
+            </p>
+          </GenericModal>
+
           <GenericModal
             title="Pet not deleted!"
             visible={deleteAlertVisible}

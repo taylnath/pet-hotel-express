@@ -43,9 +43,12 @@ router.get('/ownerPets/:ownerEmail', async (req, res) => {
     [req.params.ownerEmail]
   ).then(result => {
     // console.log(result);
-    return res.json(result);
+    res.json(result);
   })
-    .catch(e => console.error(e));
+    .catch(err => {
+      console.error(err);
+      res.json({"success": false});
+    });
 });
 
 
