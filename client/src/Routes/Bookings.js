@@ -178,7 +178,7 @@ function Bookings(props) {
       url = `/api/reservations`;
       response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
+    let body = await response.json;
     await refreshBookings(filterBy);
   }
 
@@ -207,7 +207,7 @@ function Bookings(props) {
     
     response = await putState(url, data, setLoadingStatus);
     
-    let body = await response.json();
+    let body = await response.json;
     // setFilterBy("all");
     await refreshBookings(filterBy);
   }
@@ -459,8 +459,9 @@ function Bookings(props) {
                     optionKey="petId"
                     optionValue="name"
                 />}
-                
-            {checkOutMode || modalProps.type === 'select-owner' ? '' :
+  
+            {checkOutMode || modalProps.type === 'select-owner' ||
+            modalProps.type === 'new-reservation' ? '' :
                 <Select
                     id="select-employee"
                     label="Assign Booking to Employee"

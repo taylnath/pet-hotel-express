@@ -63,7 +63,8 @@ function Home() {
                 forward to your pet's next visit.
               </p>
               <div className={"text-center"}>
-              <Button variant={"success"} size={"lg"} href={"/reservations"}>
+                {/* TODO: button should go to /reservations after final grade */}
+              <Button variant={"success"} size={"lg"} href={"/bookings"}>
                 Reserve Now
               </Button>
               </div>

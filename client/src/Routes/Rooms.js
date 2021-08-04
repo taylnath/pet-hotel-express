@@ -69,7 +69,7 @@ function Rooms() {
     } else {
       response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
+    let body = await response;
     console.log('Room updated. Got response', body);
     await refreshRooms()
   }
