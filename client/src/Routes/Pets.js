@@ -1,4 +1,4 @@
-import {Container, Button, Spinner} from "react-bootstrap";
+import {Alert, Container, Button, Spinner} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
@@ -24,6 +24,8 @@ function Pets() {
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+  const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
+  const [deleteAlertMessage, setDeleteAlertMessage] = useState("This pet could not be deleted.");
   
   // user, data states
   const [pets, setPets] = useState([]);
@@ -78,8 +80,19 @@ function Pets() {
     console.log("row = ", row)
     setPetId(row.petId);
     setName(row.name);
-    setConfirmDeleteVisible(true);
-    console.log('deleting row:', row);
+    fetch(`/api/pets/deletable/${row.petId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log("deletable result message:", res);
+        if (res.success === false && res.message){
+          setDeleteAlertMessage(res.message);
+          setDeleteAlertVisible(true);
+        } else {
+          setConfirmDeleteVisible(true);
+          console.log('deleting row:', row);
+        }
+      })
+      .catch(e => console.error(e));
   }
 
   // todo: this should be called addOrUpdatePet
@@ -108,8 +121,7 @@ function Pets() {
   }
 
   async function deletePet(){
-    let result = await deleteState(`/api/dynamic/Pets/petId/${petId}`, setLoadingStatus)
-      .then(res => res.json());
+    let result = await deleteState(`/api/dynamic/Pets/petId/${petId}`, setLoadingStatus);
     console.log(result);
     setPetId('');
     await refreshPets();
@@ -131,6 +143,13 @@ function Pets() {
         </Container>
         
         <Container>
+          {deleteAlertVisible ?
+            <Alert variant="danger" onClose={() => setDeleteAlertVisible(false)} dismissible>
+              <Alert.Heading>Pet not deleted!</Alert.Heading>
+              <p>{deleteAlertMessage}</p>
+            </Alert>
+            : ''
+          }
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Pet
           </Button>
@@ -174,7 +193,6 @@ function Pets() {
             <ConfirmDelete
               title={'Delete Pet'}
               deleteText={`${name}`}
-              extraText={`Warning: This will also delete all of ${name}'s bookings.`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               setLoadingStatus={setLoadingStatus}

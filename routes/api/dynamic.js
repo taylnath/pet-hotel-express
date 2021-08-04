@@ -24,7 +24,8 @@ router.get('/', async (req, res) => {
   .then(result => {
     // console.log(result);
     return res.json(result);
-  });
+  })
+  .catch(e => console.error(e));
 });
 
 router.post('/', async (req, res) => {
@@ -34,7 +35,8 @@ router.post('/', async (req, res) => {
     .then(result => {
       console.log("dynamicInsert: found", result)
       return res.json(result);
-    });
+    })
+    .catch(e => console.error(e));
 })
 
 router.put('/', async (req, res) => {
@@ -43,16 +45,17 @@ router.put('/', async (req, res) => {
     .then(result => {
       console.log("dynamicUpdate: found", result)
       return res.json(result);
-    });
+    })
+    .catch(e => console.error(e));
 });
 
 router.delete('/:table/:identifier/:id', async (req, res) => {
   await queryAsync(
     'delete from ?? where ?? = ?', 
     [req.params.table, req.params.identifier, req.params.id]
-  );
-  res.json({"success": true});
-})
+  ).then(() => res.json({"success": true}))
+    .catch(e => console.error(e));
+});
 
 
 module.exports = router;
