@@ -93,7 +93,7 @@ function Guests(props) {
       }
     }
       response = await postState(url, data, setLoadingStatus);
-      let body = await response.json();
+      let body = await response;
       console.log('Pet updated. Got response', body);
       await refreshOwnerPets();
   }
@@ -122,7 +122,7 @@ function Guests(props) {
   async function deleteOwnerPet(){
     
     let result = await deleteState(`/api/dynamic/Guests/guestId/${guestId}`, setLoadingStatus)
-        .then(res => res.json());
+        .then(res => res);
     console.log(result);
     setGuestId('');
     await refreshOwnerPets();

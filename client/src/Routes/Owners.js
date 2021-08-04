@@ -107,7 +107,7 @@ function Owners() {
     } else {
       response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
+    let body = await response;
     console.log('Owner updated. Got response', body);
     // Todo:  clear Add Owner modal
     await refreshOwners();
