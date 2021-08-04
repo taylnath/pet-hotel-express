@@ -25,6 +25,8 @@ function Owners() {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
   const [deleteAlertMessage, setDeleteAlertMessage] = useState("This owner could not be deleted.");
+  const [sqlAlertVisible, setSqlAlertVisible] = useState(false);
+  const [sqlAlertMessage, setSqlAlertMessage] = useState("There was an issue performing your request.");
   
   // user, data states
   const [owners, setOwners] = useState([]);
@@ -74,7 +76,7 @@ function Owners() {
     setFirstName(row.firstName);
     setLastName(row.lastName);
     fetch(`/api/owners/deletable/${row.ownerId}`)
-      .then(res => res.json())
+      .then(res => res)
       .then(res => {
         console.log("deletable result message:", res);
         if (res.success === false && res.message){
@@ -106,16 +108,19 @@ function Owners() {
       response = await putState(url, data, setLoadingStatus);
     } else {
       response = await postState(url, data, setLoadingStatus);
+      if (!response.success && response.sqlMessage){
+        setSqlAlertMessage(response.sqlMessage);
+        setSqlAlertVisible(true);
+      }
     }
-    let body = await response;
-    console.log('Owner updated. Got response', body);
+    console.log('Owner updated. Got response', response);
     // Todo:  clear Add Owner modal
     await refreshOwners();
   }
   
   async function deleteOwner(){
     let result = await deleteState(`/api/dynamic/Owners/OwnerId/${ownerId}`, setLoadingStatus)
-        .then(res => res.json());
+        .then(res => res);
     console.log(result);
     setOwnerId('');
     await refreshOwners();
@@ -140,6 +145,18 @@ function Owners() {
         
         <Container>
           <GenericModal
+              title="Database Conflict!"
+              visible={sqlAlertVisible}
+              setVisible={setSqlAlertVisible}
+              setLoadingStatus={() => {}}
+              action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {sqlAlertMessage}
+            </p>
+          </GenericModal>
+          
+          <GenericModal
             title="Owner not deleted!"
             visible={deleteAlertVisible}
             setVisible={setDeleteAlertVisible}
@@ -151,7 +168,7 @@ function Owners() {
             </p>
           </GenericModal>
 
-          <Button variant="success" onClick={() => {setModalVisible(true);}}>
+          <Button variant="success shadow" onClick={() => {setModalVisible(true);}}>
             Add New Owner
           </Button>
   
@@ -182,6 +199,8 @@ function Owners() {
                 id="email"
                 label="Email"
                 name="email"
+                type="email"
+                required="required"
                 value={email}
                 setValue={setEmail}
             />

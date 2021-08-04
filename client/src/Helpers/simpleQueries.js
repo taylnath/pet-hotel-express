@@ -18,7 +18,7 @@ const getBookings = "select `Bookings`.`bookingId`as `bookingId`, " +
     "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
     "`Employees` on `Employees`.`employeeId` = `Bookings`.`employeeId` "
 
-const queryAvailableRooms = "select `roomId` from `Rooms` where `roomId` not in  " +
+const queryAvailableRooms = "select `roomId`, `description` from `Rooms` where `roomId` not in  " +
     "(select roomId from Bookings natural join `Rooms`)"
 
 export { getPetsRooms, getBookings, queryAvailableRooms }

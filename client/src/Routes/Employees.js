@@ -121,7 +121,7 @@ function Employees() {
         </Container>
         
         <Container>
-          <Button variant="success" onClick={() => {setModalVisible(true);}}>
+          <Button variant="success shadow" onClick={() => {setModalVisible(true);}}>
             Add New Employee
           </Button>
   
