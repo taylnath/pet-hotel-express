@@ -112,7 +112,7 @@ function Rooms() {
         
         <Container>
           
-          <Button variant="success"
+          <Button variant="success shadow"
                   onClick={() => {setModalVisible(true);}}>
             Add New Room
           </Button>

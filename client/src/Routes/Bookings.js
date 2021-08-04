@@ -443,7 +443,7 @@ function Bookings(props) {
                     setValue={setSelectedRoomId}
                     optionsList={availableRooms}
                     optionKey="roomId"
-                    optionValue="roomId"
+                    optionValue="description"
                 /> : "There are no available rooms!"
                  : ''
             }

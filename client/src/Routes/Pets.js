@@ -172,7 +172,7 @@ function Pets() {
             </p>
           </GenericModal>
 
-          <Button variant="success" onClick={() => {setModalVisible(true);}}>
+          <Button variant="success shadow" onClick={() => {setModalVisible(true);}}>
             Add New Pet
           </Button>
 
