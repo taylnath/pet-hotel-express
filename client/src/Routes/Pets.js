@@ -1,4 +1,4 @@
-import {Container, Button, Spinner} from "react-bootstrap";
+import {Alert, Container, Button, Spinner} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
@@ -24,6 +24,10 @@ function Pets() {
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+  const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
+  const [deleteAlertMessage, setDeleteAlertMessage] = useState("This pet could not be deleted.");
+  const [sqlAlertVisible, setSqlAlertVisible] = useState(false);
+  const [sqlAlertMessage, setSqlAlertMessage] = useState("There was an issue performing your request.");
   
   // user, data states
   const [pets, setPets] = useState([]);
@@ -78,8 +82,19 @@ function Pets() {
     console.log("row = ", row)
     setPetId(row.petId);
     setName(row.name);
-    setConfirmDeleteVisible(true);
-    console.log('deleting row:', row);
+    fetch(`/api/pets/deletable/${row.petId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log("deletable result message:", res);
+        if (res.success === false && res.message){
+          setDeleteAlertMessage(res.message);
+          setDeleteAlertVisible(true);
+        } else {
+          setConfirmDeleteVisible(true);
+          console.log('deleting row:', row);
+        }
+      })
+      .catch(e => console.error(e));
   }
 
   // todo: this should be called addOrUpdatePet
@@ -101,15 +116,17 @@ function Pets() {
       response = await putState(url, data, setLoadingStatus);
     } else {
       response = await postState(url, data, setLoadingStatus);
+      if (!response.success && response.sqlMessage){
+        setSqlAlertMessage(response.sqlMessage);
+        setSqlAlertVisible(true);
+      }
     }
-    let body = await response.json();
-    console.log('Pet updated. Got response', body);
+    console.log('Pet updated. Got response', response);
     await refreshPets();
   }
 
   async function deletePet(){
-    let result = await deleteState(`/api/dynamic/Pets/petId/${petId}`, setLoadingStatus)
-      .then(res => res.json());
+    let result = await deleteState(`/api/dynamic/Pets/petId/${petId}`, setLoadingStatus);
     console.log(result);
     setPetId('');
     await refreshPets();
@@ -131,6 +148,30 @@ function Pets() {
         </Container>
         
         <Container>
+          <GenericModal
+            title="Database Conflict!"
+            visible={sqlAlertVisible}
+            setVisible={setSqlAlertVisible}
+            setLoadingStatus={() => {}}
+            action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {sqlAlertMessage}
+            </p>
+          </GenericModal>
+
+          <GenericModal
+            title="Pet not deleted!"
+            visible={deleteAlertVisible}
+            setVisible={setDeleteAlertVisible}
+            setLoadingStatus={() => {}}
+            action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {deleteAlertMessage}
+            </p>
+          </GenericModal>
+
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Pet
           </Button>
@@ -174,7 +215,6 @@ function Pets() {
             <ConfirmDelete
               title={'Delete Pet'}
               deleteText={`${name}`}
-              extraText={`Warning: This will also delete all of ${name}'s bookings.`}
               visible={confirmDeleteVisible}
               setVisible={setConfirmDeleteVisible}
               setLoadingStatus={setLoadingStatus}

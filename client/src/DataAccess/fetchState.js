@@ -19,7 +19,7 @@ const onSuccess = (setState, setResult) => (res) => {
         return res;
     });
   }
-  return res;
+  return res.json();
 }
 
 const settings = (method, body) => {

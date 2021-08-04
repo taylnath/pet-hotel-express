@@ -10,6 +10,8 @@ const coffeeRoutes = require('./routes/coffee');
 const bookingsRoutes = require('./routes/api/bookings');
 const employeesRoutes = require('./routes/api/employees');
 const reservationsRoutes = require('./routes/api/reservations');
+const petRoutes = require('./routes/api/pets');
+const ownerRoutes = require('./routes/api/owners');
 const roomsRoutes = require('./routes/api/rooms');
 
 const cors = require('cors'); // maybe we can take this out later
@@ -47,6 +49,8 @@ app.use('/api/bookings', bookingsRoutes);
 app.use('/api/employees', employeesRoutes);
 app.use('/api/reservations', reservationsRoutes);
 app.use('/api/rooms', roomsRoutes);
+app.use('/api/pets', petRoutes);
+app.use('/api/owners', ownerRoutes);
 
 // server static assets if in production
 console.log("running in", process.env.NODE_ENV);

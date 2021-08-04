@@ -51,10 +51,10 @@ create table  `Bookings` (
   `petId` int not null,
   `roomId` int,
   `employeeId` int,
-  -- delete all of an owners bookings when the owner gets deleted
-  constraint `bookings_fk1` foreign key (`ownerId`) references `Owners`(`ownerId`) on delete cascade on update cascade,
-  -- delete all of an pets bookings when the pet gets deleted
-  constraint `bookings_fk2` foreign key (`petId`) references `Pets`(`petId`) on delete cascade on update cascade,
+  -- don't let an owner with bookings get deleted
+  constraint `bookings_fk1` foreign key (`ownerId`) references `Owners`(`ownerId`) on delete restrict on update cascade,
+  -- don't let a pet with bookings get deleted
+  constraint `bookings_fk2` foreign key (`petId`) references `Pets`(`petId`) on delete restrict on update cascade,
   -- if a room or employee is deleted, set all refernces to null
   constraint `bookings_fk3` foreign key (`roomId`) references `Rooms`(`roomId`) on delete set null on update cascade,
   constraint `bookings_fk4` foreign key (`employeeId`) references `Employees`(`employeeId`) on delete set null on update cascade,

@@ -1,4 +1,4 @@
-import {Container, Button} from "react-bootstrap";
+import {Alert, Container, Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {getState, postState, putState, deleteState} from "../DataAccess/fetchState";
 import ShowReport from "../Components/Reports/ShowReport";
@@ -23,6 +23,8 @@ function Owners() {
   const [updateMode, setUpdateMode] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
+  const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
+  const [deleteAlertMessage, setDeleteAlertMessage] = useState("This owner could not be deleted.");
   
   // user, data states
   const [owners, setOwners] = useState([]);
@@ -71,8 +73,19 @@ function Owners() {
     setOwnerId(row.ownerId);
     setFirstName(row.firstName);
     setLastName(row.lastName);
-    setConfirmDeleteVisible(true);
-    console.log('deleting row:', row);
+    fetch(`/api/owners/deletable/${row.ownerId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log("deletable result message:", res);
+        if (res.success === false && res.message){
+          setDeleteAlertMessage(res.message);
+          setDeleteAlertVisible(true);
+        } else {
+          setConfirmDeleteVisible(true);
+          console.log('deleting row:', row);
+        }
+      })
+      .catch(e => console.error(e));
   }
   
   async function addOrUpdateOwner() {
@@ -126,6 +139,18 @@ function Owners() {
         </Container>
         
         <Container>
+          <GenericModal
+            title="Owner not deleted!"
+            visible={deleteAlertVisible}
+            setVisible={setDeleteAlertVisible}
+            setLoadingStatus={() => {}}
+            action={() => {}}
+          >
+            <p className="modal-subtitle">
+              {deleteAlertMessage}
+            </p>
+          </GenericModal>
+
           <Button variant="success" onClick={() => {setModalVisible(true);}}>
             Add New Owner
           </Button>
@@ -173,7 +198,6 @@ function Owners() {
               <ConfirmDelete
                   title={'Delete Owner'}
                   deleteText={`${firstName} ${lastName}`}
-                  extraText={`Warning: This will also delete all of ${firstName}'s bookings.`}
                   visible={confirmDeleteVisible}
                   setVisible={setConfirmDeleteVisible}
                   setLoadingStatus={setLoadingStatus}
