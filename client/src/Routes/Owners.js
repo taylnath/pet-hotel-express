@@ -173,7 +173,6 @@ function Owners() {
               <ConfirmDelete
                   title={'Delete Owner'}
                   deleteText={`${firstName} ${lastName}`}
-                  extraText={`Warning: This will also delete all of ${firstName}'s bookings.`}
                   visible={confirmDeleteVisible}
                   setVisible={setConfirmDeleteVisible}
                   setLoadingStatus={setLoadingStatus}
