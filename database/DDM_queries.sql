@@ -71,3 +71,16 @@ select `roomId` from `Rooms` where `roomId` not in
 select * from `Pets` `p` join `Guests` `g` on `g`.`petId` =  `p`.`petId` join 
     `Owners` `o` on `o`.`ownerId` = `g`.`ownerId` where 
     `o`.`ownerId` = (select `ownerId` from `Owners` where `email` = ':email');
+
+-- VERIFICATION QUERIES
+
+-- check to see if a particular pet is already booked during start and end
+--   dates requested for a new or updated reservation, to prevent double booking.
+select count(`Bookings`.`BookingId`) as `bookingCount` from `Bookings` where
+    `Bookings`.`petId` = ':petId' and not ((`Bookings`.`endDate`  <= ':endDate') or
+     (`Bookings`.`startDate` >= ':startDate'));
+
+-- check to see if owner or pet has current bookings, to prevent deleting an
+--   active owner or pet.
+select * from `Bookings` where `Bookings`.`ownerId`=':ownerId';
+select * from `Bookings` where `Bookings`.`petId`=':petId';
