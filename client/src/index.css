@@ -107,3 +107,9 @@ html {
 .attribution-link {
   color: rgb(0, 0, 255);
 }
+
+.modal-alert {
+  color: firebrick;
+  font-weight: 600;
+  font-size: large;
+}
