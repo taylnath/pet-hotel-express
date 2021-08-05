@@ -76,7 +76,7 @@ function Owners() {
     setFirstName(row.firstName);
     setLastName(row.lastName);
     fetch(`/api/owners/deletable/${row.ownerId}`)
-      .then(res => res)
+      .then(res => res.json())
       .then(res => {
         console.log("deletable result message:", res);
         if (res.success === false && res.message){
