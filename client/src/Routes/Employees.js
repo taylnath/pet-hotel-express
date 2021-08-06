@@ -6,9 +6,9 @@ import Input from "../Components/Forms/Input";
 import GenericModal from "../Components/GenericModal";
 import LoadingStatus from "../Components/LoadingStatus";
 
+
 // Employees
 //page for managers to manage Employees
-
 
 function Employees() {
   // --- state ---
@@ -73,16 +73,11 @@ function Employees() {
   
   async function deleteEmployee(){
     let result = deleteState(`/api/employees/${employeeId}`, setLoadingStatus);
-    // setEmployeeId(''); // I don't think these are necessary, but I don't think they hurt either
-    // setFirstName('');
-    // setLastName('');
-    console.log(result);
-    await refreshEmployees(); // does this need to be awaited? I'm not sure either way
+    await refreshEmployees();
   }
   
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row){
-    console.log("row = ", row)
     setUpdateMode(true);
     setEmployeeId(row.employeeId);
     setFirstName(row.firstName);
@@ -95,7 +90,6 @@ function Employees() {
   
   // initialize the confirm delete modal after clicking on a row's delete button
   function confirmDelete(row){
-    console.log("row = ", row)
     setEmployeeId(row.employeeId);
     setFirstName(row.firstName);
     setLastName(row.lastName);

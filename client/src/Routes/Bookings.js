@@ -165,11 +165,12 @@ function Bookings(props) {
   
   // add / update booking
   async function makeReservation() {
-    
+
+    // Run validation checks
     let validation = await validateReservation(bookingId, selectedPetId,
         startDate, endDate, bookings, setValidation, setModalVisible);
-    console.log("In Bookings.  Validation = ", validation)
     
+    // If validation passes
     if (validation.isGood) {
       setResetModal(true);
       let url = `/api/bookings`;
@@ -192,7 +193,8 @@ function Bookings(props) {
       }
       let body = await response.json;
       await refreshBookings(filterBy);
-      
+    
+      // If validation fails
     } else if(validation.sqlError) {
       setSqlAlertMessage(validation.text);
       setSqlAlertVisible(true);
@@ -204,7 +206,6 @@ function Bookings(props) {
       setSqlAlertVisible(true);
       setResetModal(true);
     }
-
   }
 
   // Delete a Booking
@@ -213,7 +214,7 @@ function Bookings(props) {
     await refreshBookings(filterBy);
   }
  
-  // Check in guest
+  // Check in Pet to Room, adding Room and Employee to the Booking
   async function checkIn() {
     const url = `/api/bookings`;
     let response;
@@ -233,7 +234,6 @@ function Bookings(props) {
     response = await putState(url, data, setLoadingStatus);
     
     let body = await response.json;
-    // setFilterBy("all");
     await refreshBookings(filterBy);
   }
   
@@ -314,7 +314,6 @@ function Bookings(props) {
     }
     setModalVisible(true);
     setBookingId(row.bookingId);
-    // setSelectedRoomId(row.roomId);
     setPetName(row.petName);
     setSelectedPetId(row.petId);
     setOwnerId(row.ownerId);

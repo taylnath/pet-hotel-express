@@ -59,7 +59,12 @@ router.put('/', async (req, res) => {
     })
     .catch(err => {
       console.error(err);
-      res.json({"success": false});
+      if (err.sqlMessage){
+        console.log("SQL error detected:", err.sqlMessage);
+        res.json({"success": false, "sqlMessage": err.sqlMessage});
+      } else {
+        res.json({"success": false});
+      }
     });
 });
 

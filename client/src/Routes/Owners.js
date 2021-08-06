@@ -108,12 +108,16 @@ function Owners() {
       response = await putState(url, data, setLoadingStatus);
     } else {
       response = await postState(url, data, setLoadingStatus);
-      if (!response.success && response.sqlMessage){
-        setSqlAlertMessage(response.sqlMessage);
-        setSqlAlertVisible(true);
-      }
     }
-    console.log('Owner updated. Got response', response);
+  
+  
+    if (!response.success && response.sqlMessage){
+      setSqlAlertMessage(response.sqlMessage);
+      setSqlAlertVisible(true);
+    } else {
+      console.log('Owner updated. Got response', response);
+    }
+
     // Todo:  clear Add Owner modal
     await refreshOwners();
   }
