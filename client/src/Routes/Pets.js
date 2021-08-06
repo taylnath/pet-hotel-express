@@ -8,9 +8,9 @@ import Select from '../Components/Forms/Select';
 import LoadingStatus from '../Components/LoadingStatus';
 import ConfirmDelete from '../Components/Modals/ConfirmDelete';
 
+
 // Pets
 //page for managers to manage Pets
-
 
 function Pets() {
   // -------- state --------
@@ -66,7 +66,6 @@ function Pets() {
   // -------- ShowReport Interactions --------
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row){
-    console.log("row = ", row)
     setUpdateMode(true);
     setPetId(row.petId);
     setName(row.name);
@@ -79,13 +78,11 @@ function Pets() {
   
   // initialize the confirm delete modal after clicking on a row's delete button
   function confirmDelete(row){
-    console.log("row = ", row)
     setPetId(row.petId);
     setName(row.name);
     fetch(`/api/pets/deletable/${row.petId}`)
       .then(res => res.json())
       .then(res => {
-        console.log("deletable result message:", res);
         if (res.success === false && res.message){
           setDeleteAlertMessage(res.message);
           setDeleteAlertVisible(true);
@@ -116,12 +113,15 @@ function Pets() {
       response = await putState(url, data, setLoadingStatus);
     } else {
       response = await postState(url, data, setLoadingStatus);
-      if (!response.success && response.sqlMessage){
-        setSqlAlertMessage(response.sqlMessage);
-        setSqlAlertVisible(true);
-      }
     }
-    console.log('Pet updated. Got response', response);
+    
+    if (!response.success && response.sqlMessage){
+      setSqlAlertMessage(response.sqlMessage);
+      setSqlAlertVisible(true);
+    } else {
+      console.log('Pet updated. Got response', response);
+    }
+    
     await refreshPets();
   }
 

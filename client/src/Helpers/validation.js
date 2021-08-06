@@ -9,10 +9,6 @@ import {makeDateList, textDateToFormDate} from "./dateHelpers";
 async function validateReservation(booking_id, pet_id, start_date, end_date,
                                    bookings, setValidation, setModalVisible) {
   
-  // const bookingQuery = "select count(`Bookings`.`BookingId`) as `bookingCount` from " +
-  //     "`Bookings` where " + "`Bookings`.`petId` = " + pet_id + " and " +
-  //     "not ((`Bookings`.`endDate` " + " <= '" + start_date + "') or " +
-  //     "(`Bookings`.`startDate` >= '" + end_date + "'));"
   let valid = {};
   let startDateTime = makeDate(start_date).getTime();
   let endDateTime = makeDate(end_date).getTime();
@@ -118,7 +114,6 @@ async function validateReservation(booking_id, pet_id, start_date, end_date,
           }
         }
       }
-
     }
   }
   // If there are any full days in the requested dates, booking is invalid
@@ -137,6 +132,8 @@ async function validateReservation(booking_id, pet_id, start_date, end_date,
     
     return valid;
   }
+  
+  // If we reach this, it means that no verification test failed
   return {isGood: true};
 }
 

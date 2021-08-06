@@ -74,13 +74,26 @@ select * from `Pets` `p` join `Guests` `g` on `g`.`petId` =  `p`.`petId` join
 
 -- VERIFICATION QUERIES
 
--- check to see if a particular pet is already booked during start and end
+-- Check to see if a particular pet is already booked during start and end
 --   dates requested for a new or updated reservation, to prevent double booking.
 select count(`Bookings`.`BookingId`) as `bookingCount` from `Bookings` where
-    `Bookings`.`petId` = ':petId' and not ((`Bookings`.`endDate`  <= ':endDate') or
-     (`Bookings`.`startDate` >= ':startDate'));
+      `Bookings`.`petId` = ':petId' and not
+    ((`Bookings`.`endDate`  <= ':endDate') or
+     (`Bookings`.`startDate` >= ':startDate') or
+     (`Bookings`.`bookingId` = ':bookingId'));
 
--- check to see if owner or pet has current bookings, to prevent deleting an
+-- Check to see if owner or pet has current bookings, to prevent deleting an
 --   active owner or pet.
 select * from `Bookings` where `Bookings`.`ownerId`=':ownerId';
 select * from `Bookings` where `Bookings`.`petId`=':petId';
+
+-- Count rooms, for availability verification
+select count(`Rooms`.`roomId`) as `roomCount` from `Rooms`;
+
+-- Collect all rooms booked during any part of a requested reservation, to
+-- check that PetHotel is not fully booked any of the requested days.
+select `Bookings`.`startDate`, `Bookings`.`endDate`, `Bookings`.`bookingId` from
+      `Bookings` where not
+      ((`Bookings`.`endDate` <= ':startDate') or
+       (`Bookings`.`startDate` >= ':endDate') or
+       (`Bookings`.`bookingId` = ':bookingId'));
