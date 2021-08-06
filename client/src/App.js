@@ -26,7 +26,7 @@ function App() {
     <div className="App">
 
       {/* toast to remind about titles */}
-      <Toast className={"shadow"}
+      <Toast className={"shadow d-none d-md-block"}
       style={{position: "absolute", right: 0, top: 0, margin: "5%", zIndex: 999,
         borderColor:"black", borderStyle:"solid"}}
       show={showToast} onClose={() => setShowToast(false)}>
