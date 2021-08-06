@@ -11,7 +11,7 @@ import Date from '../Components/Forms/Date';
 import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
 import formEndDateHelper from "../Helpers/formEndDateHelper";
 import LoadingStatus from "../Components/LoadingStatus";
-import {petNotDoubleBooked} from "../Helpers/validation";
+import { validateReservation } from "../Helpers/validation";
 
 // Bookings
 //page for managers to manage Bookings
@@ -166,7 +166,8 @@ function Bookings(props) {
   // add / update booking
   async function makeReservation() {
     
-    let validation = await petNotDoubleBooked(selectedPetId, startDate, endDate, setValidation, setModalVisible);
+    let validation = await validateReservation(bookingId, selectedPetId,
+        startDate, endDate, bookings, setValidation, setModalVisible);
     console.log("In Bookings.  Validation = ", validation)
     
     if (validation.isGood) {
@@ -446,7 +447,6 @@ function Bookings(props) {
             {modalProps.alertText ?
             <p className={"modal-alert"}>
               {modalProps.alertText}
-              {modalProps.type}
             </p> : ''
             }
             

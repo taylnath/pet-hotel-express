@@ -42,14 +42,19 @@ code {
 }
 
 @media only screen and (max-width: 768px) {
-  #home-showcase {min-height: 240px;}
+  #home-showcase {
+    min-height: 240px;
+    min-height: 100px;
+    background-image: none;
+  }
   .photo-attribution {display: none;}
 }
 
 @media only screen and (max-width: 540px) {
   #home-showcase {
     width: auto;
-    min-height: 200px;
+    min-height: 100px;
+    background-image: none;
   }
   #showcase-photo-attr {
     display: none;

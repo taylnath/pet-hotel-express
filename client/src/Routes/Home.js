@@ -49,8 +49,8 @@ function Home() {
         </Container>
         <Container>
           <Row id={"pet-hotel-info"} className={"align-items-center"}>
-            <Col className={"p-3"}>
-              <h2 className={"text-center"}>
+            <Col sm className={"p-3"}>
+              <h2 className={"text-center mt-4"}>
                 Luxury Lodging for Your Pet
               </h2>
               <p className={"mt-4"}>
@@ -69,7 +69,7 @@ function Home() {
               </Button>
               </div>
             </Col>
-            <Col className={"p-3"}>
+            <Col sm className={"p-3 d-none d-sm-block"}>
               <Image src={SereneCat} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 15, right: 20}}>
@@ -84,7 +84,7 @@ function Home() {
           </Row>
           
           <Row id={"pet-amenities"} className={"align-items-center"}>
-            <Col>
+            <Col sm>
               <Image src={HappyDog} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 0, left: 20}}>
@@ -97,7 +97,7 @@ function Home() {
                    </p>
               </div>
             </Col>
-            <Col className={"p-3"}>
+            <Col sm className={"p-3"}>
               <h2 className={"text-center"}>
                 Our Services
               </h2>
@@ -118,7 +118,7 @@ function Home() {
           </Row>
           
           <Row id={"vaccine-requirements"} className={"align-items-center"}>
-            <Col className={"p-3"}>
+            <Col sm className={"p-3"}>
               <h3 className={"text-center"}>
                 Immunizations
               </h3>
@@ -149,7 +149,7 @@ function Home() {
                   <li>Feline Leukemia Virus</li>
                 </ul>
             </Col>
-            <Col>
+            <Col sm>
               <Image src={BlackCat} className={"img-fluid"} rounded/>
               <div className={"photo-attribution"}
                   style={{position: "absolute", bottom: 5, right: 25}}>
