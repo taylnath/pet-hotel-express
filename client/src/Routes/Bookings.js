@@ -124,7 +124,6 @@ function Bookings(props) {
     );
     
     await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
-    console.log("bookings = ", bookings);
   }
   
   // Get Owners for select Owner
