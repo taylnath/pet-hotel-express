@@ -124,7 +124,6 @@ function Bookings(props) {
     );
     
     await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
-    console.log("bookings = ", bookings);
   }
   
   // Get Owners for select Owner
@@ -402,6 +401,7 @@ function Bookings(props) {
             </Form>
           </div>
   
+          {/* ------- Loading Status Spinner ------- */}
           <div style={{height: "20px"}}>
             <LoadingStatus status={loadingStatus}/>
           </div>
@@ -545,6 +545,7 @@ function Bookings(props) {
 
         </Container>
         
+        {/* ---------- Display Tabular Report of Bookings ---------- */}
         <Container>
           
           <h4 className={"mt-5"}>Bookings:</h4>

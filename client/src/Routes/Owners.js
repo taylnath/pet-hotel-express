@@ -213,14 +213,7 @@ function Owners() {
                 setValue={setEmail}
             />
           </GenericModal>
-  
-          {/*<GenericModal*/}
-          {/*    title={`Are you sure you want to delete owner ${ownerId}?`}*/}
-          {/*    visible={confirmDeleteVisible}*/}
-          {/*    setVisible={setConfirmDeleteVisible}*/}
-          {/*    action={deleteOwner}*/}
-          {/*/>*/}
-  
+ 
           {confirmDeleteVisible ?
               <ConfirmDelete
                   title={'Delete Owner'}

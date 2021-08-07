@@ -104,6 +104,7 @@ function Rooms() {
   }
   const attributes = ["roomId", "description", "petName"]
 
+  // render page
   return (
       <div>
         <Container>

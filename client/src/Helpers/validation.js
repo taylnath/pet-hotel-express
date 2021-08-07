@@ -35,8 +35,7 @@ async function validateReservation(booking_id, pet_id, start_date, end_date,
   }
   
   // Test to ensure Booking request does not double book a Pet
-  let last_day = dateToString(endDateTime - 86400000);
-  let bookingQuery = petBookingQuery(booking_id, pet_id, start_date, last_day);
+  let bookingQuery = petBookingQuery(booking_id, pet_id, start_date, end_date);
   let petBookings = await getState(`/api/simpleQuery?query=` + bookingQuery, () => {
   }, () => {})
       .catch((error) => {console.log("In validation, error on petBooking Query: ", error)});
