@@ -467,20 +467,22 @@ function Bookings(props) {
                 optionKey="ownerId"
                 optionValue="name"
                 />}
-
-              {checkInMode ?
+  
+            {checkInMode ?
                 availableRooms.length ?
-                <Select
-                    id="select-a-room"
-                    label="Select room for check in"
-                    name="room"
-                    value={selectedRoomId}
-                    setValue={setSelectedRoomId}
-                    optionsList={availableRooms}
-                    optionKey="roomId"
-                    optionValue="description"
-                /> : "There are no available rooms!"
-                 : ''
+                    <Select
+                        id="select-a-room"
+                        label="Select room for check in"
+                        name="room"
+                        value={selectedRoomId}
+                        setValue={setSelectedRoomId}
+                        optionsList={availableRooms}
+                        optionKey="roomId"
+                        optionValue="description"
+                    /> : <p className={"modal-alert"}>
+                      There are no available rooms!
+                    </p>
+                : ''
             }
             
             {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :

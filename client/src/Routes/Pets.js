@@ -86,6 +86,9 @@ function Pets() {
         if (res.success === false && res.message){
           setDeleteAlertMessage(res.message);
           setDeleteAlertVisible(true);
+          setPetId('');
+          setName('');
+          setPreferences('');
         } else {
           setConfirmDeleteVisible(true);
           console.log('deleting row:', row);

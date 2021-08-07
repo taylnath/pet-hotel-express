@@ -82,6 +82,10 @@ function Owners() {
         if (res.success === false && res.message){
           setDeleteAlertMessage(res.message);
           setDeleteAlertVisible(true);
+          setOwnerId('');
+          setFirstName('');
+          setLastName('');
+          setEmail('');
         } else {
           setConfirmDeleteVisible(true);
           console.log('deleting row:', row);
