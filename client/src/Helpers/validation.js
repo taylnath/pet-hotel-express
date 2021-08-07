@@ -3,7 +3,7 @@
 import { getState } from "../DataAccess/fetchState";
 import {dateToString, makeDate} from "./makeDate";
 import {countRoomsQuery, petBookingQuery, roomsBookedQuery} from "./simpleQueries";
-import {makeDateList, textDateToFormDate} from "./dateHelpers";
+import {makeDateList} from "./dateHelpers";
 
 
 async function validateReservation(booking_id, pet_id, start_date, end_date,
@@ -35,8 +35,8 @@ async function validateReservation(booking_id, pet_id, start_date, end_date,
   }
   
   // Test to ensure Booking request does not double book a Pet
-  
-  let bookingQuery = petBookingQuery(booking_id, pet_id, start_date, end_date);
+  let last_day = dateToString(endDateTime - 86400000);
+  let bookingQuery = petBookingQuery(booking_id, pet_id, start_date, last_day);
   let petBookings = await getState(`/api/simpleQuery?query=` + bookingQuery, () => {
   }, () => {})
       .catch((error) => {console.log("In validation, error on petBooking Query: ", error)});
@@ -106,13 +106,13 @@ async function validateReservation(booking_id, pet_id, start_date, end_date,
     for (let j = 0; j < bookedRooms.length; j++) {
       if ((dates[j].startDate <= dateList[i]) && ( dateList[i] < dates[j].endDate) ) {
         bookedCount += 1;
-        
-        // If the hotel is full this day, add it to the fullDates list
-        if (!(bookedCount < roomCount)) {
-          if (!fullDates.includes(dateToString(dateList[i]))) {
-            fullDates.push(dateToString(dateList[i]))
-          }
-        }
+      }
+    }
+  
+    // If the hotel is full this day, add it to the fullDates list
+    if (!(bookedCount < roomCount)) {
+      if (!fullDates.includes(dateToString(dateList[i]))) {
+        fullDates.push(dateToString(dateList[i]))
       }
     }
   }
