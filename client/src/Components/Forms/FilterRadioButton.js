@@ -14,7 +14,7 @@ function FilterRadioButton(props) {
   return (
       <>
         <ToggleButton
-            className="d-md-none"
+            className="d-none"
             id="toggle-check"
             type="checkbox"
             variant="outline-primary"
