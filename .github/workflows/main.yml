@@ -38,7 +38,7 @@ jobs:
       - name: update database
         run: |
           ls
-          mysql -h {{ secrets.CLEARDB_HOST }} -u ${{ secrets.CLEARDB_USER }} --password=${{ secrets.CLEARDB_PW }} {{ secrets.CLEARDB_DB }} < database/DDQ_file.sql
+          mysql -h {{ secrets.CLEARDB_HOST }} -u ${{ secrets.CLEARDB_USER }} --password=${{ secrets.CLEARDB_PW }} -D {{ secrets.CLEARDB_DB }} < database/DDQ_file.sql
       # - name: deploy on heroku via docker
       #   env:
       #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
