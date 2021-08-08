@@ -11,6 +11,7 @@ import Date from '../Components/Forms/Date';
 import { getBookings, queryAvailableRooms } from "../Helpers/simpleQueries";
 import formEndDateHelper from "../Helpers/formEndDateHelper";
 import LoadingStatus from "../Components/LoadingStatus";
+import { validateReservation } from "../Helpers/validation";
 
 // Bookings
 //page for managers to manage Bookings
@@ -32,7 +33,7 @@ function Bookings(props) {
   const [checkOutMode, setCheckOutMode] = useState(false);
   
   // user, data states
-  const [modalProps, setModalProps] = useState({type: '', title: ''});
+  const [modalProps, setModalProps] = useState({type: '', title: '', alertText:''});
   const [filterBy, setFilterBy] = useState('all');
   const [owners, setOwners] = useState([]);
   const [selectedOwnerId, setSelectedOwnerId] = useState('');   // can eliminate? TODO
@@ -51,15 +52,19 @@ function Bookings(props) {
   const [availableRooms, setAvailableRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [employeeId, setEmployeeId] = useState('');
+  const [validation, setValidation] = useState({});
+  const [resetModal, setResetModal] = useState(true);
+  const [sqlAlertVisible, setSqlAlertVisible] = useState(false);
+  const [sqlAlertMessage, setSqlAlertMessage] = useState("There was an issue performing your request.");
   
   
   // -------- Effects ----------------------------------------------------------
   
   // reset modal data when it closes
   useEffect(() => {
-    if (!modalVisible && !confirmDeleteVisible) {
+    if (!modalVisible && !confirmDeleteVisible && resetModal) {
       setUpdateMode(false);
-      setModalProps({type: '', title: ''})
+      setModalProps({type: '', title: '', alertText: ''})
       setCheckInMode(false);
       setCheckOutMode(false);
       setSelectedOwnerId('');
@@ -77,7 +82,7 @@ function Bookings(props) {
           setLoadingStatus({loading: false, error: false}) :
           setLoadingStatus({loading: true, error: false});
     }
-  }, [modalVisible, confirmDeleteVisible])
+  }, [modalVisible, confirmDeleteVisible, resetModal])
  
   useEffect(() => refreshBookings(filterBy), []);
   
@@ -119,7 +124,6 @@ function Bookings(props) {
     );
     
     await getState(`/api/simpleQuery?query=` + simpleQuery, setBookings, setLoadingStatus);
-    console.log("bookings = ", bookings);
   }
   
   // Get Owners for select Owner
@@ -160,26 +164,47 @@ function Bookings(props) {
   
   // add / update booking
   async function makeReservation() {
-    let url = `/api/bookings`;
-    let response;
-    const data = {
-      startDate: startDate,
-      endDate: endDate,
-      ownerId: ownerId,
-      petId: selectedPetId,
-      roomId: selectedRoomId
-    };
-    if (updateMode) {
-      data.bookingId = bookingId;
-      data.employeeId = employeeId;
-      response = await putState(url, data, setLoadingStatus);
+
+    // Run validation checks
+    let validation = await validateReservation(bookingId, selectedPetId,
+        startDate, endDate, bookings, setValidation, setModalVisible);
+    
+    // If validation passes
+    if (validation.isGood) {
+      setResetModal(true);
+      let url = `/api/bookings`;
+      let response;
+      const data = {
+        startDate: startDate,
+        endDate: endDate,
+        ownerId: ownerId,
+        petId: selectedPetId,
+        roomId: selectedRoomId
+      };
+      if (updateMode) {
+        data.bookingId = bookingId;
+        data.employeeId = employeeId;
+        response = await putState(url, data, setLoadingStatus);
+      } else {
+        // TODO: combine /api/reservations and /api/bookings
+        url = `/api/reservations`;
+        response = await postState(url, data, setLoadingStatus);
+      }
+      let body = await response.json;
+      await refreshBookings(filterBy);
+    
+      // If validation fails
+    } else if(validation.sqlError) {
+      setSqlAlertMessage(validation.text);
+      setSqlAlertVisible(true);
+      setResetModal(true);
+    } else if(validation.text) {
+      setModalProps({type: modalProps.type, title: modalProps.title, alertText: validation.text})
     } else {
-      // TODO: combine /api/reservations and /api/bookings
-      url = `/api/reservations`;
-      response = await postState(url, data, setLoadingStatus);
+      setSqlAlertMessage("A program error has occurred.  Please try again.");
+      setSqlAlertVisible(true);
+      setResetModal(true);
     }
-    let body = await response.json();
-    await refreshBookings(filterBy);
   }
 
   // Delete a Booking
@@ -188,7 +213,7 @@ function Bookings(props) {
     await refreshBookings(filterBy);
   }
  
-  // Check in guest
+  // Check in Pet to Room, adding Room and Employee to the Booking
   async function checkIn() {
     const url = `/api/bookings`;
     let response;
@@ -207,8 +232,7 @@ function Bookings(props) {
     
     response = await putState(url, data, setLoadingStatus);
     
-    let body = await response.json();
-    // setFilterBy("all");
+    let body = await response.json;
     await refreshBookings(filterBy);
   }
   
@@ -218,6 +242,7 @@ function Bookings(props) {
   // initialize the update modal after clicking on a row's update button
   function makeUpdateModal(row) {
     setModalVisible(true);
+    setResetModal(false);
     modalProps.title = "Update Reservation"
     getPets(row);
     getEmployees(row);
@@ -242,6 +267,7 @@ function Bookings(props) {
   // initialize the new Reservation modal after clicking 'New Reservation' button
   function makeNewReservationModal() {
     setModalVisible(true);
+    setResetModal(false);
     modalProps.type = 'new-reservation';
     let selected_owner = owners.filter((owner) => owner.ownerId === parseInt(ownerId))
     selected_owner[0].ownerEmail = selected_owner[0].email;
@@ -287,7 +313,6 @@ function Bookings(props) {
     }
     setModalVisible(true);
     setBookingId(row.bookingId);
-    // setSelectedRoomId(row.roomId);
     setPetName(row.petName);
     setSelectedPetId(row.petId);
     setOwnerId(row.ownerId);
@@ -376,6 +401,7 @@ function Bookings(props) {
             </Form>
           </div>
   
+          {/* ------- Loading Status Spinner ------- */}
           <div style={{height: "20px"}}>
             <LoadingStatus status={loadingStatus}/>
           </div>
@@ -384,8 +410,10 @@ function Bookings(props) {
           <GenericModal
               title={modalProps.title}
               visible={modalVisible}
+              resetModal={resetModal}
               setVisible={setModalVisible}
               setLoadingStatus={setLoadingStatus}
+              setResetModal={setResetModal}
               action={ () => {
                 if (checkInMode || checkOutMode) {
                   checkIn()
@@ -414,6 +442,13 @@ function Bookings(props) {
               : ''
               }
             </p>
+            
+            {modalProps.alertText ?
+            <p className={"modal-alert"}>
+              {modalProps.alertText}
+            </p> : ''
+            }
+            
             <p className={"modal-subtitle"}>
               {(modalProps.type === 'select-owner') ?
                   'Select an owner for this reservation'
@@ -432,20 +467,22 @@ function Bookings(props) {
                 optionKey="ownerId"
                 optionValue="name"
                 />}
-
-              {checkInMode ?
+  
+            {checkInMode ?
                 availableRooms.length ?
-                <Select
-                    id="select-a-room"
-                    label="Select room for check in"
-                    name="room"
-                    value={selectedRoomId}
-                    setValue={setSelectedRoomId}
-                    optionsList={availableRooms}
-                    optionKey="roomId"
-                    optionValue="roomId"
-                /> : "There are no available rooms!"
-                 : ''
+                    <Select
+                        id="select-a-room"
+                        label="Select room for check in"
+                        name="room"
+                        value={selectedRoomId}
+                        setValue={setSelectedRoomId}
+                        optionsList={availableRooms}
+                        optionKey="roomId"
+                        optionValue="description"
+                    /> : <p className={"modal-alert"}>
+                      There are no available rooms!
+                    </p>
+                : ''
             }
             
             {checkInMode || checkOutMode || modalProps.type === 'select-owner' ? '' :
@@ -459,8 +496,9 @@ function Bookings(props) {
                     optionKey="petId"
                     optionValue="name"
                 />}
-                
-            {checkOutMode || modalProps.type === 'select-owner' ? '' :
+  
+            {checkOutMode || modalProps.type === 'select-owner' ||
+            modalProps.type === 'new-reservation' ? '' :
                 <Select
                     id="select-employee"
                     label="Assign Booking to Employee"
@@ -507,6 +545,7 @@ function Bookings(props) {
 
         </Container>
         
+        {/* ---------- Display Tabular Report of Bookings ---------- */}
         <Container>
           
           <h4 className={"mt-5"}>Bookings:</h4>

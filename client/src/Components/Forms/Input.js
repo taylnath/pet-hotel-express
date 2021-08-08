@@ -8,9 +8,10 @@ function Input(props){
             name={props.name}
             id={props.id}
             className="form-control"
-            type="text"
+            type={props.type || "text"}
             value={props.value}
             onChange={e=> props.setValue(e.target.value)}
+            required={props.required}
         />
       </>
   )

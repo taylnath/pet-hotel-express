@@ -64,7 +64,16 @@ router.get('/simpleQuery', async (req, res) => {
   let report = await queryAsync(req.query.query)
   .then(result => {
     return res.json(result);
-  });
+  })
+      .catch(err => {
+        console.error(err);
+        if (err.sqlMessage){
+          console.log("SQL error detected:", err.sqlMessage);
+          res.json({"success": false, "sqlMessage": err.sqlMessage});
+        } else {
+          res.json({"success": false});
+        }
+      });
 });
 
 

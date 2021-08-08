@@ -18,7 +18,35 @@ const getBookings = "select `Bookings`.`bookingId`as `bookingId`, " +
     "`Rooms` on `Rooms`.`roomId` = `Bookings`.`roomId` left join " +
     "`Employees` on `Employees`.`employeeId` = `Bookings`.`employeeId` "
 
-const queryAvailableRooms = "select `roomId` from `Rooms` where `roomId` not in  " +
+const queryAvailableRooms = "select `roomId`, `description` from `Rooms` where `roomId` not in  " +
     "(select roomId from Bookings natural join `Rooms`)"
 
-export { getPetsRooms, getBookings, queryAvailableRooms }
+const countRoomsQuery = "select count(`Rooms`.`roomId`) as `roomCount` from " +
+    "`Rooms`;"
+
+function petBookingQuery (bookingId, petId, startDate, endDate) {
+  let query = "select count(`Bookings`.`BookingId`) as `bookingCount` from " +
+      "`Bookings` where `Bookings`.`petId` = " + petId + " and " +
+      "not ((`Bookings`.`endDate` " + " <= '" + startDate + "') or " +
+      "(`Bookings`.`startDate` >= '" + endDate + "') or " +
+      "(`Bookings`.`bookingId` = '" + bookingId + "'));"
+  return query;
+}
+
+function roomsBookedQuery (bookingId, startDate, endDate) {
+  let query = "select `Bookings`.`startDate`, `Bookings`.`endDate`, " +
+      "`Bookings`.`bookingId` from `Bookings` where " +
+      "not ((`Bookings`.`endDate` " + " <= '" + startDate + "') or " +
+      "(`Bookings`.`startDate` >= '" + endDate + "') or " +
+      "(`Bookings`.`bookingId` = '" + bookingId + "'));"
+  return query;
+}
+
+export {
+  getPetsRooms,
+  getBookings,
+  queryAvailableRooms,
+  petBookingQuery,
+  countRoomsQuery,
+  roomsBookedQuery
+}

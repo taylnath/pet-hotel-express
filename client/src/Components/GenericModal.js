@@ -40,6 +40,7 @@ function GenericModal(props){
               <Col>
                 <Button variant="secondary" md={4} onClick={() => {
                   props.setVisible(false);
+                  {props.setResetModal && props.setResetModal(true);}
                   {
                     props.setLoadingStatus &&
                     props.setLoadingStatus({

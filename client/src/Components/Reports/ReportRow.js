@@ -33,14 +33,18 @@ const ReportRow = (props) => {
                                                 size={"sm"}
                                                 disabled={
                                                   isLoading ||
-                                                      props.row.endDate ?
-                                                  makeDate(props.row.endDate) < makeDate(tomorrow) :
+                                                  props.row.endDate ?
+                                                      makeDate(props.row.endDate) < makeDate(tomorrow) :
                                                       false
-                                                }>
+                                                }
+                                                title={props.row.endDate &&
+                                                makeDate(props.row.endDate) < makeDate(tomorrow) ?
+                                           "Cannot update past bookings"
+                                           : ''}>
                                          {isLoading ? "Processing ..." : "Update"}
                                        </Button>)}
           />}
-        
+    
           {props.onDelete && <Cell is_header={props.is_header}
                                    cell={props.is_header ? "Delete" :
                                        (<Button onClick={() => {
@@ -53,7 +57,7 @@ const ReportRow = (props) => {
                                          {isLoading ? "Processing ..." : "Delete"}
                                        </Button>)}
           />}
-        
+    
           {props.onCheckIn && <Cell is_header={props.is_header}
                                     cell={props.is_header ? "CheckIn" :
                                         (<Button onClick={() => {
@@ -65,12 +69,16 @@ const ReportRow = (props) => {
                                                  disabled={
                                                    isLoading ||
                                                    ((makeDate(props.row.endDate) < makeDate(tomorrow)) && !props.row.roomId)
-                                                 }>
+                                                 }
+                                                 title={props.row.endDate &&
+                                                 ((makeDate(props.row.endDate) < makeDate(tomorrow)) && !props.row.roomId) ?
+                                                     "Cannot check in past bookings"
+                                                     : ''}>
                                           {isLoading ? "Processing ..." :
                                               (props.row.roomId ? "Check Out" : "Check In")}
                                         </Button>)}
           />}
-      
+  
         </tr>
       
         {/* <Button variant={"danger"}*/}

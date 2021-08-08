@@ -8,6 +8,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import DropdownItem from "react-bootstrap/DropdownItem";
 import Login  from './Login'
 import superUser from '../Models/superUser';
+import NavbarToggle from "react-bootstrap/NavbarToggle";
+import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 
 function CustomNavbar(props) {
   
@@ -26,7 +28,7 @@ function CustomNavbar(props) {
   };
   
   return (
-      <Navbar bg="dark" variant="dark">
+      <Navbar collapseOnSelect bg="dark" variant="dark" expand={"md"}>
         <Navbar.Brand as={Link} to="/"
           title="Our Homepage"
         >
@@ -38,6 +40,8 @@ function CustomNavbar(props) {
           />{' '}
           Pet Hotel
         </Navbar.Brand>
+        <NavbarToggle aria-controls={"responsive-navbar-nav"} />
+        <NavbarCollapse id={"responsive-navbar-nav"}>
         <Nav>
           <Nav.Link as={Link} to="/Reservations" 
             title="Reservations page for owners--create, read, update and delete reservations for one specific Owner."
@@ -54,22 +58,22 @@ function CustomNavbar(props) {
             <NavDropdown.Item href="/Employees">Employees</NavDropdown.Item>
             <NavDropdown.Item href="/Rooms">Rooms</NavDropdown.Item>
           </NavDropdown> */}
-          <Nav.Link as={Link} to="/Bookings" 
+          <Nav.Link eventKey={"2"} as={Link} to="/Bookings"
             title="Create, read, update, and delete Bookings for the Hotel"
           >Bookings</Nav.Link>
-          <Nav.Link as={Link} to="/Employees"
+          <Nav.Link eventKey={"3"} as={Link} to="/Employees"
             title="Create, read, update, and delete Employees of the Hotel"
           >Employees</Nav.Link>
-          <Nav.Link as={Link} to="/Rooms"
+          <Nav.Link eventKey={"4"} as={Link} to="/Rooms"
             title="Create, read, update, and delete Rooms of the Hotel"
           >Rooms</Nav.Link>
-          <Nav.Link as={Link} to="/Owners"
+          <Nav.Link eventKey={"5"} as={Link} to="/Owners"
             title="Create, read, update, and delete Owners of the Hotel"
           >Owners</Nav.Link>
-          <Nav.Link as={Link} to="/Pets"
+          <Nav.Link eventKey={"6"} as={Link} to="/Pets"
             title="Create, read, update, and delete Pets of the Hotel"
           >Pets</Nav.Link>
-          <Nav.Link as={Link} to="/Guests"
+          <Nav.Link eventKey={"7"} as={Link} to="/Guests"
             title="Create, read, update, and delete relationships (i.e. the Guests table) between Pets and Owners (without affecting the Pets or Owners tables)."
           >Guests</Nav.Link>
   
@@ -78,7 +82,7 @@ function CustomNavbar(props) {
                     className={"d-none"}
           >Test</Nav.Link>
         </Nav>
-
+        </NavbarCollapse>
         {/* login button */}
         <DropdownButton 
           variant={props.user.logged_in ? "success" : "dark"}
@@ -101,6 +105,7 @@ function CustomNavbar(props) {
          loginVisible={loginVisible} 
          setLoginVisible={setLoginVisible}
         />
+
       </Navbar>
       
       

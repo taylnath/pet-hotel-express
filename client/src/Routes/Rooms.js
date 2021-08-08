@@ -69,7 +69,7 @@ function Rooms() {
     } else {
       response = await postState(url, data, setLoadingStatus);
     }
-    let body = await response.json();
+    let body = await response;
     console.log('Room updated. Got response', body);
     await refreshRooms()
   }
@@ -104,6 +104,7 @@ function Rooms() {
   }
   const attributes = ["roomId", "description", "petName"]
 
+  // render page
   return (
       <div>
         <Container>
@@ -112,7 +113,7 @@ function Rooms() {
         
         <Container>
           
-          <Button variant="success"
+          <Button variant="success shadow"
                   onClick={() => {setModalVisible(true);}}>
             Add New Room
           </Button>
