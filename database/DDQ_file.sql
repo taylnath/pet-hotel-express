@@ -8,7 +8,6 @@ drop table if exists `Pets`;
 drop table if exists `Rooms`;
 drop table if exists `Bookings`;
 drop table if exists `Guests`;
-drop table if exists `Stays`;
 set foreign_key_checks=1;
 
 create table  `Owners` (

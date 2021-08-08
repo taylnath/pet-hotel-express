@@ -39,7 +39,7 @@ const ReportRow = (props) => {
                                                 }
                                                 title={props.row.endDate &&
                                                 makeDate(props.row.endDate) < makeDate(tomorrow) ?
-                                           "Cannot update in past bookings"
+                                           "Cannot update past bookings"
                                            : ''}>
                                          {isLoading ? "Processing ..." : "Update"}
                                        </Button>)}
