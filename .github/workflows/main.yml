@@ -34,21 +34,33 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     steps:
-      - name: deploy on flip
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          command: |
-            cd 340cs-project
-            git pull
-            mysql -h classmysql.engr.oregonstate.edu -u ${{ secrets.MARIAU }} --password=${{ secrets.MARIAP }} cs340_taylnath < database/DDQ_file.sql
-            npm install
-            npm run build --prefix client
-            forever stopall
-            forever start server.js
-            forever list
-          host: ${{ secrets.FLIP_HOST }}
-          username: taylnath
-          privateKey: ${{ secrets.FLIP_KEY }}
+      - uses: actions/checkout@v2
+      - name: update database
+          mysql -h {{ secrets.CLEARDB_HOST }} -u ${{ secrets.CLEARDB_USER }} --password=${{ secrets.CLEARDB_PW }} {{ secrets.CLEARDB_DB }} < database/DDQ_file.sql
+      - name: deploy on heroku via docker
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          APP_NAME: ${{ 'black-cat-designs-pet-hotel' }}
+        run: |
+          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+          heroku container:push web -a $APP_NAME
+          heroku container:release web -a $APP_NAME
+
+      # - name: deploy on flip
+      #   uses: garygrossgarten/github-action-ssh@release
+      #   with:
+      #     command: |
+      #       cd 340cs-project
+      #       git pull
+      #       mysql -h classmysql.engr.oregonstate.edu -u ${{ secrets.MARIAU }} --password=${{ secrets.MARIAP }} cs340_taylnath < database/DDQ_file.sql
+      #       npm install
+      #       npm run build --prefix client
+      #       forever stopall
+      #       forever start server.js
+      #       forever list
+      #     host: ${{ secrets.FLIP_HOST }}
+      #     username: taylnath
+      #     privateKey: ${{ secrets.FLIP_KEY }}
 
 
 
