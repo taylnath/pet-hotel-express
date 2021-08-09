@@ -1,21 +1,15 @@
 FROM node
 
-# create app directory
-WORKDIR /usr/src/app
+WORKDIR /app/client
+COPY ./client/package*.json ./
 
-# install dependencies
+WORKDIR /app
 COPY package*.json ./
-COPY client/package*.json ./
-
 RUN npm install
-# for production only -- take this out?
-RUN npm ci --only=production
 
-# bundle app source
+WORKDIR /app
 COPY . .
 
-EXPOSE 80
-EXPOSE 443
+ENV NODE_ENV=production
 
-# run app
 CMD [ "node", "server.js" ]
