@@ -41,7 +41,7 @@ jobs:
       - name: deploy on heroku via docker
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          APP_NAME: ${{ 'black-cat-designs-pet-hotel' }}
+          APP_NAME: ${{ 'pet-hotel-express' }}
         run: |
           docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
           heroku container:push web -a $APP_NAME
